@@ -15,5 +15,15 @@ for directory, subdirlist, filelist in os.walk(assets_file_path):
 # Use the Rewritten list to generate the 'cards' in the GUI with the multiple objects of same Type being 'stacked' or opening when clicked.
 
 # ???
+# - "Unit" handler
+# - "Room" handler
+# - Treasurery manager
+# - Enemy STR Calculator
+# - Layer tracker
+# - GUI
+# - Player Combat STR tracker
+# - Specials from Rooms tracker
+# 
+
 
 # Profit!!!
