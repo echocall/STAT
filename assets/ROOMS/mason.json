@@ -1,0 +1,15 @@
+{
+    "objecttype":"Room",
+    "category":"Unit",
+    "roomtype":"Mason",
+    "name":"Mason",
+    "cost":"20",
+    "costtype":"Resources",
+    "cost2":"",
+    "costtype2":"",
+    "description":"With stone, lumber, and steel, the mason can create incredible defenses.",
+    "special":"A mason allows you to build barricades (page 18).",
+    "unittype":"",
+    "unitcapincrease":"",
+    "icon":"mason.png"
+}

@@ -1,0 +1,15 @@
+{
+    "objecttype":"Room",
+    "category":"Buffing",
+    "roomtype":"Shrine",
+    "name":"Shrine of Defense",
+    "cost":"20",
+    "costtype":"Resources",
+    "cost2":"",
+    "costtype2":"",
+    "description":"A monument to the ancestors, the mountain spirits, or the gods.",
+    "special":"A Shrine of Defense counts as a passable level 3 trap (page 17).",
+    "unittype":"Cleric",
+    "unitcapincrease":"1",
+    "icon":"shrineofdefense.png"
+}
