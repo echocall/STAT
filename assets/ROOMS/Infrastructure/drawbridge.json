@@ -1,0 +1,15 @@
+{
+    "objecttype":"Room",
+    "category":"Infrastructure",
+    "roomtype":"",
+    "name":"Drawbridge",
+    "cost":"15",
+    "costtype":"Resources",
+    "cost2":"",
+    "costtype2":"",
+    "description":"The best way to win a fight is to not get in one.",
+    "special":"When you build a drawbridge, it is open. During combat, you may close the drawbridge to prevent enemies from crossing. Enemies take 50 STR of damage for every open grid space they fall should the drawbridge close while they're in its grid space.",
+    "unittype":"",
+    "unitcapincrease":"",
+    "icon":""
+}

@@ -1,0 +1,15 @@
+{
+    "objecttype":"Room",
+    "category":"Advanced",
+    "roomtype":"",
+    "name":"Breeder",
+    "cost":"80",
+    "costtype":"Resources",
+    "cost2":"",
+    "costtype2":"",
+    "description":"It takes a special kind of dwarf to dedicate their life to raising a creature that could kill them with a single breath.",
+    "special":"After using a breeding pheromone on a large creature, you m ay place a younger version of that creature in this Breeder room, or place it in the parent's lair. The young creature has 1/2 the STR of the parent.",
+    "unittype":"",
+    "unitcapincrease":"",
+    "icon":""
+}
