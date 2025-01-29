@@ -20,17 +20,13 @@ directory = Path('C:\\Users\\strip\\Documents\\github\\STAT\\assets')
 
 
 # splits subdirectories and create lists based on them. 
-for subdirectory in subdirectories:
+#for subdirectory in subdirectories:
     # Get the directories, go to each directory & write the contents to a list
     # If the directory contains a subdirectory: create a new list to hold the contents of the subdirectory
     # append new list to the outer list.
     # Final Product: Buffing[dorms,shrines[defense,fortune]]
     
     # 
-
-    print("nope")
-
-
 
 path = Path('C:\\Users\\strip\\Documents\\github\\STAT\\assets\\ROOMS')
 jsonslist = list(path.glob('**/*.json'))
@@ -41,7 +37,7 @@ units = []
 for path in jsonslist:
     units.append(path.read_text())
 
-
+print(units)
 
 # Order of operations: Fetch information from ROOMS or UNITS folders and throw into list
 # Rewrite list to account for anything with the same RoomType or UnitType into its own mini-list inside the big list.
