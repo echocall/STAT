@@ -1,13 +1,15 @@
 {
-    "objecttype":"",
-    "category":"",
-    "roomtype":"",
     "name":"",
-    "costs":{},
-    "price":{},
+    "assettype":"",
     "description":"",
+    "source":"",
+    "category":"",
+    "ingametypes":[],
+    "buycost":{"none": 0},
+    "sellprice":{"none": 0},
     "special":"",
-    "unittype":"",
-    "unitcapincrease":"",
-    "icon":""
+    "effects":[],
+    "other":"",
+    "icon":"",
+    "image":""
 }

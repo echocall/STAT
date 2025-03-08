@@ -1,0 +1,20 @@
+{
+    "name":"",
+    "createDate":"",
+    "dateLastSave":"",
+    "description":"",
+    "assetCustoms": false,
+    "assetCustomsPath": "",
+    "actorCustoms": false,
+    "actorCustomsPath": "",
+    "eventCustoms": false,
+    "eventCustomsPath": "",
+    "effectCustoms": false,
+    "effectCustomsPath": "",
+    "counters":{},
+    "assets":{},
+    "actors":{},
+    "currentEvents":{},
+    "currentEffects":{},
+    "logFilePath":""
+}

@@ -1,0 +1,21 @@
+{
+    "name":"Save A",
+    "baseGame":"Test",
+    "createDate":"3/8/2025",
+    "dateLastSave":"",
+    "description":"The test save for the test game. :)",
+    "assetCustoms": false,
+    "assetCustomsPath": "",
+    "actorCustoms": false,
+    "actorCustomsPath": "",
+    "eventCustoms": false,
+    "eventCustomsPath": "",
+    "effectCustoms": false,
+    "effectCustomsPath": "",
+    "counters":{"Gold": 25, "Silver": 34, "Copper": 23, "Health": 84, "1st Level Spell Slots": 6},
+    "assets":{},
+    "actors":{},
+    "currentEvents":{},
+    "currentEffects":{},
+    "logFilePath":""
+}

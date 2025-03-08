@@ -1,58 +1,52 @@
 import os
-from pathlib import Path
+import configparser
+from pathlib import PurePath, Path
+from getters import games_names_getter, game_getter, assets_getter, asset_getter
 
-assets_file_path = 'C:\\Users\\strip\\Documents\\github\\STAT\\assets'
-timesRun = 0
+# Reading from config file
+configParser = configparser.RawConfigParser()
+configFilePath = 'config.txt'
+configParser.sections()
+configParser.read(configFilePath)
 
-# Use Strategy design strategy to pick which filepath to use: UNITS, ROOMS, or IMAGES
-# Run the iterative forloop for each of thos SEPARATELY to write files into list.
-''' for directory, subdirlist, filelist in os.walk(assets_file_path):
-    print(directory)
-    print(subdirlist) 
-    for f in filelist:
-        print('\t' + f) '''
+filePaths = {}
 
-p = Path('C:\\Users\\strip\\Documents\\github\\STAT\\assets\\ROOMS')
-subdirectories = [x for x in p.iterdir() if x.is_dir()]
-print(subdirectories)
+for x in configParser['Paths']:
+        filePaths[x] = configParser['Paths'][x]
 
-directory = Path('C:\\Users\\strip\\Documents\\github\\STAT\\assets')
+# ===================================================
+unsplitGames = []
+splitGames = []
+# assetTypes is a set
+assetTypesSet = {"set", "set2"}
+# as list
+assetTypes = []
 
+# gets the unsplit names of all the games.
+unsplitGames = games_names_getter(filePaths["gamespath"])
+for game in unsplitGames:
+    name = game.split(".")
+    splitGames.append(name[0].capitalize())
 
-# splits subdirectories and create lists based on them. 
-#for subdirectory in subdirectories:
-    # Get the directories, go to each directory & write the contents to a list
-    # If the directory contains a subdirectory: create a new list to hold the contents of the subdirectory
-    # append new list to the outer list.
-    # Final Product: Buffing[dorms,shrines[defense,fortune]]
-    
-    # 
+# gets a single game as a dictionary/JSON object
+game = game_getter("test", filePaths["gamespath"])
 
-path = Path('C:\\Users\\strip\\Documents\\github\\STAT\\assets\\ROOMS')
-jsonslist = list(path.glob('**/*.json'))
-#print(jsonslist)
+"""
+for key in game:
+      print(key)
+"""
 
-units = []
+assets = []
 
-for path in jsonslist:
-    units.append(path.read_text())
+assets = assets_getter(game['assetDefaultPath'])
 
-print(units)
+# clearing out unneeded values from our set.
+assetTypesSet.clear()
+# getting the different Asset Types for later processing.
+for asset in assets:
+    print(asset['assettype'])
+    assetTypesSet.add(asset['assettype'])
 
-# Order of operations: Fetch information from ROOMS or UNITS folders and throw into list
-# Rewrite list to account for anything with the same RoomType or UnitType into its own mini-list inside the big list.
-# Use the Rewritten list to generate the 'cards' in the GUI with the multiple objects of same Type being 'stacked' or opening when clicked.
-
-# ???
-# - "Unit" handler
-# - "Room" handler
-# - Treasurery manager
-# - Enemy STR Calculator
-# - Layer tracker
-# - GUI
-# - Player Combat STR tracker
-# - Specials from Rooms tracker
-# 
-
-
-# Profit!!!
+for asset in assets:
+     if asset['assettype'] == assetTypesSet[0]:
+        print(asset)

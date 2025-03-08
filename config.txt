@@ -1,0 +1,6 @@
+[Paths]
+gamesPath = .\statassets\games
+datapackPath = .\statassets\datapacks\
+saveFilePath = .\statassets\saves\
+
+[Key Binds]
