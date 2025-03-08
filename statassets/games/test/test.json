@@ -1,0 +1,20 @@
+{
+    "name":"Test",
+    "hasCounters":true,
+    "Counters":{"Gold": 10, "Silver": 25, "Health": 100},
+    "hasActors":false,
+    "actorDefaultPath":"5",
+    "defaultActors":[],
+    "hasAssets":"Resources",
+    "assetDefaultPath":"..\\statassets\\datapacks\\test\\default\\assets",
+    "defaultsAssets":["dorms","spellstrike"],
+    "hasEvents":"",
+    "eventDefaultPath":"5",
+    "defaultEvents":[],
+    "hasEffects":"",
+    "effectDefaultPath":"5",
+    "defaultEffectss":[],
+    "description":"This is the test game for basic STAT testing",
+    "icon":"",
+    "saveFilesPath":"..\\statassets\\saves\\test"
+}

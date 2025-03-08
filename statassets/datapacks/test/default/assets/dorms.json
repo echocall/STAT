@@ -1,0 +1,15 @@
+{
+    "objecttype":"Room",
+    "category":"Buffing",
+    "roomtype":"",
+    "name":"Dorms",
+    "cost":"5",
+    "costtype":"Resources",
+    "cost2":"",
+    "costtype2":"",
+    "description":"Basic sleeping quarters for your dwarves.",
+    "special":"Increases the maximum number of units each connected room can house by 50% per grid of Dorms",
+    "unittype":"All",
+    "unitcapincrease":"50%",
+    "icon":""
+}
