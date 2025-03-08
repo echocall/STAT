@@ -2,13 +2,13 @@
     "name":"Test",
     "description":"This is the test game for basic STAT testing",
     "hasCounters":true,
-    "counters":{"Gold": 10, "Silver": 25, "Copper": 100, "Health": 100, "1st Level Spell Slots": 3},
+    "counters":{"Gold": 10, "Silver": 25, "Copper": 100, "Health": 100, "1st Level Spell Slot": 3},
     "hasActors":false,
     "actorDefaultPath":"",
     "defaultActors":[],
     "hasAssets":true,
-    "assetDefaultPath":".\\statassets\\datapacks\\test\\default\\assets",
-    "defaultAssets":["dorms","spellstrike"],
+    "assetDefaultPath":"statassets\\datapacks\\test\\default\\assets",
+    "defaultAssets":["Barracks","Spell Strike"],
     "hasEvents":false,
     "eventDefaultPath":"",
     "defaultEvents":[],
@@ -16,5 +16,5 @@
     "effectDefaultPath":"",
     "defaultEffectss":[],
     "icon":"",
-    "saveFilesPath":".\\statassets\\saves\\test"
+    "saveFilesPath":"statassets\\saves\\test"
 }

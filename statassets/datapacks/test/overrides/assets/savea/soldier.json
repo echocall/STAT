@@ -1,0 +1,15 @@
+{
+    "name":"Soldier",
+    "assettype":"Unit",
+    "description":"A basic soldier.",
+    "source":"Override",
+    "category":"Offense",
+    "ingametypes":["Warrior", "Unit", "Human", "Offense"],
+    "buycost":{"none": 0},
+    "sellprice":{"none": 0},
+    "special":"Deals 5 STR per solider in squad.",
+    "effects":[],
+    "other":"",
+    "icon":"",
+    "image":""
+}
