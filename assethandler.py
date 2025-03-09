@@ -1,10 +1,10 @@
 from getters import *
 from utilities import *
+from MyAsset import *
 
 # Need to adjust asset_handler depending on game state.
 # Example: New game -> Only call default assets, Load Game -> check for overrides
 def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: bool, overrideFilePath: str):
-    print("TODO: Handle assets. >:) > :) >:)")
     fetched_default_assets_result = {}
     fetched_default_assets = {}
     fetched_default_assets_names = {}
@@ -14,6 +14,7 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
     override_assets_as_names = {}
     conflict_check = {}
     merged_assets = []
+    converted_assets = []
     handler_result = {"missing_default": "", "missing_assets": [], "merged_assets": []}
 
     # Check that we have all the default assets.
@@ -39,18 +40,18 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
             override_assets_as_names = filter_list_value_with_set(override_assets, 'name')
         
         # Overrides exist, we need to check for conflicts and merge the results.
-        # check list of default assets to see if their name shows up in override or not.
         conflict_check = list_compare(fetched_default_assets_names, override_assets_as_names)
         # merge the lists
         merged_assets = merge_assets(fetched_default_assets, override_assets, conflict_check)
     else:
         # No overrides.
         merged_assets = fetched_default_assets
-        
+
+    converted_assets = dict_to_objects(merged_assets)
     # build the result from our handler.
     handler_result["missing_default"] = missing_default
     handler_result["missing_assets"] = missing_assets
-    handler_result["merged_assets"] = merged_assets
+    handler_result["converted_assets"] = converted_assets
     return handler_result
 
 # Checks that the default assets exist & match the game file
@@ -76,18 +77,19 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
 
 # Retrieve any override assets
 def override_asset_fetch(overrideFilePath: str) -> dict:
-    print("TODO: Get the override files.")
     override_assets = {}
     override_assets = multi_json_getter(overrideFilePath, "assets")
     return override_assets
 
 # Handle merging override assets & default assets
+# returns list of asset objects
 def merge_assets(fetched_default_assets: list, override_assets: list, conflict_check: dict) -> dict:
     merged_assets_list = merge_dict_lists(fetched_default_assets, override_assets, conflict_check)
+    
     return merged_assets_list
 
 # Asset Loader
-def asset_loader(merged_asset_list: list):
+def asset_loader(merged_asset_list: dict):
     print("TODO: Load assets.")
     # Organize assets by asset type
     # prep the types for being seen
@@ -101,5 +103,16 @@ def new_asset():
     # If it is a New Default asset, update associated game's .json
     # If it is a b
 
-# asset reader
+# asset_to_object
+def dict_to_objects(targetDict: dict) -> dict:
+    # add class object to dict of class objects. "name":object
+    asset_objects = {}
+
+    # get name of each asset in list. insubstantiate into a class object.
+    # add class object to dict of class objects. "name":object
+    for asset in targetDict:
+        classObjName = "c" + asset["name"]
+        classObjName = MyAsset(asset)
+        asset_objects[asset["name"]] = classObjName
+    return asset_objects
 

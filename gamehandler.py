@@ -7,23 +7,16 @@ def game_handler():
 
 def new_game():
     print("TODO: save a new game's information to <gamename>.py")
-    # load templateGame to use as a template
-    # as user's input for each key in templateGame
-    # Be careful to handle arrays properly
 
 def get_game(gameName: str, filePath: str, type: str) -> dict:
     game = single_json_getter(gameName, filePath, type)
     return game
 
 def get_games_names(filePath: str) -> list:
-    unsplitGames = []
-    splitGameNames = []
-    unsplitGames = games_names_getter(filePath)
-    for game in unsplitGames:
-        name = game.split(".")
-        splitGameNames.append(name[0].capitalize())
+    game_names = []
+    game_names = multi_json_names_getter(filePath, "games")
 
-    return splitGameNames
+    return game_names
 
 def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> bool:
     print("TODO: update a game's json")
@@ -77,6 +70,9 @@ def write_game_file(game: dict, directoryPath: str, fileName: str) -> bool:
         # TODO: make this better
         return error_message
     
-def get_game_saves():
-    print("TODO: get all the save files associated with a game")
+def get_game_saves(filePath: str, gameName: str) -> list:
+    # get game name
+    names_test_path = filePath + gameName
+    game_names = multi_json_names_getter(names_test_path)
 
+    return game_names

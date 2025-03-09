@@ -16,14 +16,11 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
     target_directory_path = Path(str_target_directory_path)
     target_file_path = Path(str_target_file_path)
 
-    print(target_directory_path)
-
-    # test if gamePath is valid path
+    # test if filePath is valid path
     if target_directory_path.exists():
-        # game directory is valid, got to get game.
+        # object directory is valid, get object.
         if(target_file_path.exists()):
             # TODO: Change this into message for user.
-            # print("Game file exists!")
             with open(str_target_file_path) as f:
                 target_object = json.load(f)
             # target_game = game_file_path.read_text()
@@ -41,7 +38,6 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
         print(error_message)
 
 # Multi-file getter: all .jsons at known filepath.
-# Only good for getting a Game file. :')
 def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
     error_message = ""
     target_json_objects = []
@@ -51,7 +47,6 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
     # casting to Path 
     directory_path = Path(str_directory_path)
 
-    
     if directory_path.exists():
         jsonslist = list(directory_path.glob('**/*.json'))
 
@@ -69,7 +64,36 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
 
 # Multi-file names getter: all the names with .json of the files at known filepath
 def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
-    print ("TODO")
+    error_message = ""
+    unsplit_objects = []
+    objects = []
+    str_directory_path = passedDirectoryPath
+    fetch_success = False
+
+    # casting to Path 
+    directory_path = Path(str_directory_path)
+
+    if directory_path.exists():
+        # check each directory in the directory for **/*.json file
+        jsonslist = sorted(Path(directory_path).glob('**/*.json'))
+
+        for x in (jsonslist):
+            y = PurePath(x)
+            unsplit_objects.append(y.name)
+        fetch_success = True
+        
+    for object in unsplit_objects:
+        name = object.split(".")
+        objects.append(name[0].capitalize())
+
+    else:
+         # TODO: change to pass error_message back
+        error_message = "Incorrect Path: " + objectType + " Directory not found!"
+
+    if(fetch_success == True):
+        return objects
+    else:
+        print(error_message)
 
 # Getters for loading in a game.
 # gets the names of all the game.py files in the game directory

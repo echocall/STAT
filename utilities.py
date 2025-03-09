@@ -137,11 +137,11 @@ def merge_dict_lists(defaultList: list, overrideList: list, conflictCheck: dict)
         print(conflictCheck["missing_list"])
         for item in conflictCheck("missing_list"):
             try:
-                print("TODO: handle this try in merge_lists()")
-                # Skip this asset
+                # merge in the object from the override instead
+                item_name = item["name"]
+                merged_dict_list.append(overrideList[item_name])
             except ValueError:
                 # doesn't exist in the override_assets["retrieved_list"]
-                print("TODO: handle this except in merge_lists()")
                 index = -1
                 merged_dict_list.add(item)
 

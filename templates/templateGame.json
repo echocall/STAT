@@ -16,5 +16,7 @@
     "effectDefaultPath":"",
     "defaultEffectss":[],
     "icon":"",
-    "saveFilesPath":""
+    "saveFilesPath":"",
+    "turns": false,
+    "turnType": ""
 }

@@ -27,7 +27,6 @@ game = get_game("test", filePaths["gamespath"], "games")
 
 print(game)
 print()
-print(game['assetDefaultPath'])
 
 # ====================================================
 print()
@@ -40,3 +39,20 @@ print("======== load_save test ========")
 save = load_save("save_a", game["saveFilesPath"], "saves")
 print()
 print(save)
+
+# ====================================================
+print()
+print("======== get_games_names with multi_json_names_getter test ========")
+names_test_path = filePaths["gamespath"]
+game_names = get_games_names(names_test_path)
+
+print(game_names)
+
+# ===========================================
+print()
+print("======== asset_handler test ========")
+result = {}
+result = asset_handler(game['assetDefaultPath'],game['defaultAssets'], True, "statassets\\datapacks\\test\\overrides\\savea\\assets")
+
+merged_assets = result["merged_assets"]
+print(merged_assets["Barracks"].description)

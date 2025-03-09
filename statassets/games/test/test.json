@@ -16,5 +16,7 @@
     "effectDefaultPath":"",
     "defaultEffectss":[],
     "icon":"",
-    "saveFilesPath":"statassets\\saves\\test"
+    "saveFilesPath":"statassets\\saves\\test",
+    "turns": true,
+    "turnType": "Increasing"
 }
