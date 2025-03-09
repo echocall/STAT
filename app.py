@@ -7,9 +7,14 @@ from utilities import *
 from assethandler import *
 from gamehandler import *
 from savehandler import *
+import StatInstance
 import tests
 
-filePaths = stat_initialize()
+
+# Initialzie the class instance.
+currentStat = StatInstance.MyStat("config.txt")
+
+filePaths = stat_initialize(currentStat.config_file)
 
 print(filePaths)
 
@@ -23,10 +28,14 @@ print("======== single_json_getter test ========")
 # gets a single game as a dictionary/JSON object
 game = get_game("test", filePaths["gamespath"], "games")
 
-print(game)
-print()
+currentStat.gameLoaded(game, "test")
 
-# ====================================================
+print(currentStat.is_game_loaded)
+"""
+print(game)
+print()"""
+
+"""# ====================================================
 print()
 print("======== get_saves_names test ========")
 save_names = get_game_saves(game["saveFilesPath"])
@@ -36,6 +45,6 @@ print()
 print("======== load_save test ========")
 save = load_save("save_a", game["saveFilesPath"], "saves")
 print()
-print(save)
+print(save)"""
 
 

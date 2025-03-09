@@ -3,11 +3,13 @@ import configparser
 from os import system
 import json
 from pathlib import Path
+import MyGame
+import MyAsset
 
-def stat_initialize() -> dict:
+def stat_initialize(config_file: str) -> dict:
     # Reading from config file
     configParser = configparser.RawConfigParser()
-    configFilePath = 'config.txt'
+    configFilePath = config_file
     configParser.sections()
     configParser.read(configFilePath)
 
@@ -144,5 +146,11 @@ def convert_obj_to_json(object: dict) -> dict:
 
     return json_obj
 
+def handler_result_builder(missing_default: bool, missing_objects_name: str, missing_objects: list,
+                            converted_objects_name: str, converted_objects: list )-> dict:
+    handler_result = {"missing_default": missing_default, missing_objects_name: missing_objects, 
+                      converted_objects_name: converted_objects}
+
+    return handler_result
 
 

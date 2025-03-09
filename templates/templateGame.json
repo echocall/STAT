@@ -2,7 +2,7 @@
     "name":"",
     "description":"",
     "hasCounters":false,
-    "Counters":[],
+    "counters":[],
     "hasActors":false,
     "actorDefaultPath":"",
     "defaultActors":[],
