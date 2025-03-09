@@ -108,7 +108,8 @@ def list_compare(initialList: list, secondList: list):
         result["match"] = match
         result["missing_values"] = missing_objects
         return(result)
-        
+
+
 def list_to_lowercase(parentList: list) -> list:
     newList = []
     for x in parentList:

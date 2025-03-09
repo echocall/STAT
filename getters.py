@@ -190,4 +190,3 @@ def asset_getter(asset_name: str, passed_file_path: str) -> dict:
         return target_asset
     else:
         print(error_message)
-
