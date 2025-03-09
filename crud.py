@@ -1,5 +1,6 @@
 import json
 from pathlib import PurePath, Path
+from utilities import *
 
 # CREATE
 def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: dict) -> bool:
@@ -10,7 +11,7 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: 
     str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
     json_obj = {}
 
-    json_obj = json.dumps(object, indet=4)
+    json_obj = convert_obj_to_json(object)
 
     # casting to Path 
     target_directory_path = Path(str_target_directory_path)
@@ -130,7 +131,7 @@ def overwrite_json_file(object: dict, directoryPath: str, fileName: str) -> bool
     result = False
     json_obj = {}
 
-    json_obj = json.dumps(object, indet=4)
+    json_obj = convert_obj_to_json(object)
 
      # casting to Path 
     target_directory_path = Path(str_target_directory_path)
@@ -164,3 +165,6 @@ def overwrite_json_file(object: dict, directoryPath: str, fileName: str) -> bool
 def append_json_file(object: dict, directoryPath: str, fileName: str) -> bool:
     print("TODO: fill this in.")
 
+# DELETE
+# TODO: Save this for when Error Handler is more up and running >__> 
+# And the forgiveness helpers. wtb confirm boxes.

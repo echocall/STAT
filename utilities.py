@@ -138,8 +138,11 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
 
     return merged_dict_list
 
-def convert_obj_to_json():
-    print("TODO: Convert a class object to json")
+def convert_obj_to_json(object: dict) -> dict:
+    print("TODO: Error_handling")
+    json_obj = json.dumps(object, indent=4)
+
+    return json_obj
 
 
 
