@@ -2,7 +2,7 @@ import os
 import configparser
 import datetime
 from pathlib import PurePath, Path
-from getters import *
+from crud import *
 from utilities import *
 from assethandler import *
 from gamehandler import *
@@ -32,7 +32,7 @@ def unit_test(filePaths: dict):
     print("== ASSET TESTING ==")
     print()
     print("======== asset_getter test ========")
-    asset = asset_getter("spellstrike", game['assetDefaultPath'])
+    asset = single_json_getter("spellstrike", game['assetDefaultPath'], "assets")
     print(asset)
     print()
 

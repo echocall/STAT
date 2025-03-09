@@ -1,4 +1,4 @@
-from getters import *
+from crud import *
 from utilities import *
 
 def save_handler():
@@ -7,7 +7,7 @@ def save_handler():
 def get_game_saves(filePath: str) -> list:
     unsplitSaves = []
     splitSaveNames = []
-    unsplitSaves = games_names_getter(filePath)
+    unsplitSaves = multi_json_names_getter(filePath, "saves")
     for save in unsplitSaves:
         name = save.split(".")
         splitSaveNames.append(name[0].capitalize())

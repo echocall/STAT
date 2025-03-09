@@ -1,6 +1,8 @@
 import sys
 import configparser
 from os import system
+import json
+from pathlib import Path
 
 def stat_initialize() -> dict:
     # Reading from config file
@@ -135,3 +137,9 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
                 merged_dict_list.add(item)
 
     return merged_dict_list
+
+def convert_obj_to_json():
+    print("TODO: Convert a class object to json")
+
+
+

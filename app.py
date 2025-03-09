@@ -2,7 +2,7 @@ import os
 import configparser
 import datetime
 from pathlib import PurePath, Path
-from getters import *
+from crud import *
 from utilities import *
 from assethandler import *
 from gamehandler import *
