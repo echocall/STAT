@@ -40,5 +40,3 @@ print("======== load_save test ========")
 save = load_save("save_a", game["saveFilesPath"], "saves")
 print()
 print(save)
-
-
