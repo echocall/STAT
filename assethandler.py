@@ -12,11 +12,12 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
     override_assets_as_names = {}
     conflict_check = {}
     merged_assets = []
-    handler_result ={"missing_default": "", "missing_assets": [], "merged_assets": []}
+    handler_result = {"missing_default": "", "missing_assets": [], "merged_assets": []}
 
     # Check that we have all the default assets.
     fetched_default_assets_result = default_assets_fetch(defaultFilePath, defaultAssets)
     print(fetched_default_assets_result["missing_values"])
+
     # process that result
     if fetched_default_assets_result["match"] == True:
         # we have all the default assets.
@@ -40,10 +41,10 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
         # Overrides exist, we need to check for conflicts and merge the results.
         # check list of default assets to see if their name shows up in override or not.
         conflict_check = list_compare(fetched_default_assets_names, override_assets_as_names)
-        
+        # merge the lists
         merged_assets = merge_assets(fetched_default_assets, override_assets, conflict_check)
         
-    
+    # build the result from our handler.
     handler_result["missing_default"] = missing_default
     handler_result["missing_assets"] = missing_assets
     handler_result["merged_assets"] = merged_assets
@@ -86,29 +87,3 @@ def merge_assets(fetched_default_assets: list, override_assets: list, conflict_c
 # Asset Loader
 def asset_loader():
     print("TODO: Load assets.")
-
-def get_asset_lists(initial_list: [], keyInList: str):
-    filter_set = {"set", "set2"} 
-    filtered_list = []
-    errorMessage = ""
-    filterSuccessful = False
-
-    # clearing out unneeded values from our set.
-    filter_set.clear()
-
-    if len(initial_list) <= 0:
-        errorMessage = "Initial List empty. Unable to filter list."
-    else:
-        # getting the different Asset Types for later processing.
-        for item in initial_list:
-            print(item[keyInList])
-            filter_set.add(item[keyInList])
-
-        for x in filter_set:
-            filtered_list.append(x)
-        filterSuccessful = True
-
-    if filterSuccessful == True:
-        return filtered_list
-    else:
-        return errorMessage
