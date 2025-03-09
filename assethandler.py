@@ -3,16 +3,16 @@ from utilities import *
 from MyAsset import *
 
 # Need to adjust asset_handler depending on game state.
-# Example: New game -> Only call default assets, Load Game -> check for overrides
-def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: bool,
-                   overrideFilePath: str) -> dict:
+# Example: New game -> Only call default assets, Load Game -> check for customs
+def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
+                   customFilePath: str) -> dict:
     fetched_default_assets_result = {}
     fetched_default_assets = {}
     fetched_default_assets_names = {}
     missing_default= bool
     missing_assets = {}
-    override_assets = {}
-    override_assets_as_names = {}
+    custom_assets = {}
+    custom_assets_as_names = {}
     conflict_check = {}
     merged_assets = []
     converted_assets = []
@@ -33,19 +33,19 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
         fetched_default_assets_names = multi_json_names_getter(defaultFilePath, 'assets')
         missing_assets = fetched_default_assets_result["missing_values"]
 
-    # overrides exist! Handle them. >:V
-    if (overrideExists == True):
-        override_assets = override_asset_fetch(overrideFilePath)
-        if len(override_assets) > 0:
-            # override exists, get their names
-            override_assets_as_names = filter_list_value_with_set(override_assets, 'name')
+    # customs exist! Handle them. >:V
+    if (hasCustom == True):
+        custom_assets = custom_asset_fetch(customFilePath)
+        if len(custom_assets) > 0:
+            # custom exists, get their names
+            custom_assets_as_names = filter_list_value_with_set(custom_assets, 'name')
         
-        # Overrides exist, we need to check for conflicts and merge the results.
-        conflict_check = list_compare(fetched_default_assets_names, override_assets_as_names)
+        # Customs exist, we need to check for overrides and merge the results.
+        conflict_check = list_compare(fetched_default_assets_names, custom_assets_as_names)
         # merge the lists
-        merged_assets = merge_assets(fetched_default_assets, override_assets, conflict_check)
+        merged_assets = merge_assets(fetched_default_assets, custom_assets, conflict_check)
     else:
-        # No overrides.
+        # No customs.
         merged_assets = fetched_default_assets
 
     converted_assets = dict_to_objects(merged_assets)
@@ -76,16 +76,16 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
         result["retrieved_list"] = retrieved_assets
         return result
 
-# Retrieve any override assets
-def override_asset_fetch(overrideFilePath: str) -> dict:
-    override_assets = {}
-    override_assets = multi_json_getter(overrideFilePath, "assets")
-    return override_assets
+# Retrieve any custom assets
+def custom_asset_fetch(customFilePath: str) -> dict:
+    custom_assets = {}
+    custom_assets = multi_json_getter(customFilePath, "assets")
+    return custom_assets
 
-# Handle merging override assets & default assets
+# Handle merging custom assets & default assets
 # returns list of asset objects
-def merge_assets(fetched_default_assets: list, override_assets: list, conflict_check: dict) -> list:
-    merged_assets_list = merge_dict_lists(fetched_default_assets, override_assets, conflict_check)
+def merge_assets(fetched_default_assets: list, custom_assets: list, conflict_check: dict) -> list:
+    merged_assets_list = merge_dict_lists(fetched_default_assets, custom_assets, conflict_check)
     
     return merged_assets_list
 

@@ -112,27 +112,26 @@ def list_to_lowercase(parentList: list) -> list:
             )
     return newList
 
-def merge_dict_lists(defaultList: list, overrideList: list, conflictCheck: dict) -> list:
+def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -> list:
     merged_dict_list = []
 
     if conflictCheck["match"] == False:
         # no conflict, merge the dicts together.
         for item in defaultList:
             merged_dict_list.append(item)
-        for item in overrideList:
+        for item in customList:
                 merged_dict_list.append(item)
     else:
-        # there's a conflict! Something has an override.
-        print("TODO: handle conflict override in utilities merge_lists()")
+        # there's a conflict! Something has an custom.
+        print("TODO: handle conflict custom in utilities merge_lists()")
         print(conflictCheck["missing_list"])
         for item in conflictCheck("missing_list"):
             try:
-                # merge in the object from the override instead
+                # merge in the object from the custom instead
                 item_name = item["name"]
-                merged_dict_list.append(overrideList[item_name])
+                merged_dict_list.append(customList[item_name])
             except ValueError:
-                # doesn't exist in the override_assets["retrieved_list"]
-                index = -1
+                # doesn't exist in the customList
                 merged_dict_list.add(item)
 
     return merged_dict_list

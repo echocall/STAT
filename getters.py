@@ -2,7 +2,6 @@ import json
 from pathlib import PurePath, Path
 
 # Singe file getter with known file name & file path.
-# Only good for getting a Game file. :')
 def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType: str) -> dict:
 # This handles loading a game's basic JSON File
     error_message = ""
@@ -16,9 +15,7 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
     target_directory_path = Path(str_target_directory_path)
     target_file_path = Path(str_target_file_path)
 
-    # test if filePath is valid path
     if target_directory_path.exists():
-        # object directory is valid, get object.
         if(target_file_path.exists()):
             # TODO: Change this into message for user.
             with open(str_target_file_path) as f:

@@ -9,9 +9,11 @@ from gamehandler import *
 from savehandler import *
 
 def unit_test(filePaths: dict):
-
-    print("========================")
-    print("==== Game Testing ====")
+    print("== Unit Testing ==")
+    print()
+    # == GAME TESTING ==
+    # ===================================================
+    print("== GAME TESTING ==")
     print("== get_games_names test ==")
     # gets the names of all the games.
     game_Names = get_games_names(filePaths["gamespath"])
@@ -24,8 +26,10 @@ def unit_test(filePaths: dict):
 
     print(game)
     print()
-    print(game['assetDefaultPath'])
 
+    # == ASSET TESTING ==
+    # ===================================================
+    print("== ASSET TESTING ==")
     print()
     print("======== asset_getter test ========")
     asset = asset_getter("spellstrike", game['assetDefaultPath'])
@@ -39,8 +43,7 @@ def unit_test(filePaths: dict):
 
     print(assets)
 
-    # ===================================================
-    print()
+    print ()
     print("======== default_assets_fetch test ========")
     result = {}
     result = default_assets_fetch(game['assetDefaultPath'],game['defaultAssets'])
@@ -52,10 +55,26 @@ def unit_test(filePaths: dict):
         print(asset)
         print()
 
-    # ===========================================
     print()
     print("======== asset_handler test ========")
     result = {}
     result = asset_handler(game['assetDefaultPath'],game['defaultAssets'], True, "statassets\\datapacks\\test\\overrides\\savea\\assets")
 
-    print(result)
+    converted_assets = {}
+    converted_assets= result["converted_assets"]
+
+    print(converted_assets["Barracks"])
+    print(converted_assets["Barracks"].description)
+    
+    # == SAVE TESTING ==
+    # ===================================================
+    print("== SAVE TESTING ==")
+    print("======== get_saves_names test ========")
+    save_names = get_game_saves(game["saveFilesPath"])
+    print(save_names)
+
+    print()
+    print("======== load_save test ========")
+    save = load_save("save_a", game["saveFilesPath"], "saves")
+    print()
+    print(save)

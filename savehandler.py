@@ -15,7 +15,6 @@ def get_game_saves(filePath: str) -> list:
     return splitSaveNames
 
 def convert_save_name(saveName: str) -> str:
-    print("TODO: Convert Save Name to be filepath friendly")
     formatted_name = ""
     try:
         formatted_name = saveName.strip()
