@@ -4,7 +4,8 @@ from MyAsset import *
 
 # Need to adjust asset_handler depending on game state.
 # Example: New game -> Only call default assets, Load Game -> check for overrides
-def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: bool, overrideFilePath: str):
+def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: bool,
+                   overrideFilePath: str) -> dict:
     fetched_default_assets_result = {}
     fetched_default_assets = {}
     fetched_default_assets_names = {}
@@ -29,7 +30,7 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
     else:
         missing_default = True
         fetched_default_assets = fetched_default_assets_result["retrieved_list"]
-        fetched_default_assets_names = filter_list_value_with_set(fetched_default_assets, 'name')
+        fetched_default_assets_names = multi_json_names_getter(defaultFilePath, 'assets')
         missing_assets = fetched_default_assets_result["missing_values"]
 
     # overrides exist! Handle them. >:V
@@ -83,7 +84,7 @@ def override_asset_fetch(overrideFilePath: str) -> dict:
 
 # Handle merging override assets & default assets
 # returns list of asset objects
-def merge_assets(fetched_default_assets: list, override_assets: list, conflict_check: dict) -> dict:
+def merge_assets(fetched_default_assets: list, override_assets: list, conflict_check: dict) -> list:
     merged_assets_list = merge_dict_lists(fetched_default_assets, override_assets, conflict_check)
     
     return merged_assets_list

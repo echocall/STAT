@@ -54,5 +54,8 @@ print("======== asset_handler test ========")
 result = {}
 result = asset_handler(game['assetDefaultPath'],game['defaultAssets'], True, "statassets\\datapacks\\test\\overrides\\savea\\assets")
 
-merged_assets = result["merged_assets"]
-print(merged_assets["Barracks"].description)
+converted_assets = {}
+converted_assets= result["converted_assets"]
+
+# print(converted_assets["Barracks"])
+# print(converted_assets["Barracks"].description)

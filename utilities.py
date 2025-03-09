@@ -58,7 +58,6 @@ def filter_list_value_with_set(initialList: list, keyInList: str) -> list:
         for item in initialList:
             filter_set.add(item[keyInList])
                
-
         for x in filter_set:
             filtered_list.append(x)
         filter_successful = True
@@ -77,38 +76,29 @@ def list_compare(initialList: list, secondList: list):
     second_list_size = len(secondList)
     result = { "match": False, "missing_values": []}
     index = -1
+    check = True  
+    
+    if initial_list_size > 0 and second_list_size > 0: 
+        for item in initialList:
+            if item in secondList:
+                match = True
+            else: 
+                error_message = f"Supplied value does not exist in second list: {item!r}"
+                missing_objects.append(item)
+                match = False
 
-    if(initial_list_size != second_list_size):
-        error_message = "Lists do not match."
-        compare_done = False
+        if len(missing_objects) > 0:
+            result["match"] = match
+            result["missing_values"] = missing_objects
+            return(result)
+        else:
+            # "Check complete. Lists have same objects."
+            result["match"] = match
+            result["missing_values"] = missing_objects
+            return(result)
     else:
-        if(initial_list_size <= 0):
-            error_message = "First list passed to list_compare is empty."
-        if(second_list_size <= 0):
-            error_message = "Second list passed to list_compare is empty."
-
-    for item in initialList:
-        try:
-            index = secondList.index(item)
-            match = True
-        except ValueError:
-            error_message = f"Supplied value does not exist in second list: {item!r}"
-            index = -1
-            missing_objects.append(item)
-            match = False
-
-    if len(missing_objects) > 0:
-        print(error_message,
-                sep="\n",)
-        result["match"] = match
-        result["missing_values"] = missing_objects
-        return(result)
-    else:
-        # "Check complete. Lists have same objects."
-        result["match"] = match
-        result["missing_values"] = missing_objects
-        return(result)
-
+        error_message = "Both lists are empty."
+        print(error_message)
 
 def list_to_lowercase(parentList: list) -> list:
     newList = []
@@ -122,7 +112,7 @@ def list_to_lowercase(parentList: list) -> list:
             )
     return newList
 
-def merge_dict_lists(defaultList: list, overrideList: list, conflictCheck: dict) -> dict:
+def merge_dict_lists(defaultList: list, overrideList: list, conflictCheck: dict) -> list:
     merged_dict_list = []
 
     if conflictCheck["match"] == False:
