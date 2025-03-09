@@ -8,7 +8,7 @@
     "defaultActors":[],
     "hasAssets":true,
     "assetDefaultPath":"statassets\\datapacks\\test\\default\\assets",
-    "defaultAssets":["Barracks","Spell Strike"],
+    "defaultAssets":["Barracks","Spell Strike","Monkey"],
     "hasEvents":false,
     "eventDefaultPath":"",
     "defaultEvents":[],

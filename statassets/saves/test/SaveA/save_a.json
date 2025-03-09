@@ -5,7 +5,7 @@
     "dateLastSave":"",
     "description":"The test save for the test game. :)",
     "assetCustoms": true,
-    "assetCustomsPath": "statassets\\datapacks\\test\\overrides\\assets\\save_a",
+    "assetCustomsPath": "statassets\\datapacks\\test\\overrides\\savea\\assets",
     "actorCustoms": false,
     "actorCustomsPath": "",
     "eventCustoms": false,

@@ -5,58 +5,49 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, overrideExists: boo
     print("TODO: Handle assets. >:) > :) >:)")
     fetched_default_assets_result = {}
     fetched_default_assets = {}
+    fetched_default_assets_names = {}
     missing_default= bool
     missing_assets = {}
     override_assets = {}
+    override_assets_as_names = {}
     conflict_check = {}
-    merged_assets = {}
+    merged_assets = []
+    handler_result ={"missing_default": "", "missing_assets": [], "merged_assets": []}
 
-    fetched_default_assets_result = default_assets_fetch(defaultFilePath, defaultAssets)
     # Check that we have all the default assets.
+    fetched_default_assets_result = default_assets_fetch(defaultFilePath, defaultAssets)
+    print(fetched_default_assets_result["missing_values"])
+    # process that result
     if fetched_default_assets_result["match"] == True:
         # we have all the default assets.
-        fetched_default_assets = fetched_default_assets_result["retrieved_list"]
         missing_default = False
+        fetched_default_assets = fetched_default_assets_result["retrieved_list"]
+        fetched_default_assets_names = defaultAssets
     else:
         missing_default = True
         fetched_default_assets = fetched_default_assets_result["retrieved_list"]
+        fetched_default_assets_names = filter_list_value_with_set(fetched_default_assets, 'name')
         missing_assets = fetched_default_assets_result["missing_values"]
+
 
     # overrides exist! Handle them. >:V
     if (overrideExists == True):
-        override_assets = override_asset_fetch()
-        print(override_assets)
+        override_assets = override_asset_fetch(overrideFilePath)
+        if len(override_assets) > 0:
+            # override exists, get a name of them
+            override_assets_as_names = filter_list_value_with_set(override_assets, 'name')
         
         # Overrides exist, we need to check for conflicts and merge the results.
-        conflict_check = list_compare(override_assets["retrieved_list"], fetched_default_assets)
+        # check list of default assets to see if their name shows up in override or not.
+        conflict_check = list_compare(fetched_default_assets_names, override_assets_as_names)
         
-        if conflict_check["match"] == True:
-            # no conflict, add the dicts to each other.
-            for asset in fetched_default_assets:
-                merged_assets.update(asset)
-            for asset in conflict_check["retrieved_list"]:
-                merged_assets.update(asset)
-        else:
-            # there's a conflict! Something has an override.
-            print("TODO: handle override")
-            for asset in fetched_default_assets:
-                try:
-                    index = override_assets["retrieved_list"].index(asset)
-                    # Skip this asset
-                except ValueError:
-                    # doesn't exist in the override_assets["retrieved_list"]
-                    index = -1
-                    merged_assets.update(asset)
-
-
-        if len(conflict_check["missing_values"]) > 0:
-            # these values don't have an override! :)
-            print("These don't have a conflict! :)")
-
-    if missing_default == True:
-        print("TODO: fill in if missing == True: in asset_handler")
-        # Return list of missing assets as a warning value
-        # Return the list of assets that /do/ exist.
+        merged_assets = merge_assets(fetched_default_assets, override_assets, conflict_check)
+        
+    
+    handler_result["missing_default"] = missing_default
+    handler_result["missing_assets"] = missing_assets
+    handler_result["merged_assets"] = merged_assets
+    return handler_result
 
 
 # Checks that the default assets exist & match the game file
@@ -69,7 +60,6 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
     retrieved_assets = multi_json_getter(defaultFilePath, "assets")
     # get the names of the retrieved assets
     retrieved_assets_names = filter_list_value_with_set(retrieved_assets, "name")
-
     # compare the names of the returned files with the list from the game.json
     result = list_compare(defaultAssets, retrieved_assets_names)
 
@@ -78,6 +68,7 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
         result["retrieved_list"] = retrieved_assets
         return result
     else:
+        result["retrieved_list"] = retrieved_assets
         return result
 
 # Retrieve any override assets
@@ -88,13 +79,15 @@ def override_asset_fetch(overrideFilePath: str) -> dict:
     return override_assets
 
 # Handle merging override assets & default assets
-def merge_assets():
-    print("TODO: Merge override and default assets into one list of dictionaries.")
+def merge_assets(fetched_default_assets: list, override_assets: list, conflict_check: dict) -> dict:
+    merged_assets_list = merge_dict_lists(fetched_default_assets, override_assets, conflict_check)
+    return merged_assets_list
 
 # Asset Loader
 def asset_loader():
     print("TODO: Load assets.")
 
+def get_asset_lists(initial_list: [], keyInList: str):
     filter_set = {"set", "set2"} 
     filtered_list = []
     errorMessage = ""
@@ -108,8 +101,8 @@ def asset_loader():
     else:
         # getting the different Asset Types for later processing.
         for item in initial_list:
-            print(item[key_in_list])
-            filter_set.add(item[key_in_list])
+            print(item[keyInList])
+            filter_set.add(item[keyInList])
 
         for x in filter_set:
             filtered_list.append(x)

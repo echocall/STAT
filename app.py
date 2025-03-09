@@ -39,8 +39,11 @@ print()
 print("======== asset_getter test ========")
 asset = asset_getter("spellstrike", game['assetDefaultPath'])
 print(asset)
+print()
 
 # assets gotten
+print()
+print("======== multi_json_getter test ========")
 assets = multi_json_getter(game['assetDefaultPath'], "assets")
 
 print(assets)
@@ -48,8 +51,20 @@ print(assets)
 # ===================================================
 print()
 print("======== default_assets_fetch test ========")
-print()
 result = {}
 result = default_assets_fetch(game['assetDefaultPath'],game['defaultAssets'])
+print(result['match'])
+print(result['missing_values'])
+print()
+
+for asset in result['retrieved_list']:
+    print(asset)
+    print()
+
+# ===========================================
+print()
+print("======== asset_handler test ========")
+result = {}
+result = asset_handler(game['assetDefaultPath'],game['defaultAssets'], True, "statassets\\datapacks\\test\\overrides\\savea\\assets")
 
 print(result)
