@@ -71,7 +71,7 @@ def filter_list_value_with_set(initialList: list, keyInList: str) -> list:
     else:
         return error_message
     
-# compare two lists
+# compare two lists, return bool and missing items.
 def list_compare(initialList: list, secondList: list):
     match = False
     error_message = ""
@@ -79,8 +79,6 @@ def list_compare(initialList: list, secondList: list):
     initial_list_size = len(initialList)
     second_list_size = len(secondList)
     result = { "match": False, "missing_values": []}
-    index = -1
-    check = True  
     
     if initial_list_size > 0 and second_list_size > 0: 
         for item in initialList:
@@ -146,11 +144,49 @@ def convert_obj_to_json(object: dict) -> dict:
 
     return json_obj
 
-def handler_result_builder(missing_default: bool, missing_objects_name: str, missing_objects: list,
-                            converted_objects_name: str, converted_objects: list )-> dict:
-    handler_result = {"missing_default": missing_default, missing_objects_name: missing_objects, 
-                      converted_objects_name: converted_objects}
-
+def handler_result_builder(missing_default: bool, missing_name: str, missing_objects: list,
+                            converted_name: str, converted_objects: list )-> dict:
+    handler_result = {"missing_default": missing_default, missing_name: missing_objects, 
+                      converted_name: converted_objects}
     return handler_result
 
+# INPUTS FROM USER
+# basic user confirmation y/n
+def user_confirm(prompt: str) -> bool:
+    valid = False
+    bln_continue = bool
+
+    while not valid:
+        print(prompt, sep="\n")
+        input_variable = input("Are you sure you want to continue? (Yes/No) ").strip().upper()
+        if input_variable == "NO":
+            bln_continue = False
+            valid = True
+        elif input_variable == "YES":
+            bln_continue = True
+            valid = True
+        else:
+            print(
+                    f"Type yes to continue or no to cancel.",
+                    "Please try again.",
+                    sep="\n",
+                )
+    return bln_continue
+
+# get an integer from the user with error handling.
+def get_user_int(prompt: str) -> int:
+    valid = False
+    while not valid:
+        print(prompt, sep="\n")
+        input_variable = input("Enter the value and press enter: ").strip()
+        try:
+            input_variable = int(input_variable)
+        except ValueError:
+            print(
+                f"Supplied value is not an integer: {input_variable!r}",
+                "Please try again.",
+                sep="\n",
+            )
+
+    return input_variable
 
