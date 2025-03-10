@@ -16,7 +16,7 @@
     "effect_default_path":"",
     "default_effects":[],
     "icon":"",
-    "save_files_ath":"statassets\\saves\\test",
+    "save_files_path":"statassets\\saves\\test",
     "has_turns": true,
     "turn_type": "Increasing",
     "start_turn": 0

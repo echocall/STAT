@@ -30,6 +30,7 @@ class MyGame:
             for key, value in gameDict.items():
                 setattr(self, key, value)
     
+    
     def set(self, name, description, has_counters, counters, has_actors, actor_default_path,
                  default_actors, has_assets, asset_default_path, default_assets, 
                  has_events, event_default_path, default_events, has_effects, effect_default_path,

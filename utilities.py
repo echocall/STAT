@@ -1,6 +1,4 @@
-import sys
 import configparser
-from os import system
 import json
 from pathlib import Path
 import MyGame
@@ -31,8 +29,7 @@ def format_str_for_filename(string: str) -> str:
     else:
         return formatted_string
 
-# asset Set to List handler
-# takes in an arry of assets (assets[]), and a key.
+# takes in a list of objects (objects[]), and a key, returns all value of key.
 def filter_list_value_with_set(initialList: list, keyInList: str) -> list:
     filter_set = {"set", "set2"} 
     filtered_list = []
@@ -59,7 +56,7 @@ def filter_list_value_with_set(initialList: list, keyInList: str) -> list:
         return error_message
     
 # compare two lists, return bool and missing items.
-def list_compare(initialList: list, secondList: list):
+def list_compare(initialList: list, secondList: list) -> dict:
     match = False
     error_message = ""
     missing_objects = []
@@ -88,6 +85,23 @@ def list_compare(initialList: list, secondList: list):
     else:
         error_message = "Both lists are empty."
         print(error_message)
+
+def dict_key_compare(initialDict: dict, secondDict: dict) -> dict:
+    result = { "match": False, "missing_values": []}
+    mismatch_found = False
+    error_message = ""
+    try:
+        for key in secondDict.keys():
+            if not key in initialDict:
+                rmismatch_found = True
+                result["missing_values"].append(key)
+    except:
+        error_message = "Could not compare the dictionaries."
+    
+    if mismatch_found == False:
+        result["match"] = True
+    
+    return result
 
 def list_to_lowercase(parentList: list) -> list:
     newList = []
@@ -141,14 +155,14 @@ def handler_result_builder(missing_default: bool, missing_name: str,
                       converted_name: converted_objects}
     return handler_result
 
-# INPUTS FROM USER
+# ==  INPUTS FROM USER ==
 # basic user confirmation y/n
 def user_confirm(prompt: str) -> bool:
     valid = False
     bln_continue = bool
 
     while not valid:
-        input_variable = input(prompt + "ype (Yes/No): ").strip().upper()
+        input_variable = input(prompt + "Type (Yes/No): ").strip().upper()
         if input_variable == "NO":
             bln_continue = False
             valid = True
@@ -307,15 +321,14 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     new_list = []
     field_name = ""
     new_prompt = ""
-    input_type = ""
     error_message = ""
-    input_variable
+    input_variable = ""
 
     print(prompt, sep="\n")
     if input_type == "dict":
         for index in range(loop_length):
            field_name = str(input("Enter the name of the field: ")).strip()
-           new_prompt = "Enter the value for " + field_name + " :"
+           new_prompt = "Enter the value for " + field_name + ":"
            input_variable = get_single_dict_value(new_prompt, field_name, field_type)
            new_dict[field_name] = input_variable
         return new_dict
@@ -355,10 +368,11 @@ def list_to_menu(prompt: str, choices: list):
             print("Cancelling the selection, goodbye.")
             choice_value = "cancel"
             valid = True
-        else: 
+        elif get_menu_choice in choices_as_dict:
             input_variable = get_menu_choice
             choice_value = choices_as_dict[input_variable]
             valid = True
+
     return choice_value
 
 # TODO: legacy code remove.

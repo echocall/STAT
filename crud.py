@@ -53,11 +53,17 @@ def create_new_directory(passed_directory_path: str) -> bool:
 def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType: str) -> dict:
 # This handles loading a JSON File
     error_message = ""
-    str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
-    str_target_file_name = passedFileName + '.json'
-    str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
     target_object = ""
     fetch_success = False
+
+    if objectType == 'template':
+        str_target_directory_path = passedDirectoryPath
+        str_target_file_name = passedFileName + '.json'
+        str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
+    else:
+        str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
+        str_target_file_name = passedFileName + '.json'
+        str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
 
     # casting to Path 
     target_directory_path = Path(str_target_directory_path)
@@ -137,6 +143,28 @@ def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
     else:
         print(error_message)
 
+# get json template as dict
+def get_template_json(template_type: str, directory_path: str) -> dict:
+    template_file = ""
+    template = {}
+    error_message = ""
+    
+    template_file = 'template_' + template_type
+    if template_type == 'game':
+       template = single_json_getter(template_file, directory_path, "template")
+    elif template_type =='save':
+       template = single_json_getter(template_file, directory_path, "template")
+    elif template_type == 'asset':
+       template = single_json_getter(template_file, directory_path, "template")
+    elif template_type == 'effect':
+       template = single_json_getter(template_file, directory_path, "template")
+    elif template_type == 'event':
+       template = single_json_getter(template_file, directory_path, "template")
+    else:
+        error_message = "Template type not recognized."
+        return error_message
+    return template
+
 # UPDATE
 def overwrite_json_file(object: dict, directoryPath: str, fileName: str) -> bool:
     error_message = ""
@@ -181,5 +209,11 @@ def append_json_file(object: dict, directoryPath: str, fileName: str) -> bool:
     print("TODO: fill this in.")
 
 # DELETE
+
+# Delete a folder & contents
+def delete_directory(directoryPath: str,):
+   result =  user_confirm("Are you sure you want to do this?")
+    
+
 # TODO: Save this for when Error Handler is more up and running >__> 
 # And the forgiveness helpers. wtb confirm boxes.

@@ -35,3 +35,8 @@ currentStat.gameLoaded(game, "test")
 print(currentStat.is_game_loaded)
 
 
+print("======== new_game_assembly test ========")
+# creating a new Game Dict
+new_game = new_game_assembly(filePaths["gamespath"],filePaths["savefilepath"],filePaths["datapackpath"])
+print(new_game)
+print(len(new_game))
