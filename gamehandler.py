@@ -3,9 +3,15 @@ from utilities import *
 import MyGame
 import StatInstance
 
-def game_handler():
-    print("TODO: fill this in")
-    # Check STAT instance for "gameSelected"
+def game_handler(is_game_loaded: bool) -> MyGame:
+    print("TODO: fill game_handler in")
+    # Check STAT instance for "is_game_loaded"
+    if not is_game_loaded:
+        print("Does user wnat to create a new game,",
+            " start a new save of a game,",
+            " or load a prexisting save?", sep="\n"
+        )
+
 
 def new_game():
     print("TODO: write a new game's info to a class, then save it to .py")
@@ -120,16 +126,22 @@ def assemble_game(game_path: str, saves_path: str, datapack_path):
         print("TODO")
     else:
         print("TODO: ")
+
     # TODO: Icon
 
+
     # TODO: savesFilePath
+    save_files_path = saves_path + "\\" + name["file"]
 
     # TODO: Turns
     turns_exist = user_confirm("Does your game have turns?")
     turns = define_turns(name["name"])
 
     # Create the folders.
-    result = game_folder_creator(name["file"],game_path)
+    game_folder_result = game_folder_creator(name["file"], game_path)
+    datapack_folder_result = datapack_folder_creator(name["file"], datapack_path)
+    save_folder_result = save_folder_creator(name["file"], saves_path)
+    image_folder_result = images_folder_creator(name["file"], game_path)
     
 
 def get_new_game_name(file_path: str) -> dict:
@@ -213,5 +225,9 @@ def save_folder_creator(game_file_name: str, file_path: str) -> dict:
     result = create_new_directory(save_folder)
     return result
 
-
+def images_folder_creator(game_file_name: str, file_path: str) -> dict:
+    result = False
+    image_folder = file_path + "\\" + game_file_name + "\\images\\"
+    result = create_new_directory(image_folder)
+    return result
 

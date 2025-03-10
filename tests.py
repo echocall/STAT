@@ -113,3 +113,8 @@ def unit_test(filePaths: dict):
     file_path = ".\\statassets\\games\\robotest"
     did_create = create_new_directory(file_path)
     print(did_create)
+    print("== create_new_directory test 2 ==")
+    file_path = ".\\statassets\\games\\robotest"
+    did_create = create_new_directory(file_path)
+    print(did_create)
+

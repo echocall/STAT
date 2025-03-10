@@ -18,6 +18,8 @@ filePaths = stat_initialize(currentStat.config_file)
 
 print(filePaths)
 
+## from gameInstance feed
+
 # ===================================================
 # assetTypes is a set
 assetTypesSet = {"set", "set2"}

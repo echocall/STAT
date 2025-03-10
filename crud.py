@@ -35,16 +35,16 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: 
 
 # Takes a relative file path and tries to create it at that location.
 def create_new_directory(passed_directory_path: str) -> bool:
+    # TODO: Fix this one's error handling.
     result = False
     error_message = ""
-    str_target_directory_path = passed_directory_path
 
-    print(passed_directory_path)
     try:
-        Path(passed_directory_path).mkdir(parents=True, exist_ok=False)
+        Path(passed_directory_path).mkdir(parents=False, exist_ok=False)
         result = True
     except FileExistsError:
         error_message = FileExistsError
+        print(error_message, sep="\n")
         result = False;
     return result
 
