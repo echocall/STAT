@@ -76,12 +76,12 @@ def unit_test(filePaths: dict):
     print()
     print("======== load_save test ========")
     save = load_save("save_a", game["saveFilesPath"], "saves")
-    print()
     print(save)
 
 
     # == UTILITY TESTING ==
     # ===================================================
+    print()
     print("== UTILITY TESTING ==")
     print()
     print("======== list_to_menut test ========")
@@ -93,3 +93,23 @@ def unit_test(filePaths: dict):
     print("======== get_single_dict_value test ========")
     result = get_single_dict_value("Enter a default start value for gold.","Gold", "int")
     print(result)
+
+    print()
+    print("======== format_str_for_filename test ========")
+    newFileName = format_str_for_filename("New Name")
+    print(newFileName)
+    print(type(newFileName))
+    newFileName = format_str_for_filename(123456)
+    print(newFileName)
+    print(type(newFileName))
+
+
+    # == CRUD TESTING ==
+    # ===================================================
+    print()
+    print("== CRUD TESTING ==")
+    print()
+    print("======== create_new_directory test ========")
+    file_path = ".\\statassets\\games\\robotest"
+    did_create = create_new_directory(file_path)
+    print(did_create)

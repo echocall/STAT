@@ -20,6 +20,7 @@ def stat_initialize(config_file: str) -> dict:
     return filePaths
 
 def format_str_for_filename(string: str) -> str:
+    # TODO: Upgrade this to use regex to strip unwanted characters.
     error_message = ""
     formatted_string = ""
     try:
@@ -360,6 +361,7 @@ def list_to_menu(prompt: str, choices: list):
             valid = True
     return choice_value
 
+# TODO: legacy code remove.
 def string_exists_loop(compare_list: list, original_string: str,
                         message_if_exists: str, append_suffix: str) -> bool:
     appended_string = ""

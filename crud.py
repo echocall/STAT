@@ -33,6 +33,21 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: 
     else:
         print(error_message)
 
+# Takes a relative file path and tries to create it at that location.
+def create_new_directory(passed_directory_path: str) -> bool:
+    result = False
+    error_message = ""
+    str_target_directory_path = passed_directory_path
+
+    print(passed_directory_path)
+    try:
+        Path(passed_directory_path).mkdir(parents=True, exist_ok=False)
+        result = True
+    except FileExistsError:
+        error_message = FileExistsError
+        result = False;
+    return result
+
 # READ
 # Singe file getter with known file name & file path.
 def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType: str) -> dict:

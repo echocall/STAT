@@ -32,10 +32,4 @@ currentStat.gameLoaded(game, "test")
 
 print(currentStat.is_game_loaded)
 
-print("===============")
-newFileName = format_str_for_filename("New Name")
 
-print(newFileName)
-newFileName = format_str_for_filename(123456)
-
-print(newFileName)

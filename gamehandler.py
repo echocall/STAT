@@ -1,6 +1,7 @@
 from crud import *
 from utilities import *
 import MyGame
+import StatInstance
 
 def game_handler():
     print("TODO: fill this in")
@@ -59,39 +60,79 @@ def dict_to_game_object(targetDict: dict) -> dict:
 
     return classObjName
 
-def assemble_game(file_path: str):
+def assemble_game(game_path: str, saves_path: str, datapack_path):
     print("Fill this out.")
-    name = ""
+    name = {}
     description = ""
     counters = ""
-    turn_reply = ""
-    turns_exist = bool
+    has_actors = False
+    actor_default_path = ""
+    default_actors = []
+    has_assets = False
+    asset_default_path = ""
+    default_assets = list
+    has_events = False
+    event_default_path = ""
+    default_events = []
+    has_effects = False
+    effect_default_path = ""
+    default_effects = []
+    icon = ""
+    save_files_path = ""
+    turns_exist = False
     turns = {}
+    new_game = {}
 
     # get the guts of the game
-    name = get_new_game_name(file_path)
+    name = get_new_game_name(game_path)
+
     description = str(input("Enter a description for the new game: ")).strip()
     counters = create_counters()
     # TODO: Actors
+    has_actors = user_confirm("Do you want to add actors to the game now?")
+    if has_actors == True:
+        # call actorsHandler's create Actors.
+        print("TODO")
+    else:
+        print("TODO: ")
+        # not creating assets now.
 
     # TODO: Assets
-
-    # TODO: Effects
-
+    has_assets = user_confirm("Do you want to add assets to the game now?")
+    if has_assets == True:
+        # call assetHandler's create Assets.
+        print("TODO")
+    else:
+        print("TODO: ")
+        # not creating assets now
+        # .
+    # TODO: Effect
+    has_effects = user_confirm("Do you want to add effects to the game now?")
+    if has_effects == True:
+        # call effectHandler's create Effects.
+        print("TODO")
+    else:
+        print("TODO: ")
     # TODO: Events
-
+    has_events = user_confirm("Do you want to add events to the game now?")
+    if has_events == True:
+        # call eventHandler's create Events.
+        print("TODO")
+    else:
+        print("TODO: ")
     # TODO: Icon
 
     # TODO: savesFilePath
 
     # TODO: Turns
-    turn_reply = list_to_menu
-    turns = define_turns(name)
-    # format the game name for use in file directory
-        # .lower().strip().remove(" ", _)
-    # call create file to save the game.
+    turns_exist = user_confirm("Does your game have turns?")
+    turns = define_turns(name["name"])
 
-def get_new_game_name(file_path: str) -> str:
+    # Create the folders.
+    result = game_folder_creator(name["file"],game_path)
+    
+
+def get_new_game_name(file_path: str) -> dict:
     file_name = ""
     name = ""
     games = []
@@ -153,3 +194,24 @@ def define_turns(game_name: str) -> dict:
         turns["start_turn"] = okay_user_int(0, "Enter what turn number your save should start at: ")
 
     return turns
+
+def game_folder_creator(game_file_name: str, file_path: str) -> dict:
+    result = False
+    game_folder = file_path + "\\" + game_file_name
+    result = create_new_directory(game_folder)
+    return result
+
+def datapack_folder_creator(game_file_name: str, file_path: str) -> dict:
+    result = False
+    datapack_folder = file_path + "\\" + game_file_name
+    result = create_new_directory(datapack_folder)
+    return result
+
+def save_folder_creator(game_file_name: str, file_path: str) -> dict:
+    result = False
+    save_folder = file_path + "\\" + game_file_name
+    result = create_new_directory(save_folder)
+    return result
+
+
+

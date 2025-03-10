@@ -20,7 +20,7 @@ class MyGame:
     effect_default_path: str
     default_effects: list
     icon: str
-    save_files_ath: str
+    save_files_path: str
     has_turns: bool
     turn_type: str
     start_turn: int
@@ -30,10 +30,10 @@ class MyGame:
             for key, value in gameDict.items():
                 setattr(self, key, value)
     
-    def __init__(self, name, description, has_counters, counters, has_actors, actor_default_path,
+    def set(self, name, description, has_counters, counters, has_actors, actor_default_path,
                  default_actors, has_assets, asset_default_path, default_assets, 
                  has_events, event_default_path, default_events, has_effects, effect_default_path,
-                 default_effects, icon, save_files_ath, has_turns, turn_type, start_turn):
+                 default_effects, icon, save_files_path, has_turns, turn_type, start_turn):
         self.name = name
         self.description = description
         self.has_counters = has_counters
@@ -51,7 +51,7 @@ class MyGame:
         self.effect_default_path = effect_default_path
         self.default_effects = default_effects
         self.icon = icon
-        self.save_files_ath = save_files_ath
+        self.save_files_path = save_files_path
         self.has_turns = has_turns
         self.turn_type = turn_type
         self.start_turn = start_turn
