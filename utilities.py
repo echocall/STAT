@@ -222,28 +222,36 @@ def better_user_int(upper_limit: int, prompt: str) -> int:
                 valid = True
     return input_variable
 
-
-def get_dict_value(prompt: str, field_name: str, data_type: str) -> dict:
+def get_dict_value(prompt: str, field_name: str) -> dict:
     # the dict template being passed in should have tell us whether it is
     # an int or str we're looking for.
-    # example: get_dict_value("Enter a default start value for currency <name>: ", {"gold":0})
+    # example: get_dict_value("Enter a default start value for gold: ", "gold")
     error_message = ""  
     result = {field_name : 0}
-
+    
+    # ask user for what value type we are looking for.
+    data_type = list_to_menu("Select a datatype for the dictionary value.", ["str", "int"])
+    
     print(prompt, sep="\n")
     if data_type == "str":
         # get a string
-        field_value = input("Please enter a string: ").strip()
-        return field_value
+        try: 
+            field_value = str(input("Please enter a string for the value of field "+ field_name + ": ")).strip()
+        except:
+            error_message = "field_value was not entered as a string."
+        else:
+            result[field_name] = field_value
+            return result
     elif type(data_type == "int"):
         # get an int
         field_value = get_user_int("Please enter a number: ")
-        return field_value
+        result[field_name] = field_value
+        return result
     else:
         error_message = "Error retrieving value from user for dictionary field."
     return error_message
 
-def get_list_value():
+def get_list_value(list_name: str):
     print("TODO: this")
 
 def get_user_input_loop(loop_length: int, prompt:str, input_type):
@@ -263,7 +271,7 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type):
            new_dict[field_name] = get_dict_value(new_prompt, field_name)
 
 # returns cancel if user did not want to continue.
-def dict_to_menu(prompt: str, choices: list):
+def list_to_menu(prompt: str, choices: list):
     get_menu_choice = -1
     valid = False
     options_max = len(choices)

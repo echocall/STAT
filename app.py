@@ -48,6 +48,8 @@ print()
 print(save)"""
 
 data_types = ["str", "int"]
-data_type = dict_to_menu("Testing for use", data_types)
+data_type = list_to_menu("Testing for use", data_types)
 
 print(data_type)
+
+# TODO: test get_dict_value
