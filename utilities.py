@@ -155,6 +155,7 @@ def handler_result_builder(missing_default: bool, missing_name: str,
                       converted_name: converted_objects}
     return handler_result
 
+
 # ==  INPUTS FROM USER ==
 # basic user confirmation y/n
 def user_confirm(prompt: str) -> bool:
@@ -348,7 +349,7 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     return error_message
 
 # Turns a list into an enumerated menu.
-def list_to_menu(prompt: str, choices: list):
+def list_to_menu(prompt: str, choices: list) -> str:
     get_menu_choice = -1
     valid = False
     options_max = len(choices)
@@ -381,7 +382,6 @@ def string_exists_loop(compare_list: list, original_string: str,
     appended_string = ""
     valid = False
     confirm_reply = False
-    append_done = False
     new_name = False
 
     while not valid:

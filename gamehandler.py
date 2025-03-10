@@ -7,14 +7,29 @@ def game_handler(is_game_loaded: bool) -> MyGame:
     print("TODO: fill game_handler in")
     # Check STAT instance for "is_game_loaded"
     if not is_game_loaded:
-        print("Does user wnat to create a new game,",
-            " start a new save of a game,",
-            " or load a prexisting save?", sep="\n"
+        
+        print("Does user wat to Create a new game,",
+            " start a New Save of a game,",
+            " or Load a prexisting save?", sep="\n"
         )
+    
+def new_game(game_path: str, saves_path: str, datapack_path: str):
+    new_game_dict = {}
+    new_file_name = ""
+    write_successful = False
+    error_message = ""
 
+    # write new game to a dictionary
+    new_game_dict = new_game_assembly(game_path, saves_path, datapack_path)
+    new_file_name = format_str_for_filename(new_game_dict["name"])
+    # Save data in a json file.
+    write_successful = create_new_json_file(new_file_name, game_path, 'game')
 
-def new_game():
-    print("TODO: write a new game's info to a class, then save it to .py")
+    if write_successful == True:
+        return new_game_dict
+    else:
+        error_message = "Warning, could not save new game to JSON file."
+        return error_message
 
 def get_game(gameName: str, filePath: str, type: str) -> dict:
     game = single_json_getter(gameName, filePath, type)
@@ -57,6 +72,28 @@ def load_game(game: dict) -> dict:
     game_object = dict_to_game_object(game)
     return game_object
 
+# select game
+def select_game(file_path: str):
+    print("TODO")
+    games = []
+    target_game = ''
+    target_dict = {}
+    game_object = {}
+
+    # load list of game names from games folder.
+    games = multi_json_names_getter(file_path, 'games')
+
+    # call List_to_Menu
+    target_game = list_to_menu('Select a game: ', games)
+
+    # load in the game_dict
+    target_game = get_game(target_game, file_path, 'game')
+
+    # turn the game dict into a game_object
+    game_object = dict_to_game_object(target_dict)
+
+    return game_object
+
 # dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> dict:
     # get name of the dictionary and insubstantiate into a class object.
@@ -66,8 +103,8 @@ def dict_to_game_object(targetDict: dict) -> dict:
 
     return classObjName
 
-def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
-    print("Fill this out.")
+# TODO: Finish Events, Effects, and Actors
+def new_game_assembly(game_path: str, saves_path: str, datapack_path: str) -> dict:
     name_dict = {}
     icon = ""
     turns = {}
@@ -89,6 +126,8 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
     new_game["counters"] = create_counters()
 
     # TODO: Actors
+    print()
+    print("You can create actors later.")
     create_actors = user_confirm("Do you want to add actors to the game now? ")
     if create_actors == True:
         # call actorsHandler's create Actors.
@@ -98,12 +137,13 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
         new_game["default_actors"] = multi_json_names_getter(new_game["actor_default_path"], "actors")
     else:
         # not creating actors now.
-        print("You can create actors later. ")
         new_game["has_actors"] = False
         new_game["actor_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\actors"
         new_game["default_actors"] = []
 
     # TODO: Assets
+    print()
+    print("You can create assets later.")
     create_assets = user_confirm("Do you want to add assets to the game now?")
     if create_assets == True:
         # call actorsHandler's create Actors.
@@ -113,12 +153,13 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
         new_game["default_asset"] = multi_json_names_getter(new_game["asset_default_path"], "assets")
     else:
         # not creating assets now.
-        print("You can create assets later. ")
         new_game["has_assets"] = False
         new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
         new_game["default_assets"] = []
     
     # TODO: Effect
+    print()
+    print("You can create effects later. ")
     create_effects = user_confirm("Do you want to add effects to the game now?")
     if create_effects == True:
         # call effectsHandler's create Effects.
@@ -128,12 +169,13 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
         new_game["default_effects"] = multi_json_names_getter(new_game["effect_default_path"], "effects")
     else:
         # not creating effects now.
-        print("You can create effects later. ")
         new_game["has_effects"] = False
         new_game["effect_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\effects"
         new_game["default_effects"] = []
     
     # TODO: Events
+    print()
+    print("You can create events later. ")
     create_events = user_confirm("Do you want to add events to the game now?")
     if create_events == True:
         # call eventsHandler's create Events.
@@ -143,7 +185,6 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
         new_game["default_events"] = multi_json_names_getter(new_game["event_default_path"], "events")
     else:
         # not creating events now.
-        print("You can create events later. ")
         new_game["has_events"] = False
         new_game["event_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\events"
         new_game["default_event"] = []
@@ -168,7 +209,6 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
     save_folder_result = save_folder_creator(name_dict["file"], saves_path)
     image_folder_result = images_folder_creator(name_dict["file"], game_path)
 
-    print()
     if not game_folder_result:
         print("Warning: Game folder for new game was not created!",
             sep="\n")
@@ -184,8 +224,7 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
     else:
         print("All needed folders created successfully!", sep="\n")
 
-    # TODO: Add checker for checking every key in a JSON 
-    # object against every key in a single dictionary.
+    print()
     try:
         game_template = get_template_json("game",".\\statassets\\templates")
         result = dict_key_compare(game_template, new_game)
@@ -204,7 +243,6 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path) -> dict:
         # call something to fix the game or fix those specific fields.
         return error_message
     
-
 def get_new_game_name(file_path: str) -> dict:
     file_name = ""
     name = ""

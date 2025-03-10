@@ -14,6 +14,8 @@ import tests
 # Initialzie the class instance.
 currentStat = StatInstance.MyStat("config.txt")
 
+
+
 filePaths = stat_initialize(currentStat.config_file)
 
 print(filePaths)

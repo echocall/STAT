@@ -2,5 +2,6 @@
 gamesPath = .\statassets\games
 datapackPath = .\statassets\datapacks
 saveFilePath = .\statassets\saves
+templateFilePath = .\statassets\templates
 
 [Key Binds]

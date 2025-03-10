@@ -90,7 +90,7 @@ def organize_assets_by_type():
     print("TODO: Organize the assets by asset type.")
 
 def new_asset():
-    print("TODO: Create a new asset and make the appropriate save.")
+    print("TODO: Create a new asset and make the appropriate file saves.")
     # If it is a New Default asset, update associated game's .json
     # If it is a b
 
