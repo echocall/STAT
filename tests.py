@@ -78,3 +78,18 @@ def unit_test(filePaths: dict):
     save = load_save("save_a", game["saveFilesPath"], "saves")
     print()
     print(save)
+
+
+    # == UTILITY TESTING ==
+    # ===================================================
+    print("== UTILITY TESTING ==")
+    print()
+    print("======== list_to_menut test ========")
+    data_types = ["str", "int"]
+    data_type = list_to_menu("Testing for use", data_types)
+    print(data_type)
+
+    print()
+    print("======== get_single_dict_value test ========")
+    result = get_single_dict_value("Enter a default start value for gold.","Gold", "int")
+    print(result)

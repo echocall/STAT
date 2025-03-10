@@ -31,25 +31,11 @@ game = get_game("test", filePaths["gamespath"], "games")
 currentStat.gameLoaded(game, "test")
 
 print(currentStat.is_game_loaded)
-"""
-print(game)
-print()"""
 
-"""# ====================================================
-print()
-print("======== get_saves_names test ========")
-save_names = get_game_saves(game["saveFilesPath"])
-print(save_names)
+print("===============")
+newFileName = format_str_for_filename("New Name")
 
-print()
-print("======== load_save test ========")
-save = load_save("save_a", game["saveFilesPath"], "saves")
-print()
-print(save)"""
+print(newFileName)
+newFileName = format_str_for_filename(123456)
 
-data_types = ["str", "int"]
-data_type = list_to_menu("Testing for use", data_types)
-
-print(data_type)
-
-# TODO: test get_dict_value
+print(newFileName)

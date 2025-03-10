@@ -19,30 +19,16 @@ def stat_initialize(config_file: str) -> dict:
             filePaths[x] = configParser['Paths'][x]
     return filePaths
 
-def get_user_int(upper_limit: int, prompt: str, examples: str) -> int:
-    valid = False
-    while not valid:
-        print(prompt, examples, sep="\n")
-        input_variable = input("Enter the value and press enter: ").strip()
-        try:
-            input_variable = int(input_variable)
-        except ValueError:
-            print(
-                f"Supplied value is not an integer: {input_variable!r}",
-                "Please try again.",
-                sep="\n",
-            )
-        else:
-            if input_variable > upper_limit:
-                print(
-                    f"Supplied value is too large: {input_variable} > {upper_limit}",
-                    "Please try again.",
-                    sep="\n",
-                )
-            else:
-                valid = True
-
-    return input_variable
+def format_str_for_filename(string: str) -> str:
+    error_message = ""
+    formatted_string = ""
+    try:
+        formatted_string = str(string).strip().lower().replace(" ", "_")
+    except:
+        error_message = "An error occured while trying to format the string."
+        return error_message
+    else:
+        return formatted_string
 
 # asset Set to List handler
 # takes in an arry of assets (assets[]), and a key.
@@ -114,6 +100,7 @@ def list_to_lowercase(parentList: list) -> list:
             )
     return newList
 
+# merge two lists of dictionaries into one
 def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -> list:
     merged_dict_list = []
 
@@ -138,14 +125,17 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
 
     return merged_dict_list
 
+# convert a dictionary to json
 def convert_obj_to_json(object: dict) -> dict:
     print("TODO: Error_handling")
     json_obj = json.dumps(object, indent=4)
 
     return json_obj
 
-def handler_result_builder(missing_default: bool, missing_name: str, missing_objects: list,
-                            converted_name: str, converted_objects: list )-> dict:
+# builds the result dictionary
+def handler_result_builder(missing_default: bool, missing_name: str,
+                            missing_objects: list, converted_name: str,
+                              converted_objects: list )-> dict:
     handler_result = {"missing_default": missing_default, missing_name: missing_objects, 
                       converted_name: converted_objects}
     return handler_result
@@ -157,8 +147,7 @@ def user_confirm(prompt: str) -> bool:
     bln_continue = bool
 
     while not valid:
-        print(prompt, sep="\n")
-        input_variable = input("Are you sure you want to continue? (Yes/No) ").strip().upper()
+        input_variable = input(prompt + "ype (Yes/No): ").strip().upper()
         if input_variable == "NO":
             bln_continue = False
             valid = True
@@ -188,6 +177,31 @@ def get_user_int(prompt: str) -> int:
                 "Please try again.",
                 sep="\n",
             )
+    return input_variable
+
+def okay_user_int(lower_limit: int, prompt: str) -> int:
+    valid = False
+    while not valid:
+        print(prompt, sep="\n")
+        input_variable = input("Enter the value and press enter: ").strip()
+        try:
+            input_variable = int(input_variable)
+            valid = True
+        except ValueError:
+            print(
+                f"Supplied value is not an integer: {input_variable!r}",
+                "Please try again.",
+                sep="\n",
+            )
+        else:
+            if input_variable < lower_limit:
+                print(
+                    f"Supplied value is too small: {input_variable} < {lower_limit}",
+                    "Please try again.",
+                    sep="\n",
+                )
+            else:
+                valid = True
     return input_variable
 
 # get an integer from the user with error handling.
@@ -222,15 +236,45 @@ def better_user_int(upper_limit: int, prompt: str) -> int:
                 valid = True
     return input_variable
 
-def get_dict_value(prompt: str, field_name: str) -> dict:
-    # the dict template being passed in should have tell us whether it is
-    # an int or str we're looking for.
+def best_user_int(upper_limit: int, lower_limit: int, prompt: str) -> int:
+    valid = False
+    while not valid:
+        print(prompt, sep="\n")
+        input_variable = input("Enter the value and press enter: ").strip()
+        try:
+            input_variable = int(input_variable)
+            valid = True
+        except ValueError:
+            print(
+                f"Supplied value is not an integer: {input_variable!r}",
+                "Please try again.",
+                sep="\n",
+            )
+        else:
+            if input_variable > upper_limit:
+                print(
+                    f"Supplied value is too large: {input_variable} > {upper_limit}",
+                    "Please try again.",
+                    sep="\n",
+                )
+            elif input_variable < lower_limit:
+                print(
+                    f"Number below lower limit. Lower limit: {lower_limit}",
+                    "Please try again.",
+                    sep="\n"
+                )
+            else:
+                valid = True
+    return input_variable
+
+# get a single key:value pair from user
+def get_single_dict_value(prompt: str, field_name: str, field_type: str) -> dict:
     # example: get_dict_value("Enter a default start value for gold: ", "gold")
     error_message = ""  
     result = {field_name : 0}
     
     # ask user for what value type we are looking for.
-    data_type = list_to_menu("Select a datatype for the dictionary value.", ["str", "int"])
+    data_type = field_type
     
     print(prompt, sep="\n")
     if data_type == "str":
@@ -254,23 +298,42 @@ def get_dict_value(prompt: str, field_name: str) -> dict:
 def get_list_value(list_name: str):
     print("TODO: this")
 
-def get_user_input_loop(loop_length: int, prompt:str, input_type):
-    print("TODO")
-    print(prompt, sep="\n")
+# gets the length of the list or dictionary that needs to be filled
+# then asks user for information to fill it that many times.
+def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: str):
+    print("TODO: get_user_input_loop finish", sep="\n")
     new_dict = {}
     new_list = []
     field_name = ""
     new_prompt = ""
     input_type = ""
+    error_message = ""
+    input_variable
 
-    print(prompt)
-    for index in range(loop_length):
-        if input_type == dict:
+    print(prompt, sep="\n")
+    if input_type == "dict":
+        for index in range(loop_length):
            field_name = str(input("Enter the name of the field: ")).strip()
            new_prompt = "Enter the value for " + field_name + " :"
-           new_dict[field_name] = get_dict_value(new_prompt, field_name)
+           input_variable = get_single_dict_value(new_prompt, field_name, field_type)
+           new_dict[field_name] = input_variable
+        return new_dict
+    elif input_type == "list":
+        for index in range(loop_length):
+            if field_type == "str":
+                input_variable = input("Enter the value and press enter: ").strip()
+                new_list.append(str(input_variable))
+            elif field_type == "int":
+                    input_variable = get_user_int("Enter an integer: ")
+                    new_list.append(input_variable)
+            else: 
+                error_message = "Error! Unrecognized field_type for get_user_input_loop."
+        return new_list
+    else:
+        error_message = "Input Type entered not recognized."
+    return error_message
 
-# returns cancel if user did not want to continue.
+# Turns a list into an enumerated menu.
 def list_to_menu(prompt: str, choices: list):
     get_menu_choice = -1
     valid = False
@@ -281,13 +344,12 @@ def list_to_menu(prompt: str, choices: list):
     for index in range(options_max):
         choices_as_dict[index] = choices[index-1]
 
-    print("Select the data type by picking the number of the option: ", sep="\n")
     for key, value in choices_as_dict.items():
         print(str(key) + " - " + value)
     
     while not valid:
         print("-1 will cancel.", sep="\n")
-        get_menu_choice = better_user_int(options_max,"Type -1 to cancel.")
+        get_menu_choice = best_user_int(options_max, -2, "Type -1 to cancel.")
         if get_menu_choice == -1:
             print("Cancelling the selection, goodbye.")
             choice_value = "cancel"
@@ -298,3 +360,35 @@ def list_to_menu(prompt: str, choices: list):
             valid = True
     return choice_value
 
+def string_exists_loop(compare_list: list, original_string: str,
+                        message_if_exists: str, append_suffix: str) -> bool:
+    appended_string = ""
+    valid = False
+    confirm_reply = False
+    append_done = False
+    new_name = False
+
+    while not valid:
+        # string with name already exits.
+        print(message_if_exists)
+        reply = user_confirm("Something with that name already exists. Should we append?")
+        if reply == True:
+            print("Appending" + append_suffix + "to the file name.")
+            appended_string = original_string + append_suffix
+
+            print("Checking if new name exists.")
+            result = list_compare(compare_list, appended_string)
+
+            if result["match"] == True:
+                confirm_reply = user_confirm("Do you want to change the name completely?")
+                if confirm_reply == True:
+                    new_name = True
+                    return new_name
+                # already exists, rerun loop.
+                valid = string_exists_loop(result, compare_list, appended_string,
+                                                message_if_exists, append_suffix)
+            else: 
+                # break loop
+                print("No matches found! Name is valid.")
+                valid = True
+    return valid

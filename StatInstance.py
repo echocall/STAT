@@ -35,13 +35,13 @@ class MyStat:
         self.is_assets_loaded = True
         self.assets_loaded = asset_objects
     
-    # space to store the numbers from a save
+    # TODO space to store the numbers from a save
         # Counters, # of units.
 
-    # space to store current effects
+    # TODO space to store current effects
 
-    # space to store current events
+    # TODO space to store current events
 
-    # space to store actors
+    # TODO space to store actors
 
-    # 
+    # TODO 
