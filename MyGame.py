@@ -24,8 +24,8 @@ class MyGame:
     turns: bool
     turnType: str
 
-    def __init__(self, assetDict=None):
-        if assetDict is not None:
-            for key, value in assetDict.items():
+    def __init__(self, gameDict=None):
+        if gameDict is not None:
+            for key, value in gameDict.items():
                 setattr(self, key, value)
     

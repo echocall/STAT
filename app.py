@@ -47,4 +47,7 @@ save = load_save("save_a", game["saveFilesPath"], "saves")
 print()
 print(save)"""
 
+data_types = ["str", "int"]
+data_type = dict_to_menu("Testing for use", data_types)
 
+print(data_type)

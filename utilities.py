@@ -181,12 +181,112 @@ def get_user_int(prompt: str) -> int:
         input_variable = input("Enter the value and press enter: ").strip()
         try:
             input_variable = int(input_variable)
+            valid = True
         except ValueError:
             print(
                 f"Supplied value is not an integer: {input_variable!r}",
                 "Please try again.",
                 sep="\n",
             )
-
     return input_variable
+
+# get an integer from the user with error handling.
+def better_user_int(upper_limit: int, prompt: str) -> int:
+    valid = False
+    while not valid:
+        print(prompt, sep="\n")
+        input_variable = input("Enter the value and press enter: ").strip()
+        try:
+            input_variable = int(input_variable)
+            valid = True
+        except ValueError:
+            print(
+                f"Supplied value is not an integer: {input_variable!r}",
+                "Please try again.",
+                sep="\n",
+            )
+        else:
+            if input_variable > upper_limit:
+                print(
+                    f"Supplied value is too large: {input_variable} > {upper_limit}",
+                    "Please try again.",
+                    sep="\n",
+                )
+            elif input_variable < -2:
+                print(
+                    f"Number out of bounds!",
+                    "Please try again.",
+                    sep="\n"
+                )
+            else:
+                valid = True
+    return input_variable
+
+
+def get_dict_value(prompt: str, field_name: str, data_type: str) -> dict:
+    # the dict template being passed in should have tell us whether it is
+    # an int or str we're looking for.
+    # example: get_dict_value("Enter a default start value for currency <name>: ", {"gold":0})
+    error_message = ""  
+    result = {field_name : 0}
+
+    print(prompt, sep="\n")
+    if data_type == "str":
+        # get a string
+        field_value = input("Please enter a string: ").strip()
+        return field_value
+    elif type(data_type == "int"):
+        # get an int
+        field_value = get_user_int("Please enter a number: ")
+        return field_value
+    else:
+        error_message = "Error retrieving value from user for dictionary field."
+    return error_message
+
+def get_list_value():
+    print("TODO: this")
+
+def get_user_input_loop(loop_length: int, prompt:str, input_type):
+    print("TODO")
+    print(prompt, sep="\n")
+    new_dict = {}
+    new_list = []
+    field_name = ""
+    new_prompt = ""
+    input_type = ""
+
+    print(prompt)
+    for index in range(loop_length):
+        if input_type == dict:
+           field_name = str(input("Enter the name of the field: ")).strip()
+           new_prompt = "Enter the value for " + field_name + " :"
+           new_dict[field_name] = get_dict_value(new_prompt, field_name)
+
+# returns cancel if user did not want to continue.
+def dict_to_menu(prompt: str, choices: list):
+    get_menu_choice = -1
+    valid = False
+    options_max = len(choices)
+    print(prompt, sep="\n")
+    choices_as_dict = {}
+    
+    for index in range(options_max):
+        choices_as_dict[index] = choices[index-1]
+
+    print("Select the data type by picking the number of the option: ", sep="\n")
+    for key, value in choices_as_dict.items():
+        print(str(key) + " - " + value)
+    
+    while not valid:
+        print("-1 will cancel.", sep="\n")
+        get_menu_choice = better_user_int(options_max,"Type -1 to cancel.")
+        if get_menu_choice == -1:
+            print("Cancelling the selection, goodbye.")
+            choice_value = "cancel"
+            valid = True
+        else: 
+            input_variable = get_menu_choice
+            choice_value = choices_as_dict[input_variable]
+            valid = True
+    return choice_value
 

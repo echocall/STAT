@@ -5,7 +5,7 @@
     "timing":"",
     "typeObjectAffected":"",
     "isAllObjectTypeAffected":false,
-    "<object>Affected":[],
+    "objectAffected":[],
     "typeofEffect":"",
     "affectAmount":0,
     "affectRounding":""
