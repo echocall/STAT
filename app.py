@@ -36,7 +36,8 @@ try:
 except Exception:
     print(traceback.format_exc())
 
-currentStat.gameLoaded(selected_game, selected_game.get_name)
+selected_name = selected_game.get_name()
+currentStat.gameLoaded(selected_game, selected_name)
 print("Is game loaded: ")
 print(currentStat.is_game_loaded)
 print("Game loaded: ")
@@ -44,8 +45,8 @@ print(currentStat.game_loaded_name)
 print()
 
 # == SAVES ==
-
-load_save = select_save(filePaths["savefilepath"])
+save_path = selected_game.get_savepath()
+load_save = select_save(save_path)
 print(load_save)
 
 currentStat.saveLoaded(load_save, load_save["name"])

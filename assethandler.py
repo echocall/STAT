@@ -61,13 +61,13 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
         return result
     else:
         result["retrieved_list"] = retrieved_assets
-        result["retrievied_names"] = retrieved_names
+        result["retrieved_names"] = retrieved_names
         return result
 
 # Retrieve any custom assets
 def custom_asset_fetch(customFilePath: str) -> dict:
     custom_assets = {"custom_list": {}, "custom_names": []}
-    custom_assets = multi_json_getter(customFilePath, "assets")
+    custom_assets["custom_list"] = multi_json_getter(customFilePath, "assets")
     if len(custom_assets["custom_list"]) > 0:
         custom_assets["custom_names"] = filter_list_value_with_set(custom_assets["custom_list"], 'name')
     return custom_assets
@@ -92,7 +92,7 @@ def organize_assets_by_type():
 def new_asset():
     print("TODO: Create a new asset and make the appropriate file saves.")
     # If it is a New Default asset, update associated game's .json
-    # If it is a b
+    # if it is a custom asset, update the save file's .json
 
 # dict_to_object
 def dict_to_objects(targetDict: list) -> dict:
@@ -103,7 +103,7 @@ def dict_to_objects(targetDict: list) -> dict:
     # add class object to dict of class objects. "name":objectfor asset in targetDict:
     for asset in targetDict:
         classObjName = "c" + asset["name"]
-        classObjName = MyAsset.MyAsset(asset)
+        classObjName = MyAsset(asset)
         class_objects[asset["name"]] = classObjName
     return class_objects
 

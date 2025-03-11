@@ -73,3 +73,6 @@ class MyGame:
 
     def get_name(self):
         return self.name
+    
+    def get_savepath(self):
+        return self.save_files_path
