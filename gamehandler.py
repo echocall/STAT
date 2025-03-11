@@ -11,19 +11,26 @@ def game_handler(is_game_loaded: bool) -> object:
         print("Does user want to create a JSON for a new game,",
             " or load a preexisting game JSON?", sep="\n"
         )
-    
-    
-def new_game(game_path: str, saves_path: str, datapack_path: str):
+     
+def new_game(game_path: str, saves_path: str, datapack_path: str) -> dict:
     new_game_dict = {}
     new_file_name = ""
     write_successful = False
     error_message = ""
 
-    # write new game to a dictionary
-    new_game_dict = new_game_assembly(game_path, saves_path, datapack_path)
-    new_file_name = format_str_for_filename(new_game_dict["name"])
+    try:
+        new_game_dict = new_game_assembly(game_path, saves_path, datapack_path)
+    except Exception:
+        print(traceback.format_exc())
+    try:
+        new_file_name = format_str_for_filename(new_game_dict["name"])
+    except Exception:
+        print(traceback.format_exc())
     # Save data in a json file.
-    write_successful = create_new_json_file(new_file_name, game_path, 'game')
+    try:
+        write_successful = create_new_json_file(new_file_name, game_path, 'game')
+    except Exception:
+        print(traceback.format_exc())
 
     if write_successful == True:
         return new_game_dict
@@ -35,10 +42,10 @@ def get_game(gameName: str, filePath: str, type: str) -> dict:
     game = single_json_getter(gameName, filePath, type)
     return game
 
-def get_game_as_obj(gameName: str, filePath: str, type: str) -> dict:
+def get_game_as_obj(gameName: str, filePath: str, type: str) -> object:
     game = single_json_getter(gameName, filePath, type)
     game_object = {}
-    game_object = load_game(game)
+    game_object = dict_to_game_object(game)
     return game_object
 
 def get_games_names(filePath: str) -> list:
@@ -70,13 +77,13 @@ def get_game_saves(filePath: str, gameName: str) -> list:
 
     return save_names
 
-def load_game(game: dict) -> object:
+def check_template(game: dict) -> object:
     error_message = ''
     try:
         game_template = get_template_json("game",".\\statassets\\templates")
         result = dict_key_compare(game_template, game)
-    except:
-        error_message = "Problem with comparing game_template and the game dictionary."
+    except Exception:
+        print(traceback.format_exc())
 
     if result["match"] == True:
         game_object = dict_to_game_object(game)
@@ -84,7 +91,6 @@ def load_game(game: dict) -> object:
     else:
         print(error_message)
         print(result["missing_values"])
-
 
 # select game
 def select_game(file_path: str) -> object:
@@ -106,7 +112,6 @@ def select_game(file_path: str) -> object:
     game_object = dict_to_game_object(target_dict)
 
     return game_object
-
 
 # dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> object:
@@ -324,24 +329,36 @@ def define_turns(game_name: str) -> dict:
 def game_folder_creator(game_file_name: str, file_path: str) -> dict:
     result = False
     game_folder = file_path + "\\" + game_file_name
-    result = create_new_directory(game_folder)
+    try:
+        result = create_new_directory(game_folder)
+    except Exception:
+        print(traceback.format_exc())
     return result
 
 def datapack_folder_creator(game_file_name: str, file_path: str) -> dict:
     result = False
     datapack_folder = file_path + "\\" + game_file_name
-    result = create_new_directory(datapack_folder)
+    try:
+        result = create_new_directory(datapack_folder)
+    except Exception:
+        print(traceback.format_exc())
     return result
 
 def save_folder_creator(game_file_name: str, file_path: str) -> dict:
     result = False
     save_folder = file_path + "\\" + game_file_name
-    result = create_new_directory(save_folder)
+    try:
+        result = create_new_directory(save_folder)
+    except Exception:
+        print(traceback.format_exc())
     return result
 
 def images_folder_creator(game_file_name: str, file_path: str) -> dict:
     result = False
     image_folder = file_path + "\\" + game_file_name + "\\images\\"
-    result = create_new_directory(image_folder)
+    try:
+        result = create_new_directory(image_folder)
+    except Exception:
+        print(traceback.format_exc())
     return result
 

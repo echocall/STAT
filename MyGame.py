@@ -60,10 +60,6 @@ class MyGame:
             for key, value in gameDict.items():
                 setattr(self, key, value)
 
-    def from_dict(cls, data: dict[str, str]):
-        return cls(**data)
-
-
     """
     def load_from_json(self, **my_json_object):
         

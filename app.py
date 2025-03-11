@@ -12,43 +12,39 @@ from StatInstance import *
 from MyGame import *
 import tests
 
-
 # Initialzie the class instance.
 currentStat = MyStat("config.txt")
-print(currentStat.is_assets_loaded)
+print("Is game loaded: " + currentStat.is_game_loaded)
+print("Game loaded: " + currentStat.game_loaded_name)
 
 filePaths = stat_initialize(currentStat.config_file)
 
-print(filePaths)
+# while currentStat.is_assets_loaded == False
+    # call game_handler() for menus.
 
-## from gameInstance feed
-
-# ===================================================
-# assetTypes is a set
-assetTypesSet = {"set", "set2"}
-# as list
-assetTypes = []
-
-# ==========================
-
-# selected_game = dict_to_game_object(game)
 selected_game = select_game(filePaths["gamespath"])
 
 try:
     print(selected_game.get_name())
+    print(type(selected_game))
 except Exception:
     print(traceback.format_exc())
 
-
-print(type(selected_game))
-
 currentStat.gameLoaded(selected_game, selected_game.get_name)
+print("Is game loaded: " + currentStat.is_game_loaded)
+print("Game loaded: " + currentStat.game_loaded_name)
+# === NEW GAME ====
+currentStat.gameUnloaded()
+print(currentStat.is_game_loaded)
 
-
-"""
-print("======== new_game_assembly test ========")
-# creating a new Game Dict
-new_game = new_game_assembly(filePaths["gamespath"],filePaths["savefilepath"],filePaths["datapackpath"])
+new_game = new_game(filePaths["gamespath"],filePaths["savespath"])
+print(type(new_game))
 print(new_game)
-print(len(new_game))
-"""
+
+my_new_game = dict_to_game_object(new_game)
+
+print(type(my_new_game))
+print(my_new_game)
+
+currentStat.gameLoaded(my_new_game, my_new_game.get_name)
+print(currentStat.game_loaded_name)

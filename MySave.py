@@ -23,7 +23,7 @@ class MySave:
     current_effects: dict
     log_file_path: str
 
-    def __init__(self, name, createDate, dateLastSave, description, 
+    def __post__init__(self, name, createDate, dateLastSave, description, 
                  assetCustoms, assetCustomsPath, actorCustoms, actorCustomsPath,
                  eventCustoms,eventCustomsPath, effectCustoms, effectCustomsPath,
                    counters, assets, actors, currentEvents,
