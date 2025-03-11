@@ -153,7 +153,6 @@ def handler_result_builder(missing_default: bool, missing_name: str,
                       converted_name: converted_objects}
     return handler_result
 
-
 # ==  INPUTS FROM USER ==
 # basic user confirmation y/n
 def user_confirm(prompt: str) -> bool:
@@ -353,8 +352,8 @@ def list_to_menu(prompt: str, choices: list) -> str:
     options_max = len(choices)
     choices_as_dict = {}
     
+    print()
     print(prompt, sep="\n")
-
     for index in range(options_max):
         choices_as_dict[index] = choices[index-1]
 
@@ -362,7 +361,6 @@ def list_to_menu(prompt: str, choices: list) -> str:
         for key, value in choices_as_dict.items():
             print(str(key) + " - " + value)
 
-        print("-1 will cancel.", sep="\n")
         get_menu_choice = best_user_int(options_max, -2, "Type -1 to cancel.")
         if get_menu_choice == -1:
             print("Cancelling the selection, goodbye.")

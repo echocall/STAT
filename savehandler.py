@@ -29,6 +29,23 @@ def load_save(saveName: str, filePath: str, type: str) -> dict:
     save = single_json_getter(saveName, filePath, type)
     return save
 
+def select_save(file_path: str) -> dict:
+    saves = []
+    target_save = ''
+    target_dict = {}
+    save_object = {}
+
+    # load list of game names from games folder.
+    saves = multi_json_names_getter(file_path, 'saves')
+
+    # call List_to_Menu
+    target_save = list_to_menu('Select a save: ', saves)
+
+    # load in the game_dict
+    target_dict = single_json_getter(target_save, file_path, 'saves')
+
+    return target_dict
+
 def update_save():
     print("TODO: Update a save file.")
 
@@ -37,6 +54,7 @@ def new_save():
 
 def save_current():
     print("TODO: save current STAT instance to save file.")
+    # Call update save functions in MySave
 
 def save_as_new_file():
     print("TODO: Create a new save file.")
