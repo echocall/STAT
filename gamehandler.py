@@ -1,17 +1,17 @@
 from crud import *
 from utilities import *
-import MyGame
-import StatInstance
+import MyGame as mg
+import traceback
 
-def game_handler(is_game_loaded: bool) -> MyGame:
+def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
+    load_options = ["Create new Game JSON", "Select Game JSON"]
     # Check STAT instance for "is_game_loaded"
     if not is_game_loaded:
-        
-        print("Does user wat to Create a new game,",
-            " start a New Save of a game,",
-            " or Load a prexisting save?", sep="\n"
+        print("Does user want to create a JSON for a new game,",
+            " or load a preexisting game JSON?", sep="\n"
         )
+    
     
 def new_game(game_path: str, saves_path: str, datapack_path: str):
     new_game_dict = {}
@@ -32,6 +32,10 @@ def new_game(game_path: str, saves_path: str, datapack_path: str):
         return error_message
 
 def get_game(gameName: str, filePath: str, type: str) -> dict:
+    game = single_json_getter(gameName, filePath, type)
+    return game
+
+def get_game_as_obj(gameName: str, filePath: str, type: str) -> dict:
     game = single_json_getter(gameName, filePath, type)
     game_object = {}
     game_object = load_game(game)
@@ -62,19 +66,28 @@ def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> 
 def get_game_saves(filePath: str, gameName: str) -> list:
     # get game name
     names_test_path = filePath + gameName
-    game_names = multi_json_names_getter(names_test_path)
+    save_names = multi_json_names_getter(names_test_path)
 
-    return game_names
+    return save_names
 
-def load_game(game: dict) -> dict:
-    # TODO 
-    game_object = {}
-    game_object = dict_to_game_object(game)
-    return game_object
+def load_game(game: dict) -> object:
+    error_message = ''
+    try:
+        game_template = get_template_json("game",".\\statassets\\templates")
+        result = dict_key_compare(game_template, game)
+    except:
+        error_message = "Problem with comparing game_template and the game dictionary."
+
+    if result["match"] == True:
+        game_object = dict_to_game_object(game)
+        return game_object
+    else:
+        print(error_message)
+        print(result["missing_values"])
+
 
 # select game
-def select_game(file_path: str):
-    print("TODO")
+def select_game(file_path: str) -> object:
     games = []
     target_game = ''
     target_dict = {}
@@ -87,20 +100,22 @@ def select_game(file_path: str):
     target_game = list_to_menu('Select a game: ', games)
 
     # load in the game_dict
-    target_game = get_game(target_game, file_path, 'game')
+    target_dict = get_game(target_game, file_path, 'game')
 
     # turn the game dict into a game_object
     game_object = dict_to_game_object(target_dict)
 
     return game_object
 
-# dict_to_game_object
-def dict_to_game_object(targetDict: dict) -> dict:
-    # get name of the dictionary and insubstantiate into a class object.
-    # add class object to dict of class objects. "name":object
-    classObjName = "c" + targetDict["name"]
-    classObjName = MyGame.MyGame(targetDict)
 
+# dict_to_game_object
+def dict_to_game_object(targetDict: dict) -> object:
+    # get name of the dictionary and insubstantiate into a class object.
+    classObjName = "c" + targetDict["name"]
+    try: 
+        classObjName = mg.MyGame(**targetDict)
+    except Exception:
+        print(traceback.format_exc())
     return classObjName
 
 # TODO: Finish Events, Effects, and Actors
@@ -229,7 +244,7 @@ def new_game_assembly(game_path: str, saves_path: str, datapack_path: str) -> di
         game_template = get_template_json("game",".\\statassets\\templates")
         result = dict_key_compare(game_template, new_game)
     except:
-        error_message = "Problem getting game_template.json file for testing."
+        error_message = "Problem with comparing game_template and the new_game dict."
 
     if(result["match"] == True):
         return new_game

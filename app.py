@@ -1,20 +1,21 @@
 import os
 import configparser
 import datetime
+import traceback
 from pathlib import PurePath, Path
 from crud import *
 from utilities import *
 from assethandler import *
 from gamehandler import *
 from savehandler import *
-import StatInstance
+from StatInstance import *
+from MyGame import *
 import tests
 
 
 # Initialzie the class instance.
-currentStat = StatInstance.MyStat("config.txt")
-
-
+currentStat = MyStat("config.txt")
+print(currentStat.is_assets_loaded)
 
 filePaths = stat_initialize(currentStat.config_file)
 
@@ -28,17 +29,26 @@ assetTypesSet = {"set", "set2"}
 # as list
 assetTypes = []
 
-print("======== single_json_getter test ========")
-# gets a single game as a dictionary/JSON object
-game = get_game("test", filePaths["gamespath"], "games")
+# ==========================
 
-currentStat.gameLoaded(game, "test")
+# selected_game = dict_to_game_object(game)
+selected_game = select_game(filePaths["gamespath"])
 
-print(currentStat.is_game_loaded)
+try:
+    print(selected_game.get_name())
+except Exception:
+    print(traceback.format_exc())
 
 
+print(type(selected_game))
+
+currentStat.gameLoaded(selected_game, selected_game.get_name)
+
+
+"""
 print("======== new_game_assembly test ========")
 # creating a new Game Dict
 new_game = new_game_assembly(filePaths["gamespath"],filePaths["savefilepath"],filePaths["datapackpath"])
 print(new_game)
 print(len(new_game))
+"""

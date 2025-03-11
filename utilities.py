@@ -1,8 +1,6 @@
 import configparser
 import json
 from pathlib import Path
-import MyGame
-import MyAsset
 
 def stat_initialize(config_file: str) -> dict:
     # Reading from config file
@@ -353,16 +351,17 @@ def list_to_menu(prompt: str, choices: list) -> str:
     get_menu_choice = -1
     valid = False
     options_max = len(choices)
-    print(prompt, sep="\n")
     choices_as_dict = {}
     
+    print(prompt, sep="\n")
+
     for index in range(options_max):
         choices_as_dict[index] = choices[index-1]
 
-    for key, value in choices_as_dict.items():
-        print(str(key) + " - " + value)
-    
     while not valid:
+        for key, value in choices_as_dict.items():
+            print(str(key) + " - " + value)
+
         print("-1 will cancel.", sep="\n")
         get_menu_choice = best_user_int(options_max, -2, "Type -1 to cancel.")
         if get_menu_choice == -1:

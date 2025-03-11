@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+@dataclass
 class MyStat:
     # add something for the config file
     config_file: str

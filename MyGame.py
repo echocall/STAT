@@ -25,16 +25,14 @@ class MyGame:
     turn_type: str
     start_turn: int
 
-    def __init__(self, gameDict=None):
-        if gameDict is not None:
-            for key, value in gameDict.items():
-                setattr(self, key, value)
     
-    
-    def set(self, name, description, has_counters, counters, has_actors, actor_default_path,
-                 default_actors, has_assets, asset_default_path, default_assets, 
-                 has_events, event_default_path, default_events, has_effects, effect_default_path,
-                 default_effects, icon, save_files_path, has_turns, turn_type, start_turn):
+    def __post__init__ (self, name: str, description: str, has_counters: bool, counters: dict,
+                has_actors: bool, actor_default_path: str, default_actors: list,
+                  has_assets: bool, asset_default_path: str, default_assets: list, 
+                 has_events: bool, event_default_path: str, default_events: list, 
+                 has_effects: bool, effect_default_path: str, default_effects: list,
+                   icon: str, save_files_path: str,
+                 has_turns: bool, turn_type: str, start_turn: int):
         self.name = name
         self.description = description
         self.has_counters = has_counters
@@ -56,3 +54,26 @@ class MyGame:
         self.has_turns = has_turns
         self.turn_type = turn_type
         self.start_turn = start_turn
+
+    def load_from_dict(self, gameDict):
+        if self is None and gameDict is not None:
+            for key, value in gameDict.items():
+                setattr(self, key, value)
+
+    def from_dict(cls, data: dict[str, str]):
+        return cls(**data)
+
+
+    """
+    def load_from_json(self, **my_json_object):
+        
+    """
+
+    def __str__(self):
+        return self.name +" " + self.description
+
+    def set_name(self, name):
+        self.name = name
+
+    def get_name(self):
+        return self.name
