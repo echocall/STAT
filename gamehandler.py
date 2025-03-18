@@ -116,12 +116,14 @@ def select_game(file_path: str) -> object:
 # dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> object:
     # get name of the dictionary and insubstantiate into a class object.
+    class_object = {}
     classObjName = "c" + targetDict["name"]
+    classObjName = format_str_for_filename(classObjName)
     try: 
-        classObjName = mg.MyGame(**targetDict)
+        return mg.MyGame(**targetDict)
     except Exception:
         print(traceback.format_exc())
-    return classObjName
+    
 
 # TODO: Finish Events, Effects, and Actors
 def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> dict:
@@ -223,26 +225,10 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     new_game["start_turn"] = turns["start_turn"]
     
     # Create the folders.
-    # TODO: create error_message telling us which of these failed/didn't fail
-    game_folder_result = game_folder_creator(name_dict["file"], game_path)
-    datapack_folder_result = datapack_folder_creator(name_dict["file"], datapack_path)
-    save_folder_result = save_folder_creator(name_dict["file"], saves_path)
-    image_folder_result = images_folder_creator(name_dict["file"], game_path)
-
-    if not game_folder_result:
-        print("Warning: Game folder for new game was not created!",
-            sep="\n")
-    elif not datapack_folder_result:
-        print("Warning! Datapack folder for new game was not created!",
-            sep="\n")
-    elif not save_folder_result:
-        print("Warning! Save folder for new game not was created!",
-            sep="\n")
-    elif not image_folder_result:
-        print("Warning! Image folder for new game not was created!",
-            sep="\n")
-    else:
-        print("All needed folders created successfully!", sep="\n")
+    # TODO: create more error handling within this chain.
+    result = create_folders(name_dict, game_path, datapack_path, saves_path)
+    if not result:
+        print("Creating folders failed for new game.")
 
     print()
     try:
@@ -326,39 +312,26 @@ def define_turns(game_name: str) -> dict:
 
     return turns
 
-def game_folder_creator(game_file_name: str, file_path: str) -> dict:
+def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_path: str, images_path: str) -> bool:
+    folder_created = False
+    folders_created = {}
     result = False
-    game_folder = file_path + "\\" + game_file_name
-    try:
-        result = create_new_directory(game_folder)
-    except Exception:
-        print(traceback.format_exc())
-    return result
+    folders = []
+    game_folder = game_path + "\\" + name_dict["file"]
+    datapack_folder = datapack_path + "\\" + name_dict["file"]
+    save_folder = saves_path + "\\" + name_dict["file"]
+    images_folder = game_path + "\\" + name_dict["file"] + "\\images\\"
 
-def datapack_folder_creator(game_file_name: str, file_path: str) -> dict:
-    result = False
-    datapack_folder = file_path + "\\" + game_file_name
-    try:
-        result = create_new_directory(datapack_folder)
-    except Exception:
-        print(traceback.format_exc())
-    return result
+    folders.append(game_folder)
+    folders.append(datapack_folder)
+    folders.append(save_folder)
+    folders.append(images_folder)
 
-def save_folder_creator(game_file_name: str, file_path: str) -> dict:
-    result = False
-    save_folder = file_path + "\\" + game_file_name
-    try:
-        result = create_new_directory(save_folder)
-    except Exception:
-        print(traceback.format_exc())
-    return result
+    for folder in folders:
+        folder_created = create_new_directory(folder)['created']
+        folders_created.append(folder_created)
 
-def images_folder_creator(game_file_name: str, file_path: str) -> dict:
-    result = False
-    image_folder = file_path + "\\" + game_file_name + "\\images\\"
-    try:
-        result = create_new_directory(image_folder)
-    except Exception:
-        print(traceback.format_exc())
+    if False not in folders_created:
+        result = True
+    
     return result
-

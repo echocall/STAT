@@ -1,6 +1,7 @@
 import json
 from pathlib import PurePath, Path
 from utilities import *
+import traceback
 
 # CREATE
 def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: dict) -> bool:
@@ -33,19 +34,20 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: 
     else:
         print(error_message)
 
-# Takes a relative file path and tries to create it at that location.
-def create_new_directory(passed_directory_path: str) -> bool:
+# Takes a file path and tries to create it at that location.
+def create_new_directory(passed_directory_path: str) -> dict:
     # TODO: Fix this one's error handling.
-    result = False
+    result = { 'created': False, 'create_folder_message': '' }
     error_message = ""
 
     try:
         Path(passed_directory_path).mkdir(parents=False, exist_ok=False)
-        result = True
-    except FileExistsError:
-        error_message = FileExistsError
-        print(error_message, sep="\n")
-        result = False;
+        result['created'] = True
+        result['create_folder_message'] = "Successfully created the folder!"
+    except Exception:
+        result['create_folder_message'] = traceback.format_exc()
+        result['created'] = False;
+    
     return result
 
 # READ
@@ -78,7 +80,7 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
         else:
             error_message = "Error: " + str_target_file_name + " not found within Directory."
     else:
-        error_message = "Incorrect Path: " + objectType + " directory not found!"
+        error_message = "Error getting JSON File: \n Incorrect Path. " + objectType + " directory not found!"
 
     if fetch_success == True:
         return target_object
@@ -103,7 +105,7 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
                 target_json_objects.append(json.load(f))
         fetch_success = True
     else:
-        error_message = "Target " + objectType + " could not be found in directory: " + str_directory_path
+        error_message = "Error getting multiple jsons: \n " + objectType + " could not be found in directory: " + str_directory_path
 
     if(fetch_success == True):
         return target_json_objects

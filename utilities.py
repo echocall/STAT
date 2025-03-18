@@ -125,7 +125,6 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
                 merged_dict_list.append(item)
     else:
         # there's a conflict! Something has an custom.
-        print("TODO: handle conflict custom in utilities merge_lists()")
         print(conflictCheck["missing_list"])
         for item in conflictCheck("missing_list"):
             try:
@@ -140,10 +139,12 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
 
 # convert a dictionary to json
 def convert_obj_to_json(object: dict) -> dict:
-    print("TODO: Error_handling")
-    json_obj = json.dumps(object, indent=4)
-
-    return json_obj
+    # TODO: look into Pydantic along this line.
+    try:
+        json_obj = json.dumps(object, indent=4)
+        return json_obj
+    except:
+        print("Could not convert object to json file.")
 
 # builds the result dictionary
 def handler_result_builder(missing_default: bool, missing_name: str,
@@ -372,6 +373,7 @@ def list_to_menu(prompt: str, choices: list) -> str:
             valid = True
 
     return choice_value
+
 
 # TODO: legacy code remove.
 def string_exists_loop(compare_list: list, original_string: str,
