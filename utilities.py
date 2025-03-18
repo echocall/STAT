@@ -326,18 +326,19 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     print(prompt, sep="\n")
     if input_type == "dict":
         for index in range(loop_length):
-           field_name = str(input("\n" + "Enter the name of the field: ")).strip()
-           new_prompt = "Enter the value for " + field_name + ":"
+           field_name = str(input("\n" + "Enter the name: ")).strip()
+           new_prompt = "Enter the value for " + field_name + ": "
            input_variable = get_single_dict_value(new_prompt, field_name, field_type)
            new_dict[field_name] = input_variable
         return new_dict
     elif input_type == "list":
         for index in range(loop_length):
+            print("\n" + str(index) + " of " + str(loop_length) + " to go: ")
             if field_type == "str":
-                input_variable = input("\n" + "Enter the string and press enter: ").strip()
+                input_variable = input("Enter the string and press enter: ").strip()
                 new_list.append(str(input_variable))
             elif field_type == "int":
-                    input_variable = get_user_int("\n" + "Enter an integer: ")
+                    input_variable = get_user_int("Enter an integer and press enter: ")
                     new_list.append(input_variable)
             else: 
                 error_message = "Error! Unrecognized field_type for get_user_input_loop."

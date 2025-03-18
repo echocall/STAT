@@ -168,7 +168,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     print("You can create assets later.")
     create_assets = user_confirm("Do you want to add assets to the game now?")
     if create_assets == True:
-        # call actorsHandler's create Actors.
+        # call assetsHandler's create Assets.
         # created_assets = createAssets()
         new_game["has_assets"] = True
         new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
@@ -218,7 +218,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
 
     print()
     # Turns
-    turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted. \n")
+    turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted." + "\n")
     new_game["has_turns"] = user_confirm(turns_prompt)
     turns = define_turns(name_dict["name"])
     new_game["turn_type"] = turns["turn_type"]
@@ -226,25 +226,25 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     
     # Create the folders.
     # TODO: create more error handling within this chain.
-    result = create_folders(name_dict, game_path, datapack_path, saves_path)
-    if not result:
+    create_result = create_folders(name_dict, game_path, datapack_path, saves_path)
+    if not create_result:
         print("Creating folders failed for new game.")
 
     print()
     try:
         game_template = get_template_json("game",".\\statassets\\templates")
-        result = dict_key_compare(game_template, new_game)
+        compare_result = dict_key_compare(game_template, new_game)
     except:
         error_message = "Problem with comparing game_template and the new_game dict."
 
-    if(result["match"] == True):
+    if(compare_result["match"] == True):
         return new_game
     else:
-        error_message = "Warning, missing fields from new game dictionary."
-        print("Warning, missing fields from new game dictionary.",
+        error_message = "Warning: missing fields from new game dictionary."
+        print("Warning: missing fields from new game dictionary.",
             sep="\n")
         print("Missing Fields: ", sep="\n")
-        for field in result["missing_values"]:
+        for field in compare_result["missing_values"]:
             print("Missing from new dictionary: " + field)
         # call something to fix the game or fix those specific fields.
         return error_message
@@ -253,7 +253,6 @@ def get_new_game_name(file_path: str) -> dict:
     file_name = ""
     name = ""
     games = []
-    result = False
     game_name = {"name": "", "file":""}
     valid = False
     
@@ -263,7 +262,6 @@ def get_new_game_name(file_path: str) -> dict:
         file_name = format_str_for_filename(name)
 
         # check that a game by that name doesn't already exists
-        new_game_folder = file_path + '\\' + file_name
         games = multi_json_names_getter(file_path, "games")
         if name in games:
         # if file_name already exists, ask for another game name and show what games exist.
