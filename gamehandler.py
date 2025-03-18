@@ -170,7 +170,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         # created_assets = createAssets()
         new_game["has_assets"] = True
         new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
-        new_game["default_asset"] = multi_json_names_getter(new_game["asset_default_path"], "assets")
+        new_game["default_assets"] = multi_json_names_getter(new_game["asset_default_path"], "assets")
     else:
         # not creating assets now.
         new_game["has_assets"] = False
