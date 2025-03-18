@@ -1,5 +1,6 @@
 from crud import *
 from utilities import *
+from assethandler import * # TODO: Change this later.
 import MyGame as mg
 import traceback
 
@@ -124,8 +125,21 @@ def dict_to_game_object(targetDict: dict) -> object:
     except Exception:
         print(traceback.format_exc())
     
+def new_game(game_path: str, datapack_path: str, saves_path: str) -> object:
+    # TODO: explanation/no explanation divide. 
+    # If user has said said NO EXPLANATIONS AGAIN do not even ask if they want explanations or not.
 
-# TODO: Finish Events, Effects, and Actors
+
+    want_explanations = user_confirm("Do you want explanations of what each field in a game is or does?")
+    if want_explanations:
+        # call new_game_assembly_loud
+        a = 1+1
+    else:
+        # call new_game_assembly_quiet
+        b = 2+2
+
+# TODO: Finish Assets, Events, Effects, and Actors
+# TODO: Make 'quiet' and 'loud' variants
 def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> dict:
     name_dict = {}
     icon = ""
@@ -166,13 +180,28 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     # TODO: Assets
     print()
     print("You can create assets later.")
-    create_assets = user_confirm("Do you want to add assets to the game now?")
+    create_assets = user_confirm("Do you want to add default assets to the game now?")
     if create_assets == True:
-        # call assetsHandler's create Assets.
         # created_assets = createAssets()
         new_game["has_assets"] = True
         new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
-        new_game["default_assets"] = multi_json_names_getter(new_game["asset_default_path"], "assets")
+        asset_explanations = user_confirm("Do you want explanations of the asset fields?")
+
+        # call assetsHandler's create Assets.
+        assets_to_create = okay_user_int(0,"How many default assets do you want to create?")
+        for index in range(assets_to_create):
+            created_asset = new_asset(True, new_game["asset_default_path"], "", new_game["name"], asset_explanations)
+            created_assets[created_asset.get_name()] = created_asset
+        
+        print(created_assets)
+        print(type(created_assets))
+        # TODO: Need to get the names of the assets.
+        new_asset_names = []
+        for key in created_assets:
+            new_asset_names.append(key)
+
+        new_game["default_assets"] = new_asset_names
+
     else:
         # not creating assets now.
         new_game["has_assets"] = False
@@ -232,8 +261,8 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
 
     print()
     try:
-        game_template = get_template_json("game",".\\statassets\\templates")
-        compare_result = dict_key_compare(game_template, new_game)
+        template_game = get_template_json("game",".\\statassets\\templates")
+        compare_result = dict_key_compare(template_game, new_game)
     except:
         error_message = "Problem with comparing game_template and the new_game dict."
 
@@ -281,23 +310,26 @@ def get_new_game_name(file_path: str) -> dict:
 
     return  game_name
 
-def create_counters() -> dict:
-    # TODO add error handling
-    # define a counter
-    # provide an example of a counter
-    print(
-            f"\n" + "Counters are a way to keep track of numerical values.", 
+def counter_explanation():
+    counter_info = """Counters are a way to keep track of numerical values.", 
             "They can be used to represent money, health, points,",
             " or other values where all you need is a name and a number.",
-            "Example: Health: 20, Gold: 5",
-            sep="\n",
-          )
+            "Example: Health: 20, Gold: 5, First Level Spell Slots: 20
+            
+            Counters are interacted with the Buy Costs and Sell Prices of assets.
+
+            The value of a counter defined in a game file is the amount a 
+            player starts with."""
+    print(counter_info)
+
+def create_counters() -> dict:
+    # TODO add error handling
     num_counters = -1
     counters = {}
     # ask for counters
     num_counters = okay_user_int(0, "Enter the number of counters you want to create: ")
 
-    counters = get_user_input_loop(num_counters, "Enter the name then value of the counter: ", "dict", "int")
+    counters = get_user_input_loop(num_counters, "Enter the name then the starting value of the counter: ", "dict", "int")
 
     return counters
 

@@ -90,33 +90,41 @@ def asset_loader(assetObjectsList: dict):
 def organize_assets_by_type():
     print("TODO: Organize the assets by asset type.")
 
-def new_asset(default_path: str, custom_path: str, game_name: str) -> dict:
+# TODO finish
+def new_asset(is_default: bool, default_path: str, custom_path: str, game_name: str, asset_explanations: bool) -> object:
     print("TODO: Create a new asset and make the appropriate file saves.")
     file_path = ""
     new_asset = {}
 
-    # If it is a New Default asset, update associated game's .json
-    # if it is a custom asset, update the save file's .json
-    is_default = user_confirm("Is this a default asset?")
-    default_message = ""
     if is_default:
         # TODO: make updates to the Game's object, and .json file.
         # make the file_path point to Default objects
         file_path = default_path
-        default_message = "A new default asset has been added to the game's data."
     else:
         # It's a custom! make changes to the save's object and .json file.
         # make the file_path point to Customs objects
         file_path = custom_path
         default_message = "A new custom asset has been added to the save file's data."
     
-    new_asset = new_asset_assembler(file_path, game_name)
+    # Ask if the user wants explanations for the fields.
+    if asset_explanations:
+        new_asset = new_asset_assembler_loud(file_path, game_name)
+    else:
+        new_asset = new_asset_assembler_quiet(file_path, game_name)
 
-def new_asset_assembler_quiet(file_path: str, game_name: str) -> object:
-    # TODO: Finish
+    try:
+        asset_object = dict_to_asset_object(new_asset)
+    except Exception:
+        print(traceback.format_exc())
+    else:
+     return asset_object
+    
+# TODO: Finish missing fields: icon, image,
+def new_asset_assembler_quiet(file_path: str, game_name: str) -> dict:
+    # TODO: missing fields: icon, image
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
-             'effects':[], 'other':'', 'icon':'', 'image':''}
+             'effects':[], 'icon':'', 'image':''}
     
     print("Remember: You can always add non-required fields later!")
     
@@ -161,7 +169,26 @@ def new_asset_assembler_quiet(file_path: str, game_name: str) -> object:
 
     print("Remember: You can always add non-required fields later!")
 
-def new_asset_assembler_loud(file_path: str, game_name: str) -> object:
+    # check new_asset against template_asset
+    try:
+        template_asset = get_template_json("game",".\\statassets\\templates")
+        compare_result = dict_key_compare(template_asset, new_asset)
+    except:
+        error_message = "Problem with comparing game_template and the new_game dict."
+
+    if(compare_result["match"] == True):
+        return new_asset
+    else:
+        error_message = "Warning: missing fields from new template dictionary."
+        print("Warning: missing fields from new template dictionary.",
+            sep="\n")
+        print("Missing Fields: ", sep="\n")
+        for field in compare_result["missing_values"]:
+            print("Missing from new dictionary: " + field)
+        # call something to fix the game or fix those specific fields.
+        return error_message
+# TODO: Finish missing fields: icon, image
+def new_asset_assembler_loud(file_path: str, game_name: str) -> dict:
     # TODO: Finish
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
@@ -205,9 +232,31 @@ def new_asset_assembler_loud(file_path: str, game_name: str) -> object:
     if add_prices:
         new_asset['sell_prices'] = set_sell_prices()
 
-    
-    print("Remember: You can always add non-required fields later!")
+    # TODO: add effects
 
+    # TODO: add icon
+
+    # TODO: add image
+    print("Remember: You can always add non-required fields later!")
+    
+     # check new_asset against template_asset
+    try:
+        template_asset = get_template_json("game",".\\statassets\\templates")
+        compare_result = dict_key_compare(template_asset, new_asset)
+    except:
+        error_message = "Problem with comparing game_template and the new_game dict."
+
+    if(compare_result["match"] == True):
+        return new_asset
+    else:
+        error_message = "Warning: missing fields from new template dictionary."
+        print("Warning: missing fields from new template dictionary.",
+            sep="\n")
+        print("Missing Fields: ", sep="\n")
+        for field in compare_result["missing_values"]:
+            print("Missing from new dictionary: " + field)
+        # call something to fix the game or fix those specific fields.
+        return error_message
 
 def set_new_asset_name(file_path: str) -> dict:
     file_name = ""
@@ -262,7 +311,7 @@ def description_explanation():
     You don't have to add a description to an asset."""
     print(description_info)
 
-def set_description():
+def set_description() -> str:
     # TODO: Error Handling
     description = get_user_input_string_variable("Please enter a description for the asset: ", 1500)
     return description
@@ -283,7 +332,7 @@ def set_attributes() -> list:
     game_attributes_int = 0
     game_attributes = []
 
-    game_attributes_int = get_user_int("How many attributes do you want to add to this asset?")
+    game_attributes_int = okay_user_int(0,"How many attributes do you want to add to this asset?")
     game_attributes = get_user_input_loop(game_attributes_int, list, str)
 
     return game_attributes
@@ -311,7 +360,7 @@ def set_buy_costs() -> dict:
     # TODO: Error Handling
     buy_costs = {}
 
-    game_resources_int = get_user_int("How many different resources do you need to buy or use this asset?")
+    game_resources_int = okay_user_int(0,"How many different resources do you need to buy or use this asset?")
     buy_costs = get_user_input_loop(game_resources_int, "Enter the resource name and amount needed to buy or use this unit: ", dict, str)
 
     return buy_costs
@@ -336,7 +385,7 @@ def prices_explanation():
 def set_sell_prices() -> dict:
     # TODO: Error Handling
     sell_prices = {}
-    game_resources_int = get_user_int("How many different resources do you get for selling or destroying this asset?")
+    game_resources_int = okay_user_int(0,"How many different resources do you get for selling or destroying this asset?")
     sell_prices = get_user_input_loop(game_resources_int, "Enter the resource name and type you get for selling or destroying this asset: ", dict, str)
     return sell_prices
 
@@ -350,19 +399,29 @@ def set_special() -> str:
     # TODO: Error Handling
     special = get_user_input_string_variable("Please enter the special text for the asset: ", 1500)
     return special
-
+# TODO: finish
 def set_effects():
     d = 4+4
     # TODO: We will want to wait until we have effects made.
     # Make a dictionary of effects & their description
-
+# TODO: finish
 def set_icon() -> str:
     # TODO: make this fetch the file path/move icon file to the images folder.
     e = 5+5
-
+# TODO: finish
 def set_image() -> str:
     # TODO: make this fetch the file path/move the image file to the images folder.
     f = 6+6
+
+# dict_to_game_object
+def dict_to_asset_object(targetDict: dict) -> object:
+    # get name of the dictionary and insubstantiate into a class object.
+    classObjName = "c" + targetDict["name"]
+    classObjName = format_str_for_filename(classObjName)
+    try: 
+        return MyAsset(**targetDict)
+    except Exception:
+        print(traceback.format_exc())
 
 # dict_to_object
 def dict_to_objects(targetDict: list) -> dict:

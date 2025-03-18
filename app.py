@@ -1,6 +1,3 @@
-import os
-import configparser
-import datetime
 import traceback
 from pathlib import PurePath, Path
 from crud import *
@@ -10,7 +7,7 @@ from gamehandler import *
 from savehandler import *
 from StatInstance import *
 from MyGame import *
-import tests
+from tests import *
 
 # Initialzie the class instance.
 currentStat = MyStat("config.txt")
@@ -23,59 +20,7 @@ print()
 filePaths = stat_initialize(currentStat.config_file)
 print(filePaths)
 
-# while currentStat.is_assets_loaded == False
-    # call game_handler() for menus.
-
-selected_game = select_game(filePaths["gamespath"])
-print()
-
-try:
-    print("Print the variables from the MyGame object.")
-    print(selected_game.get_name())
-    print(type(selected_game))
-except Exception:
-    print(traceback.format_exc())
-
-selected_name = selected_game.get_name()
-currentStat.gameLoaded(selected_game, selected_name)
-print("Is game loaded: ")
-print(currentStat.is_game_loaded)
-print("Game loaded: ")
-print(currentStat.game_loaded_name)
-print()
-
-# == SAVES ==
-save_path = selected_game.get_savepath()
-load_save = select_save(save_path)
-print(load_save)
-
-currentStat.saveLoaded(load_save, load_save["name"])
-print("Is save loaded: ")
-print(currentStat.is_save_loaded)
-print("Save loaded: ")
-print(currentStat.save_loaded_name)
-print()
-
-# == ASSETS ==
-handler_result = asset_handler(selected_game.asset_default_path, 
-              selected_game.default_assets, load_save["asset_customs"], 
-              load_save["asset_customs_path"])
-
-print("Any missing default assets: \n")
-print(handler_result["missing_default"])
-print()
-print("The assets converted: ")
-print(handler_result["converted_assets"])
-converted_assets = handler_result["converted_assets"]
-print()
-print(type(converted_assets))
-
 # === NEW GAME ====
-currentStat.gameUnloaded()
-print("After calling currentStat.gameUnloaded():")
-print(currentStat.is_game_loaded)
-print()
-
 new_game = new_game(filePaths["gamespath"],filePaths["datapackspath"],filePaths["savespath"])
 print("After creating new-game: ")
 print(type(new_game))
