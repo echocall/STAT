@@ -312,44 +312,6 @@ def get_single_dict_value(prompt: str, field_name: str, field_type: str) -> dict
 def get_list_value(list_name: str):
     print("TODO: this")
 
-# gets the length of the list or dictionary that needs to be filled with ints
-# then asks user for ints to fill it that many times.
-def get_user_input_loop(loop_length: int, prompt:str, input_type: str, field_type: str):
-    # TODO: get_user_input_loop finish
-    new_dict = {}
-    new_list = []
-    field_name = ""
-    new_prompt = ""
-    error_message = ""
-    input_variable = ""
-
-    print(prompt, sep="\n")
-    # if the input_type is dictionary, prepare to get name of field and value of field
-    if input_type == "dict":
-        for index in range(loop_length):
-           print("At " + str(index) + " of " + str(loop_length))
-           field_name = str(input("\n" + "Enter the name: ")).strip()
-           new_prompt = "Enter the value for " + field_name + ": "
-           input_variable = get_single_dict_value(new_prompt, field_name, field_type)
-           new_dict[field_name] = input_variable[field_name]
-        return new_dict
-    # if input type is list, prepare to get the # of items in the list.
-    elif input_type == "list":
-        for index in range(loop_length):
-            print("\n" + str(index) + " of " + str(loop_length) + " to go: ")
-            if field_type == "str":
-                input_variable = input("Enter the string and press enter: ").strip()
-                new_list.append(str(input_variable))
-            elif field_type == "int":
-                    input_variable = get_user_int("Enter an integer and press enter: ")
-                    new_list.append(input_variable)
-            else: 
-                error_message = "Error! Unrecognized field_type for get_user_input_loop."
-        return new_list
-    else:
-        error_message = "Input Type entered not recognized."
-    return error_message
-
 # Turns a list into an enumerated menu.
 def list_to_menu(prompt: str, choices: list) -> str:
     get_menu_choice = -1
@@ -403,3 +365,78 @@ def get_user_input_string_variable(prompt: str, character_limit: int) -> str:
             valid = True
 
     return user_input    
+
+# gets the length of the list or dictionary that needs to be filled with ints
+# then asks user for ints to fill it that many times.
+def get_user_input_loop(loop_length: int, prompt:str, input_type: str, field_type: str):
+    # TODO: get_user_input_loop finish
+    new_dict = {}
+    new_list = []
+    field_name = ""
+    new_prompt = ""
+    error_message = ""
+    input_variable = ""
+
+    print(prompt, sep="\n")
+    # if the input_type is dictionary, prepare to get name of field and value of field
+    if input_type == "dict":
+        for index in range(loop_length):
+           print("At " + str(index) + " of " + str(loop_length))
+           field_name = str(input("\n" + "Enter the name: ")).strip()
+           new_prompt = "Enter the value for " + field_name + ": "
+           input_variable = get_single_dict_value(new_prompt, field_name, field_type)
+           new_dict[field_name] = input_variable[field_name]
+        return new_dict
+    # if input type is list, prepare to get the # of items in the list.
+    elif input_type == "list":
+        for index in range(loop_length):
+            print("\n" + str(index) + " of " + str(loop_length) + " to go: ")
+            if field_type == "str":
+                input_variable = input("Enter the string and press enter: ").strip()
+                new_list.append(str(input_variable))
+            elif field_type == "int":
+                    input_variable = get_user_int("Enter an integer and press enter: ")
+                    new_list.append(input_variable)
+            else: 
+                error_message = "Error! Unrecognized field_type for get_user_input_loop."
+        return new_list
+    else:
+        error_message = "Input Type entered not recognized."
+    return error_message
+
+def get_user_input_loop_list(loop_length: int, prompt:str, input_type: str, field_type: str, options_list: list):
+    # TODO: get_user_input_loop finish
+    new_dict = {}
+    new_list = []
+    field_name = ""
+    new_prompt = ""
+    error_message = ""
+    input_variable = ""
+
+    print(prompt, sep="\n")
+    # if the input_type is dictionary, prepare to get name of field and value of field
+    if input_type == "dict":
+        for index in range(loop_length):
+           print("At " + str(index) + " of " + str(loop_length))
+           field_name = list_to_menu("Select the name of the field: ", options_list)
+           new_prompt = "Enter the value for " + field_name + ": "
+           input_variable = get_single_dict_value(new_prompt, field_name, field_type)
+           new_dict[field_name] = input_variable[field_name]
+        return new_dict
+    # if input type is list, prepare to get the # of items in the list.
+    elif input_type == "list":
+        for index in range(loop_length):
+            print("\n" + str(index) + " of " + str(loop_length) + " to go: ")
+            if field_type == "str":
+                input_variable = input("Enter the string and press enter: ").strip()
+                new_list.append(str(input_variable))
+            elif field_type == "int":
+                    input_variable = get_user_int("Enter an integer and press enter: ")
+                    new_list.append(input_variable)
+            else: 
+                error_message = "Error! Unrecognized field_type for get_user_input_loop."
+        return new_list
+    else:
+        error_message = "Input Type entered not recognized."
+    return error_message
+

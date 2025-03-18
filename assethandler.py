@@ -91,9 +91,14 @@ def organize_assets_by_type():
     print("TODO: Organize the assets by asset type.")
 
 # TODO finish
-def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_path: str, game_name: str, asset_explanations: bool) -> object:
+def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_path: str,
+               game_name: str, asset_explanations: bool, counters: dict) -> object:
     file_path = ""
     new_asset = {}
+    counter_names = []
+
+    for key in counters:
+        counter_names.append(key)
 
     if is_default:
         # TODO: make updates to the Game's object, and .json file.
@@ -107,9 +112,9 @@ def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_pa
     
     # Ask if the user wants explanations for the fields.
     if asset_explanations:
-        new_asset = new_asset_assembler_loud(file_path, for_new_game, game_name)
+        new_asset = new_asset_assembler_loud(file_path, for_new_game, game_name, counter_names)
     else:
-        new_asset = new_asset_assembler_quiet(file_path, for_new_game, game_name)
+        new_asset = new_asset_assembler_quiet(file_path, for_new_game, game_name, counter_names)
 
     # try to turn the dictionary into an object
     try:
@@ -120,7 +125,7 @@ def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_pa
      return asset_object
     
 # TODO: Finish missing fields: icon, image,
-def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str) -> dict:
+def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str, counter_names: list) -> dict:
     # TODO: missing fields: icon, image
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
@@ -155,12 +160,12 @@ def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str
     print()
     add_costs = user_confirm("Do you want to add buy costs to the asset now?")
     if add_costs:
-        new_asset["buy_costs"] = set_buy_costs()
+        new_asset["buy_costs"] = set_buy_costs(counter_names)
 
     print()
     add_prices = user_confirm("Do you want to add sell prices to the asset now?")
     if add_prices:
-        new_asset['sell_prices'] = set_sell_prices()
+        new_asset['sell_prices'] = set_sell_prices(counter_names)
 
     # TODO: add effects
 
@@ -189,7 +194,7 @@ def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str
         # call something to fix the game or fix those specific fields.
         return error_message
 # TODO: Finish missing fields: icon, image
-def new_asset_assembler_loud(file_path: str, game_name: str) -> dict:
+def new_asset_assembler_loud(file_path: str, for_new_game: bool, game_name: str, counter_names: list) -> dict:
     # TODO: Finish
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
@@ -198,7 +203,7 @@ def new_asset_assembler_loud(file_path: str, game_name: str) -> dict:
     print("Remember: You can always add non-required fields later!")
    
     name_dict = {}
-    name_dict['name'] = set_new_asset_name(file_path)
+    name_dict['name'] = set_new_asset_name(file_path, for_new_game)
     new_asset['name'] = name_dict['name']
 
     category_explanation()
@@ -225,13 +230,13 @@ def new_asset_assembler_loud(file_path: str, game_name: str) -> dict:
     print()
     add_costs = user_confirm("Do you want to add buy costs to the asset now?")
     if add_costs:
-        new_asset["buy_costs"] = set_buy_costs()
+        new_asset["buy_costs"] = set_buy_costs(counter_names)
 
     prices_explanation()
     print()
     add_prices = user_confirm("Do you want to add sell prices to the asset now?")
     if add_prices:
-        new_asset['sell_prices'] = set_sell_prices()
+        new_asset['sell_prices'] = set_sell_prices(counter_names)
 
     # TODO: add effects
 
@@ -363,12 +368,25 @@ def costs_explanation():
     Tip: If you set the value of a cost to a negative, you will GAIN that much instead."""
     print(costs_info)
 
-def set_buy_costs() -> dict:
+# TODO: Error Handling
+def set_buy_costs(counter_names: list) -> dict:
     # TODO: Error Handling
     buy_costs = {}
-
-    game_resources_int = okay_user_int(0,"How many different resources do you need to buy or use this asset?")
-    buy_costs = get_user_input_loop(game_resources_int, "Enter the resource name and amount needed to buy or use this unit: ", "dict", "str")
+    list_size = 0
+    list_size = len(counter_names)
+    
+    if list_size == 0:
+        print("No precreated counters found. Manual input required.")
+        game_resources_int = okay_user_int(0,"How many different costs do you need"
+        " to buy or use this asset?")
+        buy_costs = get_user_input_loop(game_resources_int, "Enter the field name"
+        " and amount needed to buy or use this unit: ", "dict", "str")
+    else:
+        # we have a list of counters, use that for the field names.
+        game_resources_int = okay_user_int(0,"How many different costs do you need"
+        " to buy or use this asset?")
+        buy_costs = buy_costs = get_user_input_loop_list(game_resources_int, "Enter the"
+        " field name and amount needed to buy or use this unit: ", "dict", "str", counter_names)
 
     return buy_costs
 
@@ -389,11 +407,24 @@ def prices_explanation():
     """
     print(prices_info)
 
-def set_sell_prices() -> dict:
+# TODO: error handling
+def set_sell_prices(counter_names: list) -> dict:
     # TODO: Error Handling
     sell_prices = {}
-    game_resources_int = okay_user_int(0,"How many different resources do you get for selling or destroying this asset?")
-    sell_prices = get_user_input_loop(game_resources_int, "Enter the resource name and type you get for selling or destroying this asset: ", "dict", "str")
+    list_size = 0
+    list_size = len(counter_names)
+    
+    if list_size == 0:
+        # no list, manual input of value names.
+        game_resources_int = okay_user_int(0,"How many different cost do"
+        " you get for selling or destroying this asset?")
+        sell_prices = get_user_input_loop(game_resources_int, "Enter the cost name and "
+        "type you get for selling or destroying this asset: ", "dict", "str")
+    else:
+        game_resources_int = okay_user_int(0,"How many different cost do"
+        " you get for selling or destroying this asset?")
+        sell_prices = get_user_input_loop_list(game_resources_int, "Enter the cost name and "
+        "type you get for selling or destroying this asset: ", "dict", "str", counter_names)
     return sell_prices
 
 def special_explanation():

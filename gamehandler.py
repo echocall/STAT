@@ -18,6 +18,14 @@ def new_game(game_path: str, saves_path: str, datapack_path: str) -> dict:
     new_file_name = ""
     write_successful = False
     error_message = ""
+    
+    want_explanations = user_confirm("Do you want explanations of what each field in a game is or does?")
+    if want_explanations:
+        # call new_game_assembly_loud
+        a = 1+1
+    else:
+        # call new_game_assembly_quiet
+        b = 2+2
 
     try:
         new_game_dict = new_game_assembly(game_path, saves_path, datapack_path)
@@ -124,18 +132,6 @@ def dict_to_game_object(targetDict: dict) -> object:
         return mg.MyGame(**targetDict)
     except Exception:
         print(traceback.format_exc())
-    
-def new_game(game_path: str, datapack_path: str, saves_path: str) -> object:
-    # TODO: explanation/no explanation divide. 
-    # If user has said said NO EXPLANATIONS AGAIN do not even ask if they want explanations or not.
-
-    want_explanations = user_confirm("Do you want explanations of what each field in a game is or does?")
-    if want_explanations:
-        # call new_game_assembly_loud
-        a = 1+1
-    else:
-        # call new_game_assembly_quiet
-        b = 2+2
 
 # TODO: Finish Assets, Events, Effects, and Actors
 # TODO: Make 'quiet' and 'loud' variants
@@ -158,6 +154,8 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     name_dict = get_new_game_name(game_path)
     new_game["name"] = name_dict["name"]
     new_game["description"] = str(input("Enter a description for the new game: ")).strip()
+
+    # TODO: separate explantion of counters for loud/quiet split
     new_game["counters"] = create_counters()
 
     # TODO: Actors
@@ -189,7 +187,8 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         # call assetsHandler's create Assets.
         assets_to_create = okay_user_int(0,"How many default assets do you want to create?")
         for index in range(assets_to_create):
-            created_asset = new_asset(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations)
+            created_asset = new_asset(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations,
+                                      new_game['counters'])
             created_assets[created_asset.get_name()] = created_asset
         
         print(created_assets)
