@@ -1,10 +1,10 @@
 {
     "name":"Spell Strike",
-    "asset_type":"Spell",
+    "category":"Spell",
     "description":"A quick spell that damages your enemy.",
     "source":"Pathfinder",
-    "category":"Damage",
-    "in_game_types":["Damage", "Arcane", "Magic"],
+    "types":"Damage",
+    "attributes":["Damage", "Arcane", "Magic"],
     "buy_costs":{"1st Level Spell Slot": 1, "Copper": 1},
     "sell_prices":{"none": 0},
     "special":"Deals 1d6 damage to an enemy with a range of 60 ft.",

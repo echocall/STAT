@@ -375,36 +375,26 @@ def list_to_menu(prompt: str, choices: list) -> str:
 
     return choice_value
 
-
-# TODO: legacy code remove.
-def string_exists_loop(compare_list: list, original_string: str,
-                        message_if_exists: str, append_suffix: str) -> bool:
-    appended_string = ""
+def get_user_input_string_variable(prompt: str, character_limit: int) -> str:
     valid = False
-    confirm_reply = False
-    new_name = False
-
+    length_check = False
+    exists_check = False
+    print("There is a " + str(character_limit) + " character limit. Leading and trailing whitespaces will be removed.")
     while not valid:
-        # string with name already exits.
-        print(message_if_exists)
-        reply = user_confirm("Something with that name already exists. Should we append?")
-        if reply == True:
-            print("Appending" + append_suffix + "to the file name.")
-            appended_string = original_string + append_suffix
+        user_input = str(input(prompt)).strip()
 
-            print("Checking if new name exists.")
-            result = list_compare(compare_list, appended_string)
+        if len(user_input) > character_limit:
+            print("The text entered is over the character limit, shrinking string: ")
+            user_input = user_input[:character_limit]
+            print("Input shrunk to: " + user_input)
+            length_check = True
 
-            if result["match"] == True:
-                confirm_reply = user_confirm("Do you want to change the name completely?")
-                if confirm_reply == True:
-                    new_name = True
-                    return new_name
-                # already exists, rerun loop.
-                valid = string_exists_loop(result, compare_list, appended_string,
-                                                message_if_exists, append_suffix)
-            else: 
-                # break loop
-                print("No matches found! Name is valid.")
-                valid = True
-    return valid
+        if len(user_input) < 1:
+            print("You must enter at least one character for this input.")
+        else:
+            exists_check = True
+        
+        if exists_check and length_check:
+            valid = True
+
+    return user_input    

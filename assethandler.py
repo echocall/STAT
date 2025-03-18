@@ -90,7 +90,7 @@ def asset_loader(assetObjectsList: dict):
 def organize_assets_by_type():
     print("TODO: Organize the assets by asset type.")
 
-def new_asset(default_path: str, custom_path: str) -> dict:
+def new_asset(default_path: str, custom_path: str, game_name: str) -> dict:
     print("TODO: Create a new asset and make the appropriate file saves.")
     file_path = ""
     new_asset = {}
@@ -110,20 +110,106 @@ def new_asset(default_path: str, custom_path: str) -> dict:
         file_path = custom_path
         default_message = "A new custom asset has been added to the save file's data."
     
-    new_asset = new_asset_assembler(file_path)
+    new_asset = new_asset_assembler(file_path, game_name)
 
-def new_asset_assembler(file_path: str) -> object:
+def new_asset_assembler_quiet(file_path: str, game_name: str) -> object:
     # TODO: Finish
-    new_asset = {'name': '', 'asset_type': '', 'description': '', 'source': '', 'category':'',
-             'in_game_types':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
+    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
+             'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
              'effects':[], 'other':'', 'icon':'', 'image':''}
-    name_dict = {}
-    name_dict['name'] = get_new_asset_name(file_path)
-    new_asset['name'] = name_dict['name']
     
-    new_asset['in_game_types'] = set_game_types()
+    print("Remember: You can always add non-required fields later!")
+    
+    print()
+    name_dict = {}
+    name_dict['name'] = set_new_asset_name(file_path)
+    new_asset['name'] = name_dict['name']
 
-def get_new_asset_name(file_path: str) -> dict:
+    # Category for a game
+    print()
+    new_asset['category'] = set_category()
+
+    print()
+    add_description = user_confirm("Do you want to add a description now?")
+    if add_description:
+        new_asset['description'] = set_description()
+
+    print()
+    new_asset['source'] = game_name
+    
+    print()
+    add_attributes = user_confirm("Do you want to add atrributes now?")
+    if add_attributes:
+        new_asset['attributes'] = set_attributes()
+
+    print()
+    print("Remember: You can always add costs later!")
+    add_costs = user_confirm("Do you want to add buy costs to the asset now?")
+    if add_costs:
+        new_asset["buy_costs"] = set_buy_costs()
+
+    print()
+    add_prices = user_confirm("Do you want to add sell prices to the asset now?")
+    if add_prices:
+        new_asset['sell_prices'] = set_sell_prices()
+
+    # TODO: add effects
+
+    # TODO: add icon
+
+    # TODO: add image
+
+    print("Remember: You can always add non-required fields later!")
+
+def new_asset_assembler_loud(file_path: str, game_name: str) -> object:
+    # TODO: Finish
+    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
+             'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
+             'effects':[], 'other':'', 'icon':'', 'image':''}
+   
+    print("Remember: You can always add non-required fields later!")
+   
+    name_dict = {}
+    name_dict['name'] = set_new_asset_name(file_path)
+    new_asset['name'] = name_dict['name']
+
+    category_explanation()
+    print()
+    new_asset['category'] = set_category()
+
+    description_explanation()
+    print()
+    add_description = user_confirm("Do you want to add a description now?")
+    if add_description:
+        new_asset['description'] = set_description()
+
+    source_explanation()
+    print()
+    new_asset['source'] = game_name
+    
+    attributes_explanation()
+    print()
+    add_attributes = user_confirm("Do you want to add atrributes now?")
+    if add_attributes:
+        new_asset['attributes'] = set_attributes()
+
+    costs_explanation()
+    print()
+    add_costs = user_confirm("Do you want to add buy costs to the asset now?")
+    if add_costs:
+        new_asset["buy_costs"] = set_buy_costs()
+
+    prices_explanation()
+    print()
+    add_prices = user_confirm("Do you want to add sell prices to the asset now?")
+    if add_prices:
+        new_asset['sell_prices'] = set_sell_prices()
+
+    
+    print("Remember: You can always add non-required fields later!")
+
+
+def set_new_asset_name(file_path: str) -> dict:
     file_name = ""
     name = ""
     assets = []
@@ -142,7 +228,7 @@ def get_new_asset_name(file_path: str) -> dict:
         # TODO: Make this true part become recursive.
             print("\n" + "An asset of that name already exists. You may experience difficulties creating the file for that asset.", sep="\n")
             if user_confirm("Do you want to enter a new name now?"):
-                get_new_asset_name(file_path)
+                set_new_asset_name(file_path)
             else:
                 print("\n" + "Appending _placeholder to asset name. If further folder creation errors persist, please create a new name. " + "\n")
                 valid = True
@@ -155,34 +241,97 @@ def get_new_asset_name(file_path: str) -> dict:
 
     return  asset_name
 
+def category_explanation():
+    category_info = """A category is the largest organization chunk for an asset.
+    In the GUI, objects will be separated by category. 
+    An asset MUST have a category.
+    Examples: Unit, Room, Trap, 1st Level."""
+    print(category_info)
 
-def asset_type():
-    z = 26+26
-    # TODO: get the types of assets
-    # oooh, should we be saving this as a list in Game file?
-    # if non-default asset types, may be better to leave as text field.
+def set_category() -> str:
+    # TODO: Error Handling, maybe allow user to see/pick from already in use
+    # categories.
+    category = get_user_input_string_variable("Please enter a category for the asset: ", 100)
+    return category
 
-def set_source():
-    y = 25+25
-    # TODO:
-    # this is just name of the game.
-    # need multiple option
+def description_explanation():
+    description_info = """This is a text field for entering information about 
+    the asset you are creating. You can put extra stats that aren't covered by STAT,
+    or as a space for flavor text, or notes about the unit itself.
 
-def set_game_types() -> list:
+    You don't have to add a description to an asset."""
+    print(description_info)
+
+def set_description():
     # TODO: Error Handling
-    game_types_int = 0
-    game_types = []
-    game_types_int = get_user_int("How many types does the game assign to this unit?")
-    game_types = get_user_input_loop(game_types_int, list, str)
+    description = get_user_input_string_variable("Please enter a description for the asset: ", 1500)
+    return description
 
-    return game_types
+def source_explanation():
+    source_info = """The source is simply the name of the game you plan to use this asset with."""
+    print(source_info)
+
+def attributes_explanation():
+    attributes_info = """Attributes are different from Categories and Type.
+    They can be used to describe a unit, and in the future to search for particular units more easily.
+    
+    You don't need to add attributes to your unit."""
+    print(attributes_info)
+
+def set_attributes() -> list:
+    # TODO: Error Handling
+    game_attributes_int = 0
+    game_attributes = []
+
+    game_attributes_int = get_user_int("How many attributes do you want to add to this asset?")
+    game_attributes = get_user_input_loop(game_attributes_int, list, str)
+
+    return game_attributes
+
+def costs_explanation():
+    costs_info = """Buy costs are subtracted from the associated counters when
+    you add another asset of that type. This can represent different types of
+    currencies used to purchase the unit, resources used to construct the unit, 
+    or something else consumed when the resource goes up.
+    
+    For example we might mock-up a spell in a tabletop game like so:
+    Name: Magic Missile  ||| Buy Costs: First Level Spell Slot: 1 ||| Amount: 10
+    Whenever we add 1 to our Amount of Magic Missiles
+    we will subtract 1 from our counter of First Level Spell Slots. 
+    In this case the Amount of Magic Missiles can stand in for how many times we've cast the spell.
+    
+    
+    Whole Numbers only.
+    You can add more than one buy cost to an asset.
+    **You don't have to add a buy cost to an asset.**
+    Tip: If you set the value of a cost to a negative, you will GAIN that much instead."""
+    print(costs_info)
 
 def set_buy_costs() -> dict:
     # TODO: Error Handling
     buy_costs = {}
+
     game_resources_int = get_user_int("How many different resources do you need to buy or use this asset?")
     buy_costs = get_user_input_loop(game_resources_int, "Enter the resource name and amount needed to buy or use this unit: ", dict, str)
+
     return buy_costs
+
+def prices_explanation():
+    # TODO
+    prices_info = """A sell price is made up of the name of one of the counters in the game (ideally) and a number.
+    The number is added to the count of the counter of the same name when 'sell' is clicked.
+    It basically represents how much you get when you sell an asset or destroy it.
+
+    For example we might mock-up an asset in a tabletop game like so:
+    Name: Log Pile  ||| Sell Price: Wood: 20 ||| Amount: 10
+    Whenever we sell 1 Log pile we will add 20 to our 'Wood' counter. 
+
+    Whole Numbers only.
+    You can add more than one sell price to an asset.
+    **You don't have to add a sell price to an asset.**
+    Tip: If you set the value of a cost to a negative, you will LOSE that much instead.
+    """
+    print(prices_info)
 
 def set_sell_prices() -> dict:
     # TODO: Error Handling
@@ -191,11 +340,29 @@ def set_sell_prices() -> dict:
     sell_prices = get_user_input_loop(game_resources_int, "Enter the resource name and type you get for selling or destroying this asset: ", dict, str)
     return sell_prices
 
+def special_explanation():
+    special_info = """Special is an extra text field that
+    isn't required. Its only purpose is to exist in case you want
+    to separate some text out of the description."""
+    print(special_info)
+
+def set_special() -> str:
+    # TODO: Error Handling
+    special = get_user_input_string_variable("Please enter the special text for the asset: ", 1500)
+    return special
+
 def set_effects():
     d = 4+4
     # TODO: We will want to wait until we have effects made.
     # Make a dictionary of effects & their description
 
+def set_icon() -> str:
+    # TODO: make this fetch the file path/move icon file to the images folder.
+    e = 5+5
+
+def set_image() -> str:
+    # TODO: make this fetch the file path/move the image file to the images folder.
+    f = 6+6
 
 # dict_to_object
 def dict_to_objects(targetDict: list) -> dict:
