@@ -21,7 +21,7 @@ filePaths = stat_initialize(currentStat.config_file)
 print(filePaths)
 
 # === NEW GAME ====
-new_game = new_game(filePaths["gamespath"],filePaths["datapackspath"],filePaths["savespath"])
+new_game = new_game_assembly(filePaths["gamespath"],filePaths["datapackspath"],filePaths["savespath"])
 print("After creating new-game: ")
 print(type(new_game))
 print(new_game)

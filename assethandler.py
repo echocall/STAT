@@ -91,8 +91,7 @@ def organize_assets_by_type():
     print("TODO: Organize the assets by asset type.")
 
 # TODO finish
-def new_asset(is_default: bool, default_path: str, custom_path: str, game_name: str, asset_explanations: bool) -> object:
-    print("TODO: Create a new asset and make the appropriate file saves.")
+def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_path: str, game_name: str, asset_explanations: bool) -> object:
     file_path = ""
     new_asset = {}
 
@@ -108,10 +107,11 @@ def new_asset(is_default: bool, default_path: str, custom_path: str, game_name: 
     
     # Ask if the user wants explanations for the fields.
     if asset_explanations:
-        new_asset = new_asset_assembler_loud(file_path, game_name)
+        new_asset = new_asset_assembler_loud(file_path, for_new_game, game_name)
     else:
-        new_asset = new_asset_assembler_quiet(file_path, game_name)
+        new_asset = new_asset_assembler_quiet(file_path, for_new_game, game_name)
 
+    # try to turn the dictionary into an object
     try:
         asset_object = dict_to_asset_object(new_asset)
     except Exception:
@@ -120,7 +120,7 @@ def new_asset(is_default: bool, default_path: str, custom_path: str, game_name: 
      return asset_object
     
 # TODO: Finish missing fields: icon, image,
-def new_asset_assembler_quiet(file_path: str, game_name: str) -> dict:
+def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str) -> dict:
     # TODO: missing fields: icon, image
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
@@ -130,7 +130,7 @@ def new_asset_assembler_quiet(file_path: str, game_name: str) -> dict:
     
     print()
     name_dict = {}
-    name_dict['name'] = set_new_asset_name(file_path)
+    name_dict = set_new_asset_name(file_path, for_new_game)
     new_asset['name'] = name_dict['name']
 
     # Category for a game
@@ -144,6 +144,8 @@ def new_asset_assembler_quiet(file_path: str, game_name: str) -> dict:
 
     print()
     new_asset['source'] = game_name
+
+    # TODO: Type
     
     print()
     add_attributes = user_confirm("Do you want to add atrributes now?")
@@ -151,7 +153,6 @@ def new_asset_assembler_quiet(file_path: str, game_name: str) -> dict:
         new_asset['attributes'] = set_attributes()
 
     print()
-    print("Remember: You can always add costs later!")
     add_costs = user_confirm("Do you want to add buy costs to the asset now?")
     if add_costs:
         new_asset["buy_costs"] = set_buy_costs()
@@ -258,7 +259,7 @@ def new_asset_assembler_loud(file_path: str, game_name: str) -> dict:
         # call something to fix the game or fix those specific fields.
         return error_message
 
-def set_new_asset_name(file_path: str) -> dict:
+def set_new_asset_name(file_path: str, for_new_game: bool) -> dict:
     file_name = ""
     name = ""
     assets = []
@@ -270,23 +271,29 @@ def set_new_asset_name(file_path: str) -> dict:
         name = str(input("Enter the name of the new asset: ")).strip()
         file_name = format_str_for_filename(name)
 
-        # check that a game by that name doesn't already exists
-        assets = multi_json_names_getter(file_path, "assets")
-        if name in assets:
-        # if file_name already exists, ask for another game name and show what games exist.
-        # TODO: Make this true part become recursive.
-            print("\n" + "An asset of that name already exists. You may experience difficulties creating the file for that asset.", sep="\n")
-            if user_confirm("Do you want to enter a new name now?"):
-                set_new_asset_name(file_path)
-            else:
-                print("\n" + "Appending _placeholder to asset name. If further folder creation errors persist, please create a new name. " + "\n")
+        # If for a new game, don't look for already existing asset.
+        if for_new_game:
                 valid = True
-                asset_name["name"] = name + "_Placeholder"
-                asset_name["file"] = file_name + "_placeholder"
+                asset_name["name"] = name
+                asset_name["file"] = file_name
         else:
-            valid = True
-            asset_name["name"] = name
-            asset_name["file"] = file_name
+            # check that an asset by that name doesn't already exists
+            assets = multi_json_names_getter(file_path, "assets")
+            if name in assets:
+            # if file_name already exists, ask for another game name and show what games exist.
+            # TODO: Make this true part become recursive.
+                print("\n" + "An asset of that name already exists. You may experience difficulties creating the file for that asset.", sep="\n")
+                if user_confirm("Do you want to enter a new name now?"):
+                    set_new_asset_name(file_path)
+                else:
+                    print("\n" + "Appending _placeholder to asset name. If further folder creation errors persist, please create a new name. " + "\n")
+                    valid = True
+                    asset_name["name"] = name + "_Placeholder"
+                    asset_name["file"] = file_name + "_placeholder"
+            else:
+                valid = True
+                asset_name["name"] = name
+                asset_name["file"] = file_name
 
     return  asset_name
 
@@ -361,7 +368,7 @@ def set_buy_costs() -> dict:
     buy_costs = {}
 
     game_resources_int = okay_user_int(0,"How many different resources do you need to buy or use this asset?")
-    buy_costs = get_user_input_loop(game_resources_int, "Enter the resource name and amount needed to buy or use this unit: ", dict, str)
+    buy_costs = get_user_input_loop(game_resources_int, "Enter the resource name and amount needed to buy or use this unit: ", "dict", "str")
 
     return buy_costs
 
@@ -386,7 +393,7 @@ def set_sell_prices() -> dict:
     # TODO: Error Handling
     sell_prices = {}
     game_resources_int = okay_user_int(0,"How many different resources do you get for selling or destroying this asset?")
-    sell_prices = get_user_input_loop(game_resources_int, "Enter the resource name and type you get for selling or destroying this asset: ", dict, str)
+    sell_prices = get_user_input_loop(game_resources_int, "Enter the resource name and type you get for selling or destroying this asset: ", "dict", "str")
     return sell_prices
 
 def special_explanation():

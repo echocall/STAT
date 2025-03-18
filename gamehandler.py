@@ -129,7 +129,6 @@ def new_game(game_path: str, datapack_path: str, saves_path: str) -> object:
     # TODO: explanation/no explanation divide. 
     # If user has said said NO EXPLANATIONS AGAIN do not even ask if they want explanations or not.
 
-
     want_explanations = user_confirm("Do you want explanations of what each field in a game is or does?")
     if want_explanations:
         # call new_game_assembly_loud
@@ -190,7 +189,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         # call assetsHandler's create Assets.
         assets_to_create = okay_user_int(0,"How many default assets do you want to create?")
         for index in range(assets_to_create):
-            created_asset = new_asset(True, new_game["asset_default_path"], "", new_game["name"], asset_explanations)
+            created_asset = new_asset(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations)
             created_assets[created_asset.get_name()] = created_asset
         
         print(created_assets)
@@ -349,7 +348,7 @@ def define_turns(game_name: str) -> dict:
 
     return turns
 
-def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_path: str, images_path: str) -> bool:
+def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_path: str) -> bool:
     folder_created = False
     folders_created = {}
     result = False

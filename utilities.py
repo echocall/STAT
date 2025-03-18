@@ -314,7 +314,7 @@ def get_list_value(list_name: str):
 
 # gets the length of the list or dictionary that needs to be filled with ints
 # then asks user for ints to fill it that many times.
-def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: str):
+def get_user_input_loop(loop_length: int, prompt:str, input_type: str, field_type: str):
     # TODO: get_user_input_loop finish
     new_dict = {}
     new_list = []
@@ -324,13 +324,16 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     input_variable = ""
 
     print(prompt, sep="\n")
+    # if the input_type is dictionary, prepare to get name of field and value of field
     if input_type == "dict":
         for index in range(loop_length):
+           print("At " + str(index) + " of " + str(loop_length))
            field_name = str(input("\n" + "Enter the name: ")).strip()
            new_prompt = "Enter the value for " + field_name + ": "
            input_variable = get_single_dict_value(new_prompt, field_name, field_type)
-           new_dict[field_name] = input_variable
+           new_dict[field_name] = input_variable[field_name]
         return new_dict
+    # if input type is list, prepare to get the # of items in the list.
     elif input_type == "list":
         for index in range(loop_length):
             print("\n" + str(index) + " of " + str(loop_length) + " to go: ")
@@ -387,6 +390,8 @@ def get_user_input_string_variable(prompt: str, character_limit: int) -> str:
             print("The text entered is over the character limit, shrinking string: ")
             user_input = user_input[:character_limit]
             print("Input shrunk to: " + user_input)
+            length_check = True
+        else:
             length_check = True
 
         if len(user_input) < 1:
