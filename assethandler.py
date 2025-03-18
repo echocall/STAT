@@ -103,7 +103,7 @@ def dict_to_objects(targetDict: list) -> dict:
     # add class object to dict of class objects. "name":objectfor asset in targetDict:
     for asset in targetDict:
         classObjName = "c" + asset["name"]
-        classObjName = MyAsset(asset)
+        classObjName = MyAsset(**asset)
         class_objects[asset["name"]] = classObjName
     return class_objects
 

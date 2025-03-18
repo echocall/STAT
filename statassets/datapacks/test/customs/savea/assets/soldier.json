@@ -2,14 +2,13 @@
     "name":"Soldier",
     "asset_type":"Unit",
     "description":"A basic soldier.",
-    "source":"Override",
+    "source":"Delve",
     "category":"Offense",
     "in_game_types":["Warrior", "Unit", "Human", "Offense"],
     "buy_costs":{"none": 0},
     "sell_prices":{"none": 0},
     "special":"Deals 5 STR per solider in squad.",
     "effects":[],
-    "other":"",
     "icon":"",
     "image":""
 }

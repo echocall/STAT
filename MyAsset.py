@@ -16,7 +16,8 @@ class MyAsset:
     icon: str
     image: str
 
-    def __init__(self, name, asset_type, description, source, category,
+
+    def __post__init__ (self, name, asset_type, description, source, category,
                   in_game_types, buy_costs, sell_prices, special,
                   effects, icon, image):
         self.name = name

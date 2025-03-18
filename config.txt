@@ -1,7 +1,7 @@
 [Paths]
 gamesPath = .\statassets\games
-datapackPath = .\statassets\datapacks
-saveFilePath = .\statassets\saves
+datapacksPath = .\statassets\datapacks
+savesPath = .\statassets\saves
 templateFilePath = .\statassets\templates
 
 [Key Binds]

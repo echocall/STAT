@@ -2,14 +2,13 @@
     "name":"Barracks",
     "asset_type":"Unit Rooms",
     "description":"A room for your soldiers to live in.",
-    "source":"Default",
+    "source":"Delve",
     "category":"Buffing",
     "in_game_types":["Building"],
-    "buy_gosts":{"Resources": 10},
+    "buy_costs":{"Resources": 10},
     "sell_prices":{"none": 0},
     "special":"Each Barrack can hold either 10 Soldiers or 10 Gunners. (They cannot share a grid after an ancient smear against rifles).",
     "effects":[],
-    "other":"",
     "icon":"",
     "image":""
 }

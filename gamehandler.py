@@ -124,7 +124,7 @@ def dict_to_game_object(targetDict: dict) -> object:
     return classObjName
 
 # TODO: Finish Events, Effects, and Actors
-def new_game_assembly(game_path: str, saves_path: str, datapack_path: str) -> dict:
+def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> dict:
     name_dict = {}
     icon = ""
     turns = {}
