@@ -161,7 +161,7 @@ def user_confirm(prompt: str) -> bool:
     bln_continue = bool
 
     while not valid:
-        input_variable = input(prompt + "Type (Yes/No): ").strip().upper()
+        input_variable = input(prompt + " Type (Yes/No): ").strip().upper()
         if input_variable == "NO":
             bln_continue = False
             valid = True
@@ -312,10 +312,10 @@ def get_single_dict_value(prompt: str, field_name: str, field_type: str) -> dict
 def get_list_value(list_name: str):
     print("TODO: this")
 
-# gets the length of the list or dictionary that needs to be filled
-# then asks user for information to fill it that many times.
+# gets the length of the list or dictionary that needs to be filled with ints
+# then asks user for ints to fill it that many times.
 def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: str):
-    print("TODO: get_user_input_loop finish", sep="\n")
+    # TODO: get_user_input_loop finish
     new_dict = {}
     new_list = []
     field_name = ""
@@ -326,7 +326,7 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     print(prompt, sep="\n")
     if input_type == "dict":
         for index in range(loop_length):
-           field_name = str(input("Enter the name of the field: ")).strip()
+           field_name = str(input("\n" + "Enter the name of the field: ")).strip()
            new_prompt = "Enter the value for " + field_name + ":"
            input_variable = get_single_dict_value(new_prompt, field_name, field_type)
            new_dict[field_name] = input_variable
@@ -334,10 +334,10 @@ def get_user_input_loop(loop_length: int, prompt:str, input_type, field_type: st
     elif input_type == "list":
         for index in range(loop_length):
             if field_type == "str":
-                input_variable = input("Enter the value and press enter: ").strip()
+                input_variable = input("\n" + "Enter the string and press enter: ").strip()
                 new_list.append(str(input_variable))
             elif field_type == "int":
-                    input_variable = get_user_int("Enter an integer: ")
+                    input_variable = get_user_int("\n" + "Enter an integer: ")
                     new_list.append(input_variable)
             else: 
                 error_message = "Error! Unrecognized field_type for get_user_input_loop."

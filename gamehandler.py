@@ -253,7 +253,7 @@ def get_new_game_name(file_path: str) -> dict:
     file_name = ""
     name = ""
     games = []
-    result = {}
+    result = False
     game_name = {"name": "", "file":""}
     valid = False
     
@@ -263,23 +263,32 @@ def get_new_game_name(file_path: str) -> dict:
         file_name = format_str_for_filename(name)
 
         # check that a game by that name doesn't already exists
+        new_game_folder = file_path + '\\' + file_name
         games = multi_json_names_getter(file_path, "games")
-        result = list_compare(games, file_name)
-
+        if name in games:
         # if file_name already exists, ask for another game name and show what games exist.
-        if result["match"] == True:
-           print("A game of that name already exists, pick another one!", sep="\n")
-           print("Games that exist: " + games, sep="\n")
+        # TODO: Make this true part become recursive.
+            print("\n" + "A game of that name already exists. You may experience difficulties creating folders for this game.", sep="\n")
+            if user_confirm("Do you want to enter a new name now?"):
+                get_new_game_name(file_path)
+            else:
+                print("\n" + "Appending _placeholder to game name. If further folder creation errors persist, please create a new name. " + "\n")
+                valid = True
+                game_name["name"] = name + "_Placeholder"
+                game_name["file"] = file_name + "_placeholder"
         else:
             valid = True
             game_name["name"] = name
             game_name["file"] = file_name
+
     return  game_name
 
 def create_counters() -> dict:
     # TODO add error handling
+    # define a counter
+    # provide an example of a counter
     print(
-            f"Counters are a way to keep track of numerical values.", 
+            f"\n" + "Counters are a way to keep track of numerical values.", 
             "They can be used to represent money, health, points,",
             " or other values where all you need is a name and a number.",
             "Example: Health: 20, Gold: 5",
@@ -287,8 +296,6 @@ def create_counters() -> dict:
           )
     num_counters = -1
     counters = {}
-    # define a counter
-    # provide an example of a counter
     # ask for counters
     num_counters = okay_user_int(0, "Enter the number of counters you want to create: ")
 
