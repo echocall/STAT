@@ -55,7 +55,7 @@ class MyGame:
         self.turn_type = turn_type
         self.start_turn = start_turn
 
-    def load_from_dict(self, gameDict):
+    def set_from_dict(self, gameDict):
         if self is None and gameDict is not None:
             for key, value in gameDict.items():
                 setattr(self, key, value)
@@ -66,7 +66,7 @@ class MyGame:
     """
 
     def __str__(self):
-        return self.name +" " + self.description
+        return self.name +" : " + self.description
 
     def set_name(self, name):
         self.name = name

@@ -240,6 +240,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
 
     # TODO: Icon
     new_game["icon"] = ""
+    
     # Save file Path
     new_game["save_files_path"] = saves_path + "\\" + name_dict["file"]
 

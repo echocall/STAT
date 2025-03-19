@@ -75,23 +75,35 @@ def custom_asset_fetch(customFilePath: str) -> dict:
 
 # Handle merging custom assets & default assets
 # returns list of asset objects
-def merge_assets(fetched_default_assets: list, custom_assets: list, conflict_check: dict) -> list:
+def merge_assets(fetched_default_assets: list, custom_assets: list,
+                  conflict_check: dict) -> list:
     merged_assets_list = merge_dict_lists(fetched_default_assets, custom_assets, conflict_check)
     
     return merged_assets_list
 
 # Asset Loader
-def asset_loader(assetObjectsList: dict):
+def asset_loader(asset_objects: dict):
     print("TODO: Load assets.")
     # Organize assets by asset type
     # prep the types for being seen
 
+# TODO: This
+def organize_assets_by_category() -> dict:
+    # TODO: Take all assets from a loaded game/save & sort into a dictionary
+    # of dictionaries grouping assets with similar categories together.
+    # {"categoryName":{dictionary of objects in that category}, 
+    # "categoryName2":{dictionary2}}
+    az = 1 + 26
+
 # asset type organizer
-def organize_assets_by_type():
-    print("TODO: Organize the assets by asset type.")
+def organize_assets_by_type() -> dict:
+    # TODO: Take all assets from a loaded game/save & sort into a dictionary
+    # of dictionaries grouping assets with similar types together.
+    by = 2 + 25
 
 # TODO finish
-def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_path: str,
+def new_asset(is_default: bool, for_new_game: bool, default_path: str,
+               custom_path: str,
                game_name: str, asset_explanations: bool, counters: dict) -> object:
     file_path = ""
     new_asset = {}
@@ -125,9 +137,10 @@ def new_asset(is_default: bool, for_new_game: bool, default_path: str, custom_pa
      return asset_object
     
 # TODO: Finish missing fields: icon, image,
-def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str, counter_names: list) -> dict:
+def new_asset_assembler_quiet(file_path: str, for_new_game: bool,
+                               game_name: str, counter_names: list) -> dict:
     # TODO: missing fields: icon, image
-    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
+    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'asset_type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
              'effects':[], 'icon':'', 'image':''}
     
@@ -151,6 +164,8 @@ def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str
     new_asset['source'] = game_name
 
     # TODO: Type
+    print()
+    new_asset['asset_type'] = set_asset_type()
     
     print()
     add_attributes = user_confirm("Do you want to add atrributes now?")
@@ -194,9 +209,10 @@ def new_asset_assembler_quiet(file_path: str, for_new_game: bool, game_name: str
         # call something to fix the game or fix those specific fields.
         return error_message
 # TODO: Finish missing fields: icon, image
-def new_asset_assembler_loud(file_path: str, for_new_game: bool, game_name: str, counter_names: list) -> dict:
+def new_asset_assembler_loud(file_path: str, for_new_game: bool,
+                              game_name: str, counter_names: list) -> dict:
     # TODO: Finish
-    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'type':'',
+    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'asset_type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
              'effects':[], 'other':'', 'icon':'', 'image':''}
    
@@ -219,6 +235,11 @@ def new_asset_assembler_loud(file_path: str, for_new_game: bool, game_name: str,
     source_explanation()
     print()
     new_asset['source'] = game_name
+    
+    # TODO: Typeset_asset_type
+    asset_type_explanation()
+    print()
+    new_asset['asset_type'] = set_asset_type()
     
     attributes_explanation()
     print()
@@ -332,13 +353,30 @@ def source_explanation():
     source_info = """The source is simply the name of the game you plan to use this asset with."""
     print(source_info)
 
+def asset_type_explanation():
+    type_info = """ Asset Type is another way to categorize and asset.
+    Its another way to further break assets into small parts withing categories.
+    For example if we had animal based assets and we wanted to make a lion:
+    Name: Lion ||| Category: Mammal ||| Asset Type: Predator"""
+    print(type_info)
+
+# TODO: Error Handling
+def set_asset_type() -> str:
+    asset_type = get_user_input_string_variable("Please enter a type for the asset: ", 100)
+    return asset_type
+
 def attributes_explanation():
     attributes_info = """Attributes are different from Categories and Type.
-    They can be used to describe a unit, and in the future to search for particular units more easily.
+    They can be used to describe a unit, and in the future to search
+      for particular units more easily.
+      
+    For example if we had animal based assets and we wanted to make a lion:
+    Name: Lion ||| Category: Mammal ||| Asset Type: Predator 
+      Attributes: [Carnivore, Predator, Fur, Claws, Fangs, Feline]
     
     You don't need to add attributes to your unit."""
     print(attributes_info)
-
+# TODO: Error Handling
 def set_attributes() -> list:
     # TODO: Error Handling
     game_attributes_int = 0
@@ -351,7 +389,7 @@ def set_attributes() -> list:
 
 def costs_explanation():
     costs_info = """Buy costs are subtracted from the associated counters when
-    you add another asset of that type. This can represent different types of
+    you add another asset of that kind. This can represent different types of
     currencies used to purchase the unit, resources used to construct the unit, 
     or something else consumed when the resource goes up.
     
@@ -437,21 +475,25 @@ def set_special() -> str:
     # TODO: Error Handling
     special = get_user_input_string_variable("Please enter the special text for the asset: ", 1500)
     return special
+
 # TODO: finish
 def set_effects():
     d = 4+4
     # TODO: We will want to wait until we have effects made.
     # Make a dictionary of effects & their description
+
 # TODO: finish
 def set_icon() -> str:
     # TODO: make this fetch the file path/move icon file to the images folder.
     e = 5+5
+
 # TODO: finish
 def set_image() -> str:
     # TODO: make this fetch the file path/move the image file to the images folder.
     f = 6+6
 
-# dict_to_game_object
+# Takes singular asset dictionary and returns
+# a singular asset object.
 def dict_to_asset_object(targetDict: dict) -> object:
     # get name of the dictionary and insubstantiate into a class object.
     classObjName = "c" + targetDict["name"]
@@ -461,8 +503,9 @@ def dict_to_asset_object(targetDict: dict) -> object:
     except Exception:
         print(traceback.format_exc())
 
-# dict_to_object
-def dict_to_objects(targetDict: list) -> dict:
+# takes a dictionary of asset dicts and returns
+# a dictionary of objects.
+def dict_to_objects(targetDict: dict) -> dict:
     # add class object to dict of class objects. "name":object
     class_objects = {}
 

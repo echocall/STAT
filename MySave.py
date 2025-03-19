@@ -29,8 +29,8 @@ class MySave:
                    counters, assets, actors, currentEvents,
                      currentEffects, logFilePath ):
         self.name = name
-        self.create_date = createDate
-        self.date_last_save = dateLastSave
+        self.create_date = datetime.strptime(str(createDate), '%\d-%m-%Y %H:%M:%S')
+        self.date_last_save = datetime.strptime(str(dateLastSave), '%\d-%m-%Y %H:%M:%S')
         self.description = description
         self.asset_customs = assetCustoms
         self.asset_customs_path = assetCustomsPath
@@ -47,35 +47,46 @@ class MySave:
         self.current_effects = currentEffects
         self.log_file_path = logFilePath
 
+    def __str__(self):
+        return self.name + " Created: " + self.create_date + "  Last Saved: " + self.date_last_save
+
     def create_from_dict(self,saveDict=None):
         if saveDict is not None:
             for key, value in saveDict.items():
                 setattr(self, key, value)
 
-    def update_counters(self, counterDict=None):
+    def update_save(self, saveDict=None):
+        if saveDict is not None:
+            for key, value in saveDict.items():
+                setattr(self, key, value)
+
+    def set_counters(self, counterDict=None):
         if counterDict is not None:
             self.counters = counterDict
 
-    def update_assets(self, assetDict=None):
+    def set_assets(self, assetDict=None):
         if assetDict is not None:
             self.assets = assetDict
 
-    def update_actors(self, actorDict=None):
+    def set_actors(self, actorDict=None):
         if actorDict is not None:
             self.actors = actorDict
     
-    def update_events(self, eventDict=None):
+    def set_events(self, eventDict=None):
         if eventDict is not None:
             self.current_events = eventDict
 
-    def update_effecs(self, effectDict=None):
+    def set_effecs(self, effectDict=None):
         if effectDict is not None:
             self.current_effects = effectDict
 
-    # other update stuff.
+    # Time stuff.
+    def create(self):
+        self.create_date = datetime.strptime(str(datetime.today('EDT')), '%\d-%m-%Y %H:%M:%S')
+    
     def save(self):
-        self.date_last_save = datetime.today('EDT')
+        self.date_last_save = datetime.strptime(str(datetime.today('EDT')), '%\d-%m-%Y %H:%M:%S')
 
     # to_JSON
     def to_JSON(self):
-        return json.dumps(self,  indent=4)
+        return json.dumps(self, indent=4)
