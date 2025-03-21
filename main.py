@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import api_router_example
-import class_example
 import function_example
 import home_page
 import new_game
