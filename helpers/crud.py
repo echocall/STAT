@@ -1,6 +1,6 @@
 import json
 from pathlib import PurePath, Path
-from utilities import *
+from helpers.utilities import *
 import traceback
 
 # CREATE
@@ -27,7 +27,7 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: 
             f.close()
             result = True
     else:
-        error_message = "Incorrect Path: directory not found!"
+        error_message = "Incorrect Path: directory not found for file creation!"
 
     if result == True:
         return result

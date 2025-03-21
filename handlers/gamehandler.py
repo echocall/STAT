@@ -1,7 +1,7 @@
-from crud import *
-from utilities import *
-from assethandler import * # TODO: Change this later.
-import MyGame as mg
+from helpers.crud import *
+from helpers.utilities import *
+from handlers.assethandler import * # TODO: Change this later.
+import classes.MyGame as mg
 import traceback
 
 def game_handler(is_game_loaded: bool) -> object:
@@ -236,7 +236,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         # not creating events now.
         new_game["has_events"] = False
         new_game["event_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\events"
-        new_game["default_event"] = []
+        new_game["default_events"] = []
 
     # TODO: Icon
     new_game["icon"] = ""
@@ -365,7 +365,7 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 
     for folder in folders:
         folder_created = create_new_directory(folder)['created']
-        folders_created.append(folder_created)
+        folders_created['folder']=folder_created
 
     if False not in folders_created:
         result = True

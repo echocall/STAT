@@ -1,12 +1,12 @@
 import traceback
 from pathlib import PurePath, Path
-from crud import *
-from utilities import *
-from assethandler import *
-from gamehandler import *
-from savehandler import *
-from StatInstance import *
-from MyGame import *
+from helpers.crud import *
+from helpers.utilities import *
+from handlers.assethandler import *
+from handlers.gamehandler import *
+from handlers.savehandler import *
+from classes.StatInstance import *
+from classes.MyGame import *
 from tests import *
 
 # Initialzie the class instance.
@@ -26,6 +26,12 @@ print("After creating new-game: ")
 print(type(new_game))
 print(new_game)
 print()
+
+file_name = format_str_for_filename(new_game['name'])
+game_path = filePaths["gamespath"] + file_name
+
+file_saved = create_new_json_file(file_name, game_path, new_game)
+print(file_saved)
 
 my_new_game = dict_to_game_object(new_game)
 

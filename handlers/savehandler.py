@@ -1,5 +1,5 @@
-from crud import *
-from utilities import *
+from helpers.crud import *
+from helpers.utilities import *
 
 def save_handler():
     print("TODO: Handle the saves of various games.")

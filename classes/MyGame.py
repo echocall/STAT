@@ -74,5 +74,12 @@ class MyGame:
     def get_name(self):
         return self.name
     
+    def add_counter(self, counter_key, counter_value):
+        self.counters[counter_key] = counter_value
+
+    def remove_counter(self, counter_key):
+        self.counters.pop(counter_key)
+    
     def get_savepath(self):
         return self.save_files_path
+    

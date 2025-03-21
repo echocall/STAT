@@ -1,6 +1,6 @@
-from crud import *
-from utilities import *
-from MyAsset import *
+from helpers.crud import *
+from helpers.utilities import *
+from classes.MyAsset import *
 
 # Need to adjust asset_handler depending on game state.
 # Example: New game -> Only call default assets, Load Game -> check for customs

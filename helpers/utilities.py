@@ -366,6 +366,29 @@ def get_user_input_string_variable(prompt: str, character_limit: int) -> str:
 
     return user_input    
 
+# validation
+def validate_user_input_variable(user_input: str, max_limit: int, min_limit: int) -> str:
+    valid = False
+    length_check = False
+    exists_check = False
+    error_message = ''
+
+    while not valid:
+        if len(user_input) > max_limit:
+            error_message = "The text entered is over the character limit, please correct the length."
+        else:
+            length_check = True
+
+        if len(user_input) < min_limit:
+            error_message = "You do not meet the required minimum length for this field. Min length is = " + str(min_limit) + " characters."
+        else:
+            exists_check = True
+        
+        if exists_check and length_check:
+            error_message = 'None'
+
+    return error_message    
+
 # gets the length of the list or dictionary that needs to be filled with ints
 # then asks user for ints to fill it that many times.
 def get_user_input_loop(loop_length: int, prompt:str, input_type: str, field_type: str):
@@ -439,4 +462,3 @@ def get_user_input_loop_list(loop_length: int, prompt:str, input_type: str, fiel
     else:
         error_message = "Input Type entered not recognized."
     return error_message
-

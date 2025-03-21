@@ -1,13 +1,13 @@
 import datetime
 import traceback
 from pathlib import PurePath, Path
-from crud import *
-from utilities import *
-from assethandler import *
-from gamehandler import *
-from savehandler import *
-from StatInstance import *
-from MyGame import *
+from helpers.crud import *
+from helpers.utilities import *
+from handlers.assethandler import *
+from handlers.gamehandler import *
+from handlers.savehandler import *
+from classes.StatInstance import *
+from classes.MyGame import *
 import tests
 
 def unit_test(filePaths: dict):
