@@ -35,6 +35,13 @@ async def new_game_dialog():
             description.validation={'Input too long, limit is 500 characters.': lambda z: len(z) <= 500}
             desc_chars_left = ui.label()
 
+            # Create counters
+            ui.label('Do you want to add counters to your game?')
+            has_counters = ui.switch()
+
+
+
+
         with ui.card_actions().classes():
             # The button submits the dialog providing the text entered
             submit = ui.button(
@@ -45,6 +52,7 @@ async def new_game_dialog():
             submit.bind_enabled_from(
                 name_input, "error", backward=lambda x: not x and name_input.value
             )
+            # attempting to bind the information but getting errors.
             name_input.bind_value_from(game, 'name', name_input.value)
             description.bind_value_from(game, 'description', description.value)
             # Its disabled by default since the validation rules only run when the text changes
