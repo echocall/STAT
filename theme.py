@@ -1,7 +1,5 @@
 from contextlib import contextmanager
-
 from menu import menu
-
 from nicegui import ui
 
 
@@ -13,7 +11,7 @@ def frame(navigation_title: str):
     with ui.header():
         ui.label('STAT').classes('font-bold')
         ui.space()
-        ui.label(navigation_title)
+        ui.label(navigation_title).classes('font-bold')
         ui.space()
         with ui.row():
             menu()

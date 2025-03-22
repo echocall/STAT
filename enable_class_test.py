@@ -1,5 +1,5 @@
 from nicegui import ui
-# base from https://github.com/zauberzeug/nicegui/discussions/1791
+# base from second example here: https://github.com/zauberzeug/nicegui/discussions/1791
 class Enable:
     def __init__(self) -> None:
         self.inputs = {}
@@ -51,8 +51,10 @@ class Enable:
             self.no_errors = True
 
 enable = Enable()
-a = ui.input("A", value=" ", on_change=lambda x: enable.on_change(x, 'short'), validation={"Too short!": enable.is_too_short})
-b = ui.input("B", value=" ", on_change=lambda y: enable.on_change(y, 'long', 10), validation={"Too long!": enable.is_too_long_variable})
+a = ui.input("A", value=" ", on_change=lambda x: enable.on_change(x, 'short'),
+              validation={"Too short!": enable.is_too_short})
+b = ui.input("B", value=" ", on_change=lambda y: enable.on_change(y, 'long'),
+              validation={"Too long!": lambda b: enable.is_too_long_variable(b, 10)})
 
 c = ui.button("C")
 a.value = ""
