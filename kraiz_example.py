@@ -1,3 +1,4 @@
+from nicegui import ui
 async def new_table_dialog(db: AsyncSession, user: UserResponse, callback):
     with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a New Table").classes("text-h3")

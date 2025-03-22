@@ -19,4 +19,3 @@ def frame(navigation_title: str):
             menu()
     with ui.column().classes('absolute-center items-center'):
         yield
-        
