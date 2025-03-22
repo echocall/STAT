@@ -15,6 +15,10 @@ game = {'name': '', 'description':'',
         'icon':'', 'save_files_path': '', 
         'has_turns': False, 'turn_type': '', 'start_turn': 0}
 
+# TODO: Fix returns & passing info in.
+# TODO: don't call Create_New_Asset during the creation of a new game, wait until game has been created?
+# COULD pass in the value in the game.name, or have a list of game names passed in in other call cases... hm...
+
 async def new_game_dialog():
     with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a New Game").classes('text-h3')
