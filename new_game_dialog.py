@@ -1,7 +1,10 @@
 import theme
+from classes.Enable import *
 from message import message
 from new_counter_dialog import new_counter_dialog
 from nicegui import ui
+
+enable = Enable()
 
 game = {'name': '', 'description':'', 
         'has_counters': False, 'counters': {},
@@ -13,19 +16,18 @@ game = {'name': '', 'description':'',
         'has_turns': False, 'turn_type': '', 'start_turn': 0}
 
 async def new_game_dialog():
-    with ui.dialog() as dialog, ui.card().tight().classes():
+    with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a New Game").classes('text-h3')
         with ui.card_section().classes('w-80 items-stretch'):
             # get the name of the game.
             ui.label("Enter a name for the game. The name should be unique.").classes()
             name_input = ui.input(label='Game Name', placeholder='50 character limit',
                             on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-            # name_input.bind_value(globals(),'game')
+            # allows user to clear the field
             name_input.props('clearable')
             # This handles the validation of the field.
-            name_input.validation={'Input too long, limit is 50 characters.': lambda x: len(x) <= 50,
-                                        'Input too short, you need at least five characters.': lambda y: len(y) >= 5} 
-            # Binds to the field in the dictionary.             
+            name_input.validation={"Too short!": enable.is_too_short} 
+            # Displays the characters.        
             name_chars_left = ui.label()
             
         with ui.card_section().classes('w-80 items-stretch'):
@@ -34,7 +36,7 @@ async def new_game_dialog():
             description = ui.input(label='Game Description', placeholder='500 character limit',
                             on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
             # this handles the validation of the field.
-            description.validation={'Input too long, limit is 500 characters.': lambda z: len(z) <= 500}
+            description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
             desc_chars_left = ui.label()
             
         # Creating counters
@@ -118,10 +120,8 @@ async def new_game_dialog():
             submit.bind_enabled_from(
                 name_input, "error", backward=lambda x: not x and name_input.value
             )
-            # attempting to bind the information but getting errors.
-            # name_input.bind_value_from(game, 'name', name_input.value)
-            # description.bind_value_from(game, 'description', description.value)
-            # Its disabled by default since the validation rules only run when the text changes
+
+            # Disable the button by default until validation is done.
             submit.disable()
 
             # Cancel out of dialog.

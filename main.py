@@ -4,7 +4,7 @@ import function_example
 import home_page
 import new_game
 import theme
-
+from fastapi import Depends 
 from nicegui import app, ui
 
 
