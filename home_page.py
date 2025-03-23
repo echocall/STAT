@@ -5,6 +5,8 @@ from nicegui import ui
 
 def content() -> None:
     
+    ui.label("Welcome to STAT!")
+
     ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
     new_game = ui.button(
     "Create New Game",

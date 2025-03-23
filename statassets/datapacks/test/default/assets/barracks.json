@@ -1,6 +1,6 @@
 {
     "name":"Barracks",
-    "category":"Unit Rooms",
+    "category":"Room",
     "description":"A room for your soldiers to live in.",
     "source":"Delve",
     "type":"Buffing",

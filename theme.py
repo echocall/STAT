@@ -15,7 +15,9 @@ def frame(navigation_title: str):
         ui.space()
         with ui.row():
             menu()
-    with ui.column().classes('absolute-center items-center'):
+    with ui.column().classes('w-full items-center'):
         yield
+    with ui.footer().props(f' color=#d5c7ba'):
+        ui.label('STAT').classes('font-bold')
     # with ui.label.color('#688157'):
     #    yield

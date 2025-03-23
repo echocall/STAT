@@ -517,3 +517,56 @@ def dict_to_objects(targetDict: dict) -> dict:
         class_objects[asset["name"]] = classObjName
     return class_objects
 
+    # Sort the assets by category
+
+# SORTING
+
+def sort_assets(assets_to_sort: dict) -> dict:
+        sorted_assets = {}
+        # Make a set of all the different category types.
+        categories_set = {}
+        categories_list = []
+
+        categories_set = set(categories_set)
+
+        for key in assets_to_sort:
+            if assets_to_sort[key]['category'] not in categories_set:
+                categories_set.add(assets_to_sort[key]['category'])
+       # Change set into list for more consistent sorting.
+        categories_list = list(categories_set)
+        
+        categories_list.sort()
+
+        # now that we have the set, create dictionary.
+        sorted_assets = asset_sorter(assets_to_sort, categories_list)
+        return sorted_assets
+
+    # actually sorted the assets by category.
+
+def asset_sorter(assets_to_sort: dict, categories_list: list) -> dict:
+        #sorted_assets = {'category':[<asset1>,<asset2>]}
+        sorted_assets = {}
+        # initialize the dictionary of lists
+        for category in categories_list:
+            sorted_assets[category] = []
+        
+        for key in assets_to_sort:
+        # if the asset's category is in the sorted dictionary, add it.
+            if assets_to_sort[key]['category'] in sorted_assets:
+                category = assets_to_sort[key]['category']
+                sorted_assets[category].append(assets_to_sort[key])
+            return sorted_assets
+            
+def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
+        # TODO: return an unsorted dictionary of owned assets.
+        owned_assets = {}
+        error_message = ''
+        for asset_name in assets_owned:
+            # checking if the owned asset is in the asset list.
+                if asset_name in assets:
+                    owned_assets[asset_name] = assets.get(asset_name)
+                else:
+                # TODO: error handling
+                    error_message = 'Owned asset not in list of assets.'
+
+        return owned_assets
