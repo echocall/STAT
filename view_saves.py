@@ -1,5 +1,5 @@
-from message import message
-import theme
+from elements.message import message
+import elements.theme as theme
 from pathlib import PurePath, Path
 from nicegui import ui
 from handlers.savehandler import *

@@ -1,5 +1,5 @@
-import theme
-from message import message
+import elements.theme as theme
+from elements.message import message
 
 from nicegui import ui
 

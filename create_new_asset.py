@@ -1,7 +1,9 @@
-import theme
-from message import message
+import elements.theme as theme
+from elements.message import message
 from classes.Enable import Enable
 from classes.MyAsset import MyAsset
+from create_new_dict_entry_dialog import new_dict_entry_dialog
+from new_counter_dialog import new_counter_dialog
 from nicegui import ui
 
 # TODO: Fix returns & passing info in.

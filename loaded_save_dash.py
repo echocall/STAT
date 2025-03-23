@@ -1,8 +1,8 @@
 from nicegui import ui
 from handlers.assethandler import *
-from classes.CategoryLabel import CategoryLabel
-from classes.AssetContainer import AssetContainer
-import theme
+from elements.CategoryLabel import CategoryLabel
+from elements.AssetContainer import AssetContainer
+import elements.theme as theme
 
 # Dashboard for after a game has been selected, and a save has been loaded.
 # Displays the user's information.

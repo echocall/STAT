@@ -1,4 +1,4 @@
-from message import message
+from elements.message import message
 
 from nicegui import ui
 

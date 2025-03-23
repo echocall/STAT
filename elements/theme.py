@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from menu import menu
+from elements.menu import menu
 from nicegui import ui
 
 @contextmanager

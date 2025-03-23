@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-import api_router_example
+
 import function_example
 import home_page
-import new_game
-import theme
+import create_new_game
+import create_new_asset
+import elements.theme as theme
 import view_games
 import view_saves
 import loaded_save_dash
+
+
 from fastapi import Depends 
-from nicegui import app, ui
+from nicegui import ui
+
 
 
 # Example 1: use a custom page decorator directly and putting the content creation into a separate function
@@ -17,7 +21,9 @@ def index_page() -> None:
     with theme.frame('Homepage'):
         home_page.content()
 
-new_game.create()
+create_new_game.create()
+
+create_new_asset.create()
 
 view_games.create()
 

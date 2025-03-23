@@ -1,4 +1,4 @@
-from message import message
+from elements.message import message
 from new_game_dialog import new_game_dialog
 
 from nicegui import ui

@@ -1,9 +1,11 @@
-import theme
-from message import message
+import elements.theme as theme
+from elements.message import message
 from classes.Enable import Enable
 from nicegui import ui
 
 enable = Enable()
+
+new_dict_entry = {}
 
 # TODO: replace old Enable() class with newer version.
 # TODO: Learn how to pass stuff in properly.

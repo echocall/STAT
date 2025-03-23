@@ -1,5 +1,5 @@
-from message import message
-import theme
+from elements.message import message
+import elements.theme as theme
 from pathlib import PurePath, Path
 from nicegui import ui
 
@@ -11,7 +11,7 @@ TODO: make it pull pathing from config.txt and also write selection to the sessi
 def create() -> None:
     @ui.page('/viewgames')
     def view_games():
-        with theme.frame('- View Games -'):
+        with theme.frame('View Gamess'):
             games = [
                 {'name': 'Test', 'description':'A game for testing purposes.', 'saves': 1},
                 {'name': 'Delve', 'description':'A game about digging too deep.', 'saves': 0}
@@ -27,6 +27,7 @@ def create() -> None:
                             ui.label().bind_text_from(game, 'saves', backward=lambda saves:f'# of save files: {saves}')
                         with ui.card_actions().classes("w-full justify-end"):
                             ui.button('Select Game', on_click=lambda: ui.notify('This will load the game.'))
+                            
 
 
                 

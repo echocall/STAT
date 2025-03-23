@@ -1,7 +1,7 @@
-import theme
+import elements.theme as theme
 from classes.Enable import *
 from classes.MyGame import MyGame
-from message import message
+from elements.message import message
 from new_counter_dialog import new_counter_dialog
 from nicegui import ui
 
@@ -109,7 +109,8 @@ async def new_game_dialog():
             with ui.column().bind_visibility_from(has_turns,'value'):
                 ui.label("Do they increase or decrease as you play?")
                 turn_type = ui.radio({1: 'Increasing', 2: 'Decreasing'}).props('inline')
-                start_turn = ui.number("What turn or round number does your game start on?")
+                ui.label("What turn or round number does your game start on?")
+                start_turn = ui.number("Enter a whole number.")
         
 
         with ui.card_actions():

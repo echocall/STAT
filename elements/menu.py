@@ -3,12 +3,12 @@ from nicegui import ui
 def menu() -> None:
     with ui.link(target='/'):
         ui.icon('home')
-    ui.link('A', '/a').classes(replace='text-white')
+    # ui.link('A', '/a').classes(replace='text-white')
 
     with ui.button(icon='menu').classes('scale-75'):
         with ui.menu() as general_menu:
-            with ui.link(target='/newgames'):
-                ui.menu_item('Creat New Game')
+            with ui.link(target='/newgame'):
+                ui.menu_item('Create New Game')
             with ui.link(target='/viewgames'):
                 ui.menu_item('Load Game Data')
             ui.separator()
