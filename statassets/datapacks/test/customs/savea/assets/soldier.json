@@ -5,7 +5,7 @@
     "source":"Delve",
     "type":"Offense",
     "attributes":["Warrior", "Unit", "Human", "Offense"],
-    "buy_costs":{"none": 0},
+    "buy_costs":{"Gold": 2},
     "sell_prices":{"none": 0},
     "special":"Deals 5 STR per solider in squad.",
     "effects":[],

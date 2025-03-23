@@ -4,9 +4,10 @@ from nicegui import ui
 
 @contextmanager
 def frame(navigation_title: str):
-    """Custom page frame to share the same styling and behavior across all pages"""
-    # Instead of a Head
-    ui.colors(primary='#b7bfb0 ', secondary='#d5c7ba', accent='#686157', positive='#cdbb8b')
+    """Custom page frame to share the same styling and behavior across all pages.
+    Base of this is from the NiceGUI github repo example for modularization"""
+    # Why tho color palette from fastman27
+    ui.colors(primary='#262f50 ', secondary='#d5c7ba', accent='#686157', positive='#cdbb8b')
     with ui.header():
         ui.label('STAT').classes('font-bold')
         ui.space()

@@ -22,7 +22,33 @@ def menu() -> None:
             ui.separator()
             ui.menu_item('Close', settings_menu.close)
 
+    with ui.button(icon='menu').classes('scale-75'):
+        with ui.menu() as general_menu:
+            ui.menu_item('Load Game', lambda: ui.notify('This open the Load Game screen in the future.').classes('mr-auto'))
+            ui.separator()
+            ui.menu_item('Load Save', lambda: ui.notify('This load the Load Save screen in the future.').classes('mr-auto'))
+            ui.separator()
+            with ui.link(target='/loadeddash'):
+                ui.menu_item('Session Dash')
+            ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.').classes('mr-auto'))
+            ui.separator()
+            ui.menu_item('Close', settings_menu.close)
 
-def switch_dark_mode(value):
-    dark = ui.dark_mode()
+
+""" Creating a custom menu_item for toggling dark mode on/off.
+Based on the example on NiceGUI of acustom ToggleButton."""
+class ToggleDark(ui.menu_item):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._state = False
+        self.on('click', self.toggle)
+
+    def toggle(self) -> None:
+        # Toggling the button state.
+        self._state = not self._state
+        self.updat()
+
+    def update(self) -> None:
+        self.props(f'color={"yellow" if self._state else "blue"}')
+        super().update()
     

@@ -6,6 +6,7 @@ import new_game
 import theme
 import view_games
 import game_loaded
+import loaded_save_dash
 from fastapi import Depends 
 from nicegui import app, ui
 
@@ -24,5 +25,7 @@ game_loaded.create()
 
 function_example.create()
 
+loaded_save_dash.create()
 
-ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(800, 500), fullscreen=False)
+
+ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', dark = 'None', window_size=(800, 500), fullscreen=False)
