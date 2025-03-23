@@ -1,7 +1,7 @@
 from nicegui import ui
 from handlers.assethandler import *
-from CategoryLabel import CategoryLabel
-from AssetContainer import AssetContainer
+from classes.CategoryLabel import CategoryLabel
+from classes.AssetContainer import AssetContainer
 import theme
 
 # Dashboard for after a game has been selected, and a save has been loaded.
@@ -20,7 +20,20 @@ def create() -> None:
                        'counters': {"Gold": 25, "Silver": 34, "Copper": 23, "Resources":'20', "Health": 84, "1st Level Spell Slots": 6},
                        'assets':{'Barracks': 2, 'Soldier': 4}, 'actors':{}, 
                        'current_events':{}, 'current_effects':{}, 'log_file_path':''}
-            assets = {# soldier
+            assets = { 
+                 # Barracks
+                 'Barracks':{'name':'Barracks', 'category':'Room', 'description':"A room for your soldiers to live in.",
+                 'source':'Test', 'type':'Required', 'attributes':['Building', 'Unit Room'],
+                 'buy_costs':{'Resources': 10}, 'sell_prices':{'Silver': 5},
+                 'special':'Each Barrack can hold either 10 Soldiers or 10 Gunners. (They cannot share a grid after an ancient smear against rifles).',
+                 'effects':[], 'icon':'','image':''},
+                 # Spell Strike
+                'Spell Strike':{'name':'Spell Strike', 'category':'Spell', 'description':"A quick spell that damages your enemy.",
+                 'source':'Test', 'type':'Damage', 'attributes':['Damage', 'Arcane', 'Magic'],
+                 'buy_costs':{"1st Level Spell Slot": 1, "Copper": 1}, 'sell_prices':{'none': 0},
+                 'special':'Deals 1d6 damage to an enemy with a range of 60 ft.',
+                 'effects':[], 'icon':'','image':''},
+                 # Soldier
                 'Soldier':{'name':'Soldier', 'category':'Unit', 'description':"A basic soldier.",
                  'source':'Test - Custom', 'type':'Offense', 'attributes':['Warrior', 'Unit', 'Human','Offense'],
                  'buy_costs':{'Gold': 2}, 'sell_prices':{'none': 0},
@@ -63,6 +76,6 @@ def create() -> None:
                                         ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')
                                         ui.label().bind_text_from(asset, 'buy_costs', backward=lambda buy_costs: f'{buy_costs}')
                                         ui.label().bind_text_from(asset, 'sell_prices', backward=lambda sell_prices: f'{sell_prices}')
-                                        # ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
+                                    with ui.card_actions().classes("w-full justify-end"):
+                                        ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
                     
-                    ui.separator()

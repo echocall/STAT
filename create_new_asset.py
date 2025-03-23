@@ -1,6 +1,7 @@
 import theme
 from message import message
 from classes.Enable import Enable
+from classes.MyAsset import MyAsset
 from nicegui import ui
 
 # TODO: Fix returns & passing info in.
@@ -57,7 +58,7 @@ def create() -> None:
             new_buy_cost.bind_visibility_from(has_buy_costs, 'value')
             new_buy_cost.on(
                 "click",
-                lambda: new_buy_cost_dialog(),
+                lambda: new_counter_dialog(),
             )
 
         # Add Sell Prices
@@ -73,7 +74,7 @@ def create() -> None:
             new_sell_cost.bind_visiblity_from(has_buy_costs, 'value')
             new_buy_cost.on(
                 "click",
-                lambda: new_sell_cost_dialog(),
+                lambda: new_counter_dialog(),
             )
 
         # Add any extra special text to the asset.

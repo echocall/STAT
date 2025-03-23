@@ -1,5 +1,5 @@
 from nicegui import ui
-from CategoryLabel import CategoryLabel
+from classes.CategoryLabel import CategoryLabel
 
 # Call after for category in sorted_assets:
 # pass in category and sorted_assets, return asset_contianer.

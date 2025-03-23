@@ -1,5 +1,6 @@
 import theme
 from classes.Enable import *
+from classes.MyGame import MyGame
 from message import message
 from new_counter_dialog import new_counter_dialog
 from nicegui import ui
@@ -69,7 +70,6 @@ async def new_game_dialog():
                                       on_click=lambda: ui.notify('You clicked Create Actors!'))
             create_actors.bind_visibility_from(has_actors, 'value')
 
-        
         # Creating Assets
         with ui.card_section().classes('w-80 items-stretch'):
             ui.label('Do you want to add Assets now?')
@@ -80,7 +80,6 @@ async def new_game_dialog():
                                       on_click=lambda: ui.notify('You clicked Create Assets!'))
             create_assets.bind_visibility_from(has_assets, 'value')
 
-        
         # Creating Effects
         with ui.card_section().classes('w-80 items-stretch'):
             ui.label('Do you want to add Effects now?')
@@ -90,7 +89,6 @@ async def new_game_dialog():
             create_effects = ui.button('Create Effect', 
                                       on_click=lambda: ui.notify('You clicked Create Effects!'))
             create_effects.bind_visibility_from(has_effects, 'value')
-
 
         # Creating Events
         with ui.card_section().classes('w-80 items-stretch'):
