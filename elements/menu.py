@@ -7,7 +7,7 @@ def menu() -> None:
 
     with ui.button(icon='menu').classes('scale-75'):
         with ui.menu() as general_menu:
-            with ui.link(target='/newgame'):
+            with ui.link(target='/creategame'):
                 ui.menu_item('Create New Game')
             with ui.link(target='/viewgames'):
                 ui.menu_item('Load Game Data')

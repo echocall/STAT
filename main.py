@@ -7,13 +7,10 @@ import create_new_asset
 import elements.theme as theme
 import view_games
 import view_saves
-import loaded_save_dash
-
+import loaded_save_dashboard
 
 from fastapi import Depends 
 from nicegui import ui
-
-
 
 # Example 1: use a custom page decorator directly and putting the content creation into a separate function
 @ui.page('/')
@@ -31,7 +28,7 @@ view_saves.create()
 
 function_example.create()
 
-loaded_save_dash.create()
+loaded_save_dashboard.create()
 
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(800, 500), fullscreen=False)
