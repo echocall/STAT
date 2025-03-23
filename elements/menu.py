@@ -49,8 +49,6 @@ def menu() -> None:
             ui.menu_item('Close', settings_menu.close)
 
 
-
-
 """ Creating a custom menu_item for toggling dark mode on/off.
 Based on the example on NiceGUI of acustom ToggleButton."""
 class ToggleDark(ui.menu_item):
