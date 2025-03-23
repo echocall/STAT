@@ -12,11 +12,17 @@ def menu() -> None:
                          lambda: ui.notify('Selected help item 3').classes('mr-auto'), auto_close=False)
             ui.separator()
             ui.menu_item('Close', help_menu.close)
+
     with ui.button(icon='settings').classes('scale-75'):
         with ui.menu() as settings_menu:
             ui.menu_item('Menu item 1', lambda: ui.notify('Selected item 1').classes('mr-auto'))
-            ui.menu_item('Menu item 2', lambda: ui.notify('Selected item 1').classes('mr-auto'))
+            ui.menu_item('Menu item 2', lambda: ui.notify('Selected item 2').classes('mr-auto'))
             ui.menu_item('Menu item 3 (keep open)',
                          lambda: ui.notify('Selected item 3').classes('mr-auto'), auto_close=False)
             ui.separator()
             ui.menu_item('Close', settings_menu.close)
+
+
+def switch_dark_mode(value):
+    dark = ui.dark_mode()
+    

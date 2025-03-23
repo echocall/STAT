@@ -4,7 +4,6 @@ from classes.Enable import Enable
 from nicegui import ui
 
 # TODO: Fix returns & passing info in.
-# TODO: Fix returns & passing info in.
 # TODO: don't call during the creation of a new game, wait until game has been created?
 # COULD pass in the value in the game.name, or have a list of game names passed in in other call cases... hm...
 enable = Enable()

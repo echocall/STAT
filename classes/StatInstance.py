@@ -52,6 +52,8 @@ class MyStat:
         self.is_assets_loaded = False
         self.assets_loaded = ""
 
+    
+
     # TODO space to store the numbers from a save
         # Counters, # of units.
 

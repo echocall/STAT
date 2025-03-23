@@ -4,6 +4,8 @@ import function_example
 import home_page
 import new_game
 import theme
+import view_games
+import game_loaded
 from fastapi import Depends 
 from nicegui import app, ui
 
@@ -15,6 +17,10 @@ def index_page() -> None:
         home_page.content()
 
 new_game.create()
+
+view_games.create()
+
+game_loaded.create()
 
 function_example.create()
 
