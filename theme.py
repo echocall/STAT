@@ -16,5 +16,5 @@ def frame(navigation_title: str):
             menu()
     with ui.column().classes('absolute-center items-center'):
         yield
-    with ui.label.color('#688157'):
-        yield
+    # with ui.label.color('#688157'):
+    #    yield
