@@ -5,7 +5,7 @@ import home_page
 import new_game
 import theme
 import view_games
-import view_save
+import view_saves
 import loaded_save_dash
 from fastapi import Depends 
 from nicegui import app, ui
@@ -21,7 +21,7 @@ new_game.create()
 
 view_games.create()
 
-view_save.create()
+view_saves.create()
 
 function_example.create()
 
