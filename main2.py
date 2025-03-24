@@ -35,13 +35,17 @@ assets = { 'Barracks':{'name':'Barracks', 'category':'Room', 'description':"A ro
 
 counters = {'Gold': 10, "Silver": 25, "Copper": 100, "Health": 100, "1st Level Spell Slot": 3}
 
-sorted_assets = sort_assets(assets)
+sorted_assets = sort_assets_by_category(assets)
 owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
-sorted_owned_assets = sort_assets(owned_assets_unsorted)
+sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
 
 print(sorted_assets)
-for value in counters:
-    print(counters[value])
+
+print()
+print()
+for counter in counters:
+    print(counter)
+    print(counters[counter])
 
 assets_list = []
 print()

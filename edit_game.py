@@ -42,12 +42,13 @@ def create() -> None:
                 with ui.row():
                      # get the name of the game.
                     ui.label("Enter a name for the game. The name should be unique.")
-                    name_input = ui.input(label='Game Name', placeholder='Required field')
-                    name_input.bind_value(loaded_game, 'name', backward=lambda name: f'Name: {name}')
+                    name_input = ui.input(label='Game Name', placeholder='Required field',
+                                    on_change=lambda name_value: name_chars_left.set_text(str(len(name_value.value)) + ' of 50 characters used.'))
+                    name_input.bind_value(loaded_game, 'name')
                     # allows user to clear the field
                     name_input.props('clearable')
                     # This handles the validation of the field.
-                    # name_input.validation={"Too short!": len(name_input.value) <= 0} 
+                    name_input.validation={"Too short!": lambda name_value: enable.is_too_short_variable(name_value,1)} 
                     # Displays the characters.        
                     name_chars_left = ui.label()
                 
@@ -56,25 +57,28 @@ def create() -> None:
                     # input description for the game.
                     ui.label('Enter a description for the new game:')
                     description = ui.input(label='Game Description', placeholder='500 character limit',
-                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
-                    name_input.bind_value(loaded_game, 'description')
+                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
+                    description.props('clearable')
+                    description.bind_value(loaded_game, 'description')
                     # this handles the validation of the field.
-                    description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
+                    description.validation={"Too long!": lambda descript_value: enable.is_too_long_variable(descript_value, 500)}
                     desc_chars_left = ui.label()
 
                 # Counter cards
                 with ui.row():
-                    ui.label('Select a counter to update the default values of:')
+                    ui.label('Select a counter to update:')
                     counters = loaded_game['counters']
                     counter_card_container = ui.row().classes("full flex items-center")
                     with counter_card_container:
                         for counter in counters:
-                            with ui.card().tight():
+                            with ui.card():
                                 with ui.card_section():
-                                    ui.label("Counter Name: ")
-                                    ui.label().bind_text_from(counter)
-                                    ui.label("Counter Default Value:")
-                                    ui.label().bind_text_from(counters, counter)
+                                    with ui.row():
+                                        ui.label("Name: ")
+                                        ui.label(counter)
+                                    with ui.row():
+                                        ui.label("Default Value:")
+                                        ui.label().bind_text_from(counters, counter)
                                 with ui.card_actions().classes("w-full justify-end"):
                                     ui.button('Select Counter', on_click=lambda: ui.notify('This will launch a counter dialog in the future'))
                 
@@ -98,4 +102,4 @@ def create() -> None:
                         edit_actors.bind_visibility(has_actors_switch, 'value')
 
 
-
+            ui.button('Print Game', on_click=lambda: ui.notify(loaded_game))

@@ -2,10 +2,10 @@ from nicegui import ui
 
 def menu() -> None:
     with ui.link(target='/'):
-        ui.icon('home')
+        ui.icon('home').classes('scale-200').props('color="white"')
     # ui.link('A', '/a').classes(replace='text-white')
 
-    with ui.button(icon='menu').classes('scale-75'):
+    with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :
         with ui.menu() as general_menu:
             with ui.link(target='/creategame'):
                 ui.menu_item('Create New Game')
@@ -23,10 +23,13 @@ def menu() -> None:
             ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
             ui.menu_item('Load Session', lambda: ui.notify('This will call the Save_session function in the future.'))
             ui.separator()
+            with ui.link(target='/createasset'):
+                ui.menu_item('Create an Asset')
+            ui.separator()
             ui.menu_item('Close', general_menu.close)
 
 
-    with ui.button(icon='help').classes('scale-75').props('color= #B8C9C0') as help_menu_btn:
+    with ui.button(icon='help').classes('scale-75').props('color="secondary"') as help_menu_btn:
         with ui.menu() as help_menu:
             game_help = ui.menu_item('Game Help', lambda: ui.notify('Selected help item 1'), auto_close=False)
             with ui.menu() as game_help:

@@ -11,7 +11,7 @@ from nicegui import ui
 # COULD pass in the value in the game.name, or have a list of game names passed in in other call cases... hm...
 enable = Enable()
 def create() -> None:
-    @ui.page('/newasset')
+    @ui.page('/createasset')
     def new_asset():
         with theme.frame('Create an Asset'), ui.card().classes("w-full"):
             message('Create an Asset')
@@ -46,53 +46,51 @@ def create() -> None:
                 ui.label('Enter the source game for the asset: ')
                 # TODO: Grab the game name from list of games.
 
-        # Add Buy Costs
-        with ui.card_section().classes('w-80 items-stretch'):
+
             # Create Buy Costs
             ui.label("Do you want to add a Buy Cost to your asset?")
             has_buy_costs = ui.switch()
+            # Add Buy Costs
+            with ui.card_section().classes('w-80 items-stretch').bind_visibility_from(has_buy_costs, 'value'):
+                ui.label('You can add more than one buy cost to the asset.')
+                new_buy_cost = ui.button(
+                    "Add Buy Cost",
+                    icon="create",
+                )
+                new_buy_cost.on(
+                    "click",
+                    lambda: new_dict_entry_dialog('Buy Cost'),
+                )
 
-            ui.label('You can add more than one buy cost to the asset.')
-            new_buy_cost = ui.button(
-                "Add Buy Cost",
-                icon="create",
-            )
-            new_buy_cost.bind_visibility_from(has_buy_costs, 'value')
-            new_buy_cost.on(
-                "click",
-                lambda: new_counter_dialog(),
-            )
-
-        # Add Sell Prices
-        with ui.card_section().classes('w-80 items.stretch'):
+            # Add Sell Prices
             ui.label("Do you want to add a Sell Price to your asset?")
             has_sell_costs = ui.switch()
+            with ui.card_section().classes('w-80 items.stretch').bind_visibility_from(has_sell_costs,'value'):
+                ui.label("You can add more than one sell price to the asset.")
+                new_sell_cost = ui.button(
+                    "Add Sell Cost",
+                    icon="create",
+                )
+                # Pull up the new_dict_entry_dialog to set new sell price.
+                new_sell_cost.on(
+                    "click",
+                    lambda: new_dict_entry_dialog('Sell Price'),
+                )
 
-            ui.label("You can add more than one sell price to the asset.")
-            new_sell_cost = ui.button(
-                "Add Sell Cost",
-                icon="create",
-            )
-            new_sell_cost.bind_visiblity_from(has_buy_costs, 'value')
-            new_buy_cost.on(
-                "click",
-                lambda: new_counter_dialog(),
-            )
-
-        # Add any extra special text to the asset.
-        with ui.card_section().classes('w-80 items-stretch'):
-            ui.label('Enter any special text for the new asset:').classes()
-            special = ui.input(label='Special Text', placeholder='500 character limit',
-                                on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
-            # this handles the validation of the field.
-            special.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
-            special_chars_left = ui.label()
-        
-        # effects
-        with ui.card_section().classes('w-80 items-stretch'):
-            ui.label("Sorry, this feature hasnt been implemented yet!")
-            # If loaded_game.effects[] == empty: "Please add effects to the game 
-            # before trying to add them to assets."
+            # Add any extra special text to the asset.
+            with ui.card_section().classes('w-80 items-stretch'):
+                ui.label('Enter any special text for the new asset:').classes()
+                special = ui.input(label='Special Text', placeholder='500 character limit',
+                                    on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
+                # this handles the validation of the field.
+                special.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
+                special_chars_left = ui.label()
+            
+            # effects
+            with ui.card_section().classes('w-80 items-stretch'):
+                ui.label("Sorry, this feature hasnt been implemented yet!")
+                # If loaded_game.effects[] == empty: "Please add effects to the game 
+                # before trying to add them to assets."
         
         # icon
 

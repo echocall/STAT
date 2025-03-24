@@ -103,8 +103,8 @@ def organize_assets_by_type() -> dict:
 
 # TODO finish
 def new_asset(is_default: bool, for_new_game: bool, default_path: str,
-               custom_path: str,
-               game_name: str, asset_explanations: bool, counters: dict) -> object:
+               custom_path: str, game_name: str, 
+               asset_explanations: bool, counters: dict) -> object:
     file_path = ""
     new_asset = {}
     counter_names = []
@@ -136,10 +136,9 @@ def new_asset(is_default: bool, for_new_game: bool, default_path: str,
     else:
      return asset_object
     
-# TODO: Finish missing fields: icon, image,
+# TODO: Finish missing fields: effects, icon, image,
 def new_asset_assembler_quiet(file_path: str, for_new_game: bool,
                                game_name: str, counter_names: list) -> dict:
-    # TODO: missing fields: icon, image
     new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'asset_type':'',
              'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
              'effects':[], 'icon':'', 'image':''}
@@ -447,7 +446,6 @@ def prices_explanation():
 
 # TODO: error handling
 def set_sell_prices(counter_names: list) -> dict:
-    # TODO: Error Handling
     sell_prices = {}
     list_size = 0
     list_size = len(counter_names)
@@ -521,7 +519,7 @@ def dict_to_objects(targetDict: dict) -> dict:
 
 # SORTING
 
-def sort_assets(assets_to_sort: dict) -> dict:
+def sort_assets_by_category(assets_to_sort: dict) -> dict:
         sorted_assets = {}
         # Make a set of all the different category types.
         categories_set = {}
@@ -538,23 +536,24 @@ def sort_assets(assets_to_sort: dict) -> dict:
         categories_list.sort()
 
         # now that we have the set, create dictionary.
-        sorted_assets = asset_sorter(assets_to_sort, categories_list)
+        sorted_assets = asset_sorter(assets_to_sort, categories_list, 'category')
         return sorted_assets
 
     # actually sorted the assets by category.
 
-def asset_sorter(assets_to_sort: dict, categories_list: list) -> dict:
+def asset_sorter(assets_to_sort: dict, sort_by_list: list, sort_field: str) -> dict:
         #sorted_assets = {'category':[<asset1>,<asset2>]}
         sorted_assets = {}
-        # initialize the dictionary of lists
-        for category in categories_list:
-            sorted_assets[category] = []
+
+        # initialize the dictionary of lists by field
+        for each in sort_by_list:
+            sorted_assets[each] = []
         
         for key in assets_to_sort:
         # if the asset's category is in the sorted dictionary, add it.
-            if assets_to_sort[key]['category'] in sorted_assets:
-                category = assets_to_sort[key]['category']
-                sorted_assets[category].append(assets_to_sort[key])
+            if assets_to_sort[key][sort_field] in sorted_assets:
+                each = assets_to_sort[key][sort_field]
+                sorted_assets[each].append(assets_to_sort[key])
             return sorted_assets
             
 def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:

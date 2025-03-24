@@ -46,9 +46,10 @@ def create() -> None:
                  'special':'Deals 5 STR.',
                  'effects':[], 'icon':'','image':''},
             }
-            sorted_assets = sort_assets(assets)
+            counters = save_data['counters']
+            sorted_assets = sort_assets_by_category(assets)
             owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
-            sorted_owned_assets = sort_assets(owned_assets_unsorted)
+            sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
             # The tabs
             with ui.tabs().classes('w-full') as tabs:
                 main = ui.tab('Main')
@@ -57,6 +58,14 @@ def create() -> None:
             with ui.tab_panels(tabs, value=main).classes('full flex items-left'):
                 with ui.tab_panel(main):
                         ui.label('Main tab')
+                        with ui.row():
+                            with ui.column():
+                                ui.label('Save Name: ' + save_data['name'])
+                            with ui.column():
+                                ui.label('Base Game: ' + save_data['base_game'])
+                        with ui.row():
+                            for counter in counters:
+                                ui.label(counter + ':  ' + str(counters[counter]))
                 with ui.tab_panel(assets):
                         ui.label('Owned Assets tab')
                 with ui.tab_panel(store):
