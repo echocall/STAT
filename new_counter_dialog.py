@@ -17,7 +17,7 @@ async def new_counter_dialog():
             # allows user to clear the field
             name_input.props('clearable')
             # This handles the validation of the field.
-            name_input.validation={"Too short!": enable.is_too_short} 
+            name_input.validation={"Must have a value": enable.not_null} 
             # Displays the characters.        
             name_chars_left = ui.label()
 
@@ -26,15 +26,19 @@ async def new_counter_dialog():
             value_input = ui.number("Starting value of the counter?")
             # This handles the validation of the field. Checking for not null.
             value_input.validation={"Must have a value.": enable.not_null} 
-
+        new_counter ={}
+        new_counter[name_input] = value_input
         with ui.card_actions():
             # The button submits the data in the fields.
             submit = ui.button(
                 "Create Counter",
-                on_click=lambda: dialog.submit(),
+                on_click=lambda: dialog.submit(new_counter),
             )
+            
             # This enables or disables the button depending on if the input field has errors or not
-            submit.bind_enabled_from(enable, "no_errors")
+            submit.bind_enabled_from(
+                name_input, "error", backward=lambda x: not x and name_input.value
+            )
 
             # Disable the button by default until validation is done.
             submit.disable()
@@ -42,10 +46,8 @@ async def new_counter_dialog():
             # Cancel out of dialog.
             ui.button("Cancel", on_click=dialog.close)
  
-    # Get value
+    # Get new_counter
     counter = await dialog
-    print(counter)
-    # creating a new counter as a dict
-    new_counter[counter.name_input] = counter.value_input
 
-    print(new_counter)
+    ui.notify(counter)
+    # creating a new counter as a dict

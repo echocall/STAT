@@ -26,19 +26,24 @@ def menu() -> None:
             ui.menu_item('Close', general_menu.close)
 
 
-    with ui.button(icon='help').classes('scale-75'):
+    with ui.button(icon='help').classes('scale-75').props('color= #B8C9C0') as help_menu_btn:
         with ui.menu() as help_menu:
-            game_help = ui.menu_item('Help Topic 1', lambda: ui.notify('Selected help item 1'), auto_close=False)
+            game_help = ui.menu_item('Game Help', lambda: ui.notify('Selected help item 1'), auto_close=False)
             with ui.menu() as game_help:
-                ui.menu_item('What is a game?', lambda: ui.notify('In the context of STAT'
+                ui.menu_item('What is a Game?', lambda: ui.notify('In the context of STAT'
                 ' a game is a file that contians the default information for a playtime of that game.'))
+                ui.menu_item("What is a counter?", lambda: ui.notify('A counter is meant to keep track of any resource where you just need to keep track of the Name and Amount you have.'
+                ' This could be health,  money, points for victory, spell slots you expend by using spells, or other uses.'))
                 ui.menu_item('Close game menu', game_help.close)    
-            ui.menu_item('Help Topic 2', lambda: ui.notify('Selected help item 2'))
+            asset_help = ui.menu_item('Help Topic 2', lambda: ui.notify('Selected help item 2'))
+            with ui.menu() as asset_help:
+                ui.menu_item('What is an Asset?', lambda: ui.notify('An asset is anything you want to track the amount you have'
+                ' as well as any possible changes to your counters upon gaining, using, or selling the item.'))
             ui.menu_item('Help item 3 (keep open)',
                          lambda: ui.notify('Selected item 3'), auto_close=False)
             ui.menu_item('Close', help_menu.close)
 
-    with ui.button(icon='settings').classes('scale-75'):
+    with ui.button(icon='settings').classes('scale-75').props('color="secondary"'):
         with ui.menu() as settings_menu:
             ui.menu_item('Menu item 1', lambda: ui.notify('Selected item 1'))
             ui.menu_item('Menu item 2', lambda: ui.notify('Selected item 2'))

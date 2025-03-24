@@ -120,7 +120,7 @@ def create() -> None:
                     # ui.button("Cancel", on_click=dialog.close)
 
         # when the dialog.submit(...) is called, here's where the value comes out.
-        game = 'TODO: Fix this'
+        game = 'You have finished creating a game! Congrats!'
         
-        message(game)
+        ui.label(game)
         return game
