@@ -1,6 +1,4 @@
 from handlers.assethandler import *
-from nicegui import ui
-
 save_data = {'name': 'Save A', 'base_game': 'Test', 
                      'create_date': '3/8/2025', 'date_last_save':'3/15/2025', 
                      'description':'A save for testing purposes.', 'asset_customs':True,
@@ -35,44 +33,17 @@ assets = { 'Barracks':{'name':'Barracks', 'category':'Room', 'description':"A ro
                  'effects':[], 'icon':'','image':''},
             }
 
+counters = {'Gold': 10, "Silver": 25, "Copper": 100, "Health": 100, "1st Level Spell Slot": 3}
 
 sorted_assets = sort_assets(assets)
 owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
 sorted_owned_assets = sort_assets(owned_assets_unsorted)
 
 print(sorted_assets)
+for value in counters:
+    print(counters[value])
 
 assets_list = []
-for category in sorted_assets:
-    print("Category: ")
-    print(category)
-    print()
-    print()
-    assets_list = sorted_assets[category]
-    print(assets_list)
-for asset in assets_list: 
- #  for asset in sorted_assets[category]:
-        with ui.card().tight():
-            with ui.card_section():
-                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
-                ui.label().bind_text_from(asset, 'description', backward=lambda description: f'{description}')
-            with ui.card_actions().classes("w-full justify-end"):
-                ui.button('Select Game', on_click=lambda: ui.notify('This will load the game.'))
 print()
 print()
 
-"""asset_card_container = ui.row().classes("full flex items-center")
-with asset_card_container:
-    for asset in sorted_assets[category]:
-        with ui.card().tight():
-            with ui.card_section():
-                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
-                ui.label().bind_text_from(asset, 'description', backward=lambda description: f'{description}')
-            with ui.card_actions().classes("w-full justify-end"):
-                ui.button('Select Game', on_click=lambda: ui.notify('This will load the game.'))"""
-
-    # category = sorted_assets[key]
-    # assets = sorted_category[category]
-    # asset = assets[i]
-
-ui.run()

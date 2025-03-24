@@ -9,8 +9,10 @@ def menu() -> None:
         with ui.menu() as general_menu:
             with ui.link(target='/creategame'):
                 ui.menu_item('Create New Game')
+            with ui.link(target='/editgame'):
+                ui.menu_item('Edit Game File')
             with ui.link(target='/viewgames'):
-                ui.menu_item('Load Game Data')
+                ui.menu_item('Load Game File')
             ui.separator()
             ui.menu_item('Load a Save', lambda: ui.notify('This opens the Load Save screen in the future.'))
             with ui.link(target='loadeddash'):
@@ -19,16 +21,10 @@ def menu() -> None:
             with ui.link(target='/loadeddash'):
                 ui.menu_item('Current Session Dashboard')
             ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
+            ui.menu_item('Load Session', lambda: ui.notify('This will call the Save_session function in the future.'))
             ui.separator()
             ui.menu_item('Close', general_menu.close)
 
-    with ui.button(icon='add').classes('scale-75'):
-        with ui.menu() as create_menu:
-            ui.menu_item('Create Game', lambda: ui.notify('Selected Create Game'))
-            ui.menu_item('Create Actor', lambda: ui.notify('Selected Create Actor'))
-            ui.menu_item('Create Asset', lambda: ui.notify('Selected Create Asset'))
-            ui.menu_item('Create Counter', lambda: ui.notify('Selected Create Counter'))
-            ui.menu_item('Create Effect', lambda: ui.notify('Selected Create Effect'))
 
     with ui.button(icon='help').classes('scale-75'):
         with ui.menu() as help_menu:

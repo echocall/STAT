@@ -8,6 +8,7 @@ import elements.theme as theme
 import view_games
 import view_saves
 import loaded_save_dashboard
+import edit_game
 
 from fastapi import Depends 
 from nicegui import ui
@@ -29,6 +30,8 @@ view_saves.create()
 function_example.create()
 
 loaded_save_dashboard.create()
+
+edit_game.create()
 
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(800, 500), fullscreen=False)

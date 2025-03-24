@@ -14,8 +14,6 @@ def content() -> None:
     )
     new_game.on("click",
                 lambda: new_game_dialog())
-    
-    ui.button('Select Game', on_click=lambda: ui.colors(primary='#C15F7C'))
 
     with ui.link(target='/viewgames'):
-        ui.button('View Games', on_click=lambda: ui.colors(primary='#9C4A52'))
+        ui.button('View Games')

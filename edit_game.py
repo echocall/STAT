@@ -1,12 +1,101 @@
 from nicegui import ui
 import elements.theme as theme
 from elements.message import message
+from classes.Enable import *
 from new_counter_dialog import new_counter_dialog
 from classes.MyGame import MyGame
 from elements.message import message
+from typing import Annotated, Awaitable
+
+enable = Enable()
 
 def create() -> None:
     @ui.page('/editgame')
     def edit_game():
         with theme.frame('Edit a Game'):
-            message("Edit a game!")
+            loaded_game = {
+                    'name':'Test',
+                    'description':'This is the test game for basic STAT testing',
+                    'has_counters':True,
+                    'counters':{'Gold': 10, "Silver": 25, "Copper": 100, "Health": 100, "1st Level Spell Slot": 3},
+                    'has_actors':False,
+                    'actor_default_path':"",
+                    'default_actors':[],
+                    'has_assets':True,
+                    'asset_default_path':"statassets\\datapacks\\test\\default\\assets",
+                    'default_assets':["Barracks","Spell Strike","Monkey"],
+                    'has_events':False,
+                    'event_default_path':"",
+                    'default_events':[],
+                    'has_effects': False,
+                    'effect_default_path':"",
+                    'default_effects':[],
+                    'icon':"",
+                    'save_files_path':"statassets\\saves\\test",
+                    'has_turns': True,
+                    'turn_type': "Increasing",
+                    'start_turn': 0
+                }
+            message("Edit the details of the game:")
+            with ui.column().props('flex'):
+                # Name of the Game
+                with ui.row():
+                     # get the name of the game.
+                    ui.label("Enter a name for the game. The name should be unique.")
+                    name_input = ui.input(label='Game Name', placeholder='Required field')
+                    name_input.bind_value(loaded_game, 'name')
+                    # allows user to clear the field
+                    name_input.props('clearable')
+                    # This handles the validation of the field.
+                    # name_input.validation={"Too short!": len(name_input.value) <= 0} 
+                    # Displays the characters.        
+                    name_chars_left = ui.label()
+                
+                # Description of the Game
+                with ui.row():
+                    # input description for the game.
+                    ui.label('Enter a description for the new game:')
+                    description = ui.input(label='Game Description', placeholder='500 character limit',
+                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
+                    name_input.bind_value(loaded_game, 'description')
+                    # this handles the validation of the field.
+                    description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
+                    desc_chars_left = ui.label()
+
+                # Counter cards
+                with ui.row():
+                    ui.label('Select a counter to update the default values of:')
+                    counters = loaded_game['counters']
+                    counter_card_container = ui.row().classes("full flex items-center")
+                    with counter_card_container:
+                        for counter in counters:
+                            with ui.card().tight():
+                                with ui.card_section():
+                                    ui.label("Counter Name: ")
+                                    ui.label().bind_text(counter, counter)
+                                    ui.label("Counter Default Value:")
+                                    ui.label().bind_text(counter, counters[counter])
+                                with ui.card_actions().classes("w-full justify-end"):
+                                    ui.button('Select Counter', on_click=lambda: ui.notify('This will launch a counter dialog in the future'))
+                
+                # Has Actors
+                with ui.row():
+                    ui.label("Are there Actors?")
+                    has_actors_switch = ui.switch()
+                    name_input.bind_value(loaded_game, 'has_actors')
+                    with ui.column():
+                        default_actors = loaded_game['default_actors']
+                        for actor in default_actors:
+                            with ui.list().props('dense separator'):
+                                ui.item(actor)
+                                # TODO: this should pop up an 'edit actor' dialog box.
+                                ui.icon('Edit')
+                                # TODO: this should pop up a 'are you sure you want to delete?
+                                ui.icon('Delete')
+                    with ui.column():
+                        edit_actors = ui.button('Edit Actors', 
+                                                on_click=lambda: ui.notify('You clicked edit actors! In the future this will pop up a dialog box.'))
+                        edit_actors.bind_visibility(has_actors_switch, 'value')
+
+
+
