@@ -16,7 +16,7 @@ def menu() -> None:
             ui.separator()
             ui.menu_item('Load a Save', lambda: ui.notify('This opens the Load Save screen in the future.'))
             with ui.link(target='loadeddash'):
-                ui.menu_item('New save for loaded game.')
+                ui.menu_item('New Save Start')
             ui.separator()
             with ui.link(target='/loadeddash'):
                 ui.menu_item('Current Session Dashboard')
@@ -28,11 +28,14 @@ def menu() -> None:
 
     with ui.button(icon='help').classes('scale-75'):
         with ui.menu() as help_menu:
-            ui.menu_item('Help Topic 1', lambda: ui.notify('Selected help item 1'))
+            game_help = ui.menu_item('Help Topic 1', lambda: ui.notify('Selected help item 1'), auto_close=False)
+            with ui.menu() as game_help:
+                ui.menu_item('What is a game?', lambda: ui.notify('In the context of STAT'
+                ' a game is a file that contians the default information for a playtime of that game.'))
+                ui.menu_item('Close game menu', game_help.close)    
             ui.menu_item('Help Topic 2', lambda: ui.notify('Selected help item 2'))
-            ui.menu_item('Help Topic 3 (keep open)',
-                         lambda: ui.notify('Selected help item 3'), auto_close=False)
-            ui.separator()
+            ui.menu_item('Help item 3 (keep open)',
+                         lambda: ui.notify('Selected item 3'), auto_close=False)
             ui.menu_item('Close', help_menu.close)
 
     with ui.button(icon='settings').classes('scale-75'):

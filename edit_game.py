@@ -43,7 +43,7 @@ def create() -> None:
                      # get the name of the game.
                     ui.label("Enter a name for the game. The name should be unique.")
                     name_input = ui.input(label='Game Name', placeholder='Required field')
-                    name_input.bind_value(loaded_game, 'name')
+                    name_input.bind_value(loaded_game, 'name', backward=lambda name: f'Name: {name}')
                     # allows user to clear the field
                     name_input.props('clearable')
                     # This handles the validation of the field.
