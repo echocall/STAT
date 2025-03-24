@@ -72,9 +72,9 @@ def create() -> None:
                             with ui.card().tight():
                                 with ui.card_section():
                                     ui.label("Counter Name: ")
-                                    ui.label().bind_text(counter, counter)
+                                    ui.label().bind_text_from(counter)
                                     ui.label("Counter Default Value:")
-                                    ui.label().bind_text(counter, counters[counter])
+                                    ui.label().bind_text_from(counters, counter)
                                 with ui.card_actions().classes("w-full justify-end"):
                                     ui.button('Select Counter', on_click=lambda: ui.notify('This will launch a counter dialog in the future'))
                 
