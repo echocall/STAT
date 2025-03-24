@@ -43,12 +43,13 @@ def create() -> None:
                      # get the name of the game.
                     ui.label("Enter a name for the game. The name should be unique.")
                     name_input = ui.input(label='Game Name', placeholder='Required field',
-                                    on_change=lambda name_value: name_chars_left.set_text(str(len(name_value.value)) + ' of 50 characters used.'))
-                    name_input.bind_value(loaded_game, 'name')
-                    # allows user to clear the field
+                                          on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                     name_input.props('clearable')
+                    name_input.bind_value(loaded_game, 'name')
+                    print(name_input.value)
+                    # allows user to clear the field
                     # This handles the validation of the field.
-                    name_input.validation={"Too short!": lambda name_value: enable.is_too_short_variable(name_value,1)} 
+                    # name_input.validation={"Too short!": lambda name_value: enable.is_too_short_variable(name_value,1)} 
                     # Displays the characters.        
                     name_chars_left = ui.label()
                 

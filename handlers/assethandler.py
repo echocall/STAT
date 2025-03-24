@@ -87,20 +87,6 @@ def asset_loader(asset_objects: dict):
     # Organize assets by asset type
     # prep the types for being seen
 
-# TODO: This
-def organize_assets_by_category() -> dict:
-    # TODO: Take all assets from a loaded game/save & sort into a dictionary
-    # of dictionaries grouping assets with similar categories together.
-    # {"categoryName":{dictionary of objects in that category}, 
-    # "categoryName2":{dictionary2}}
-    az = 1 + 26
-
-# asset type organizer
-def organize_assets_by_type() -> dict:
-    # TODO: Take all assets from a loaded game/save & sort into a dictionary
-    # of dictionaries grouping assets with similar types together.
-    by = 2 + 25
-
 # TODO finish
 def new_asset(is_default: bool, for_new_game: bool, default_path: str,
                custom_path: str, game_name: str, 
