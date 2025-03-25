@@ -1,2 +1,2 @@
 # STAT
- solo ttrpg assistant tracker
+ Snazzy Ttrpg Assistant Tracker
