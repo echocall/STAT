@@ -13,7 +13,7 @@ class MyStat:
     is_assets_loaded: bool
     assets_loaded: dict
     
-    def __post__init__(self, configFile: str):
+    def __init__(self, configFile: str):
         self.config_file = configFile
         self.is_game_loaded = False
         self.game_loaded = {}

@@ -248,9 +248,13 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     # Turns
     turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted." + "\n")
     new_game["has_turns"] = user_confirm(turns_prompt)
-    turns = define_turns(name_dict["name"])
-    new_game["turn_type"] = turns["turn_type"]
-    new_game["start_turn"] = turns["start_turn"]
+    if new_games["has_turns"] == true:
+        turns = define_turns(name_dict["name"])
+        new_game["turn_type"] = turns["turn_type"]
+        new_game["start_turn"] = turns["start_turn"]
+    else:
+        new_game["turn_type"] = ""
+        new_game["start_turn"] = 0
     
     # Create the folders.
     # TODO: create more error handling within this chain.

@@ -368,7 +368,7 @@ def set_attributes() -> list:
     game_attributes = []
 
     game_attributes_int = okay_user_int(0,"How many attributes do you want to add to this asset?")
-    game_attributes = get_user_input_loop(game_attributes_int, list, str)
+    game_attributes = get_user_input_loop(game_attributes_int, 'list', 'str')
 
     return game_attributes
 
@@ -504,7 +504,6 @@ def dict_to_objects(targetDict: dict) -> dict:
     # Sort the assets by category
 
 # SORTING
-
 def sort_assets_by_category(assets_to_sort: dict) -> dict:
         sorted_assets = {}
         # Make a set of all the different category types.

@@ -27,7 +27,7 @@ print(new_game)
 print()
 
 file_name = format_str_for_filename(new_game['name'])
-game_path = filePaths["gamespath"] + file_name
+game_path = filePaths["gamespath"] + "\\" + file_name
 
 file_saved = create_new_json_file(file_name, game_path, new_game)
 print(file_saved)
