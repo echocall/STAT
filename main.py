@@ -2,6 +2,7 @@
 
 import function_example
 import home_page
+import welcome
 import create_new_game
 import create_new_asset
 import elements.theme as theme
@@ -16,8 +17,8 @@ from nicegui import ui
 # Example 1: use a custom page decorator directly and putting the content creation into a separate function
 @ui.page('/')
 def index_page() -> None:
-    with theme.frame('Homepage'):
-        home_page.content()
+    with theme.frame('Welcome'):
+        welcome.content()
 
 create_new_game.create()
 

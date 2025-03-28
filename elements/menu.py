@@ -14,14 +14,13 @@ def menu() -> None:
             with ui.link(target='/viewgames'):
                 ui.menu_item('Load Game File')
             ui.separator()
-            ui.menu_item('Load a Save', lambda: ui.notify('This opens the Load Save screen in the future.'))
-            with ui.link(target='loadeddash'):
-                ui.menu_item('New Save Start')
+            ui.menu_item('New Save Start')
             ui.separator()
             with ui.link(target='/loadeddash'):
                 ui.menu_item('Current Session Dashboard')
             ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
-            ui.menu_item('Load Session', lambda: ui.notify('This will call the Save_session function in the future.'))
+            with ui.link(target='/viewsaves'):
+                ui.menu_item('Load Session', lambda: ui.notify('This will call the Save_session function in the future.'))
             ui.separator()
             with ui.link(target='/createasset'):
                 ui.menu_item('Create an Asset')
@@ -31,12 +30,12 @@ def menu() -> None:
 
     with ui.button(icon='help').classes('scale-75').props('color="secondary"') as help_menu_btn:
         with ui.menu() as help_menu:
-            game_help = ui.menu_item('Game Help', lambda: ui.notify('Selected help item 1'), auto_close=False)
+            game_help = ui.menu_item('Game Help', auto_close=False)
             with ui.menu() as game_help:
                 ui.menu_item('What is a Game?', lambda: ui.notify('In the context of STAT'
-                ' a game is a file that contians the default information for a playtime of that game.'))
+                ' a game is a file that contians the default information for a playtime of that game.'), auto_close=False)
                 ui.menu_item("What is a counter?", lambda: ui.notify('A counter is meant to keep track of any resource where you just need to keep track of the Name and Amount you have.'
-                ' This could be health,  money, points for victory, spell slots you expend by using spells, or other uses.'))
+                ' This could be health,  money, points for victory, spell slots you expend by using spells, or other uses.'), auto_close=False)
                 ui.menu_item('Close game menu', game_help.close)    
             asset_help = ui.menu_item('Help Topic 2', lambda: ui.notify('Selected help item 2'))
             with ui.menu() as asset_help:

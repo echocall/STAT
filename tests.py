@@ -8,7 +8,6 @@ from handlers.gamehandler import *
 from handlers.savehandler import *
 from classes.StatInstance import *
 from classes.MyGame import *
-import tests
 
 def unit_test(filePaths: dict):
     print("== Unit Testing ==")
