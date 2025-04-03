@@ -1,14 +1,21 @@
 from elements.message import message
 import elements.theme as theme
-from pathlib import PurePath, Path
+from pathlib import Path
+from fastapi import FastAPI, Depends
 from nicegui import ui
+from MyGame import MyGame
 
-""" TODO: Load in all games from the game file and create cards.
+app = FastAPI()
+
+
+# File path for game data
+""" TODO: Load in all games from the game JSONs and create cards.
 Find the # of saves for each game and display that as well.
 Suffer the sins of my hubris.
 TODO: make it pull pathing from config.txt and also write selection to the session data holder."""
 
-def create() -> None:
+def load_game_from_json():
+    
     @ui.page('/viewgames')
     def view_games():
         with theme.frame('View Gamess'):
@@ -30,4 +37,4 @@ def create() -> None:
                             
 
 
-                
+            

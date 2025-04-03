@@ -8,6 +8,18 @@ def stat_initialize(config_file: str) -> dict:
     configFilePath = config_file
     configParser.sections()
     configParser.read(configFilePath)
+    print("Printing ConfigParser:")
+    print(configParser.sections())
+
+    config_dict = {}
+    for Section in configParser.sections():
+        temp_dict = {}
+        for key, value in configParser[Section].items():
+            temp_dict.update({key:value})
+        config_dict[Section] = temp_dict
+
+    print("Priting Config_Dict")
+    print(config_dict)
 
     filePaths = {}
 

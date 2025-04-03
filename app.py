@@ -20,6 +20,7 @@ filePaths = stat_initialize(currentStat.config_file)
 print(filePaths)
 
 # === NEW GAME ====
+"""
 new_game = new_game_assembly(filePaths["gamespath"],filePaths["datapackspath"],filePaths["savespath"])
 print("After creating new-game: ")
 print(type(new_game))
@@ -42,3 +43,4 @@ currentStat.gameLoaded(my_new_game, my_new_game.get_name())
 print("After loading new_game into currentStat: ")
 print(currentStat.game_loaded_name)
 print()
+"""

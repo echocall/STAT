@@ -1,38 +1,45 @@
 #!/usr/bin/env python3
-
-import function_example
+from typing import Annotated
+import configparser
 import home_page
-import welcome
-import create_new_game
-import create_new_asset
 import elements.theme as theme
-import view_games
-import view_saves
-import loaded_save_dashboard
-import edit_game
 
 from fastapi import Depends 
-from nicegui import ui
+from nicegui import ui, app
 
-# Example 1: use a custom page decorator directly and putting the content creation into a separate function
+# load file paths from config.txt
+# Reworked from utilities -> stat_initializer
+def load_config(config_file: str):
+    # Reading from config file
+    configParser = configparser.ConfigParser()
+    configFilePath = config_file
+    configParser.sections()
+    configParser.read(configFilePath)
+
+    config_dict = {}
+    # We want to preserve the sections for organization later
+    for Section in configParser.sections():
+        temp_dict = {}
+        # Create a temporary diction that gets added to the Sectiond ictionary
+        for key, value in configParser[Section].items():
+            temp_dict.update({key:value})
+        config_dict[Section] = temp_dict
+
+    # Return the organized dictionary
+    return config_dict
+
 @ui.page('/')
-def index_page() -> None:
+async def index_page() -> None:
+
+    config_data = load_config('config.txt')
+    structured_data = {}
+    
+    for section in config_data:
+        structured_data[section] = config_data[section]
+    # Store as nested dictionary
+    app.storage.user["config"] = structured_data
+
     with theme.frame('Home Page'):
-        home_page.content()
-
-create_new_game.create()
-
-create_new_asset.create()
-
-view_games.create()
-
-view_saves.create()
-
-function_example.create()
-
-loaded_save_dashboard.create()
-
-edit_game.create()
-
+        await home_page.content()
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(800, 500), fullscreen=False)

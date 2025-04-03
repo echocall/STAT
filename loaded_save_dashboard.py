@@ -4,75 +4,87 @@ from elements.CategoryLabel import CategoryLabel
 from elements.AssetContainer import AssetContainer
 import elements.theme as theme
 
+# Dashboard for after a game has been selected, and a save has been loaded.
+# Displays the user's information.
 def create() -> None:
     @ui.page('/loadeddash')
     def view_saves():
-        with theme.frame('View Saves'):
-            save_data = {...}  # Existing save data
-            assets = {...}  # Existing asset data
+       with theme.frame('View Saves'):
+    # Getting assets sorted.
+            save_data = {'name': 'Save A', 'base_game': 'Test', 
+                     'create_date': '3/8/2025', 'date_last_save':'3/15/2025', 
+                     'description':'A save for testing purposes.', 'asset_customs':True,
+                      'asset_customs_path':'statassets\\datapacks\\test\\customs\\savea\\assets',
+                       'actor_customs':False, 'asset_customs_path':'', 'event_customs':False,
+                       'event_customs_path':'', 'effect_customs':False,'effect_customs_path':'',
+                       'counters': {"Gold": 25, "Silver": 34, "Copper": 23, "Resources":'20', "Health": 84, "1st Level Spell Slots": 6},
+                       'assets':{'Barracks': 2, 'Soldier': 4}, 'actors':{}, 
+                       'current_events':{}, 'current_effects':{}, 'log_file_path':''}
+            assets = { 
+                 # Barracks
+                 'Barracks':{'name':'Barracks', 'category':'Room', 'description':"A room for your soldiers to live in.",
+                 'source':'Test', 'type':'Required', 'attributes':['Building', 'Unit Room'],
+                 'buy_costs':{'Resources': 10}, 'sell_prices':{'Silver': 5},
+                 'special':'Each Barrack can hold either 10 Soldiers or 10 Gunners. (They cannot share a grid after an ancient smear against rifles).',
+                 'effects':[], 'icon':'','image':''},
+                 # Spell Strike
+                'Spell Strike':{'name':'Spell Strike', 'category':'Spell', 'description':"A quick spell that damages your enemy.",
+                 'source':'Test', 'type':'Damage', 'attributes':['Damage', 'Arcane', 'Magic'],
+                 'buy_costs':{"1st Level Spell Slot": 1, "Copper": 1}, 'sell_prices':{'none': 0},
+                 'special':'Deals 1d6 damage to an enemy with a range of 60 ft.',
+                 'effects':[], 'icon':'','image':''},
+                 # Soldier
+                'Soldier':{'name':'Soldier', 'category':'Unit', 'description':"A basic soldier.",
+                 'source':'Test - Custom', 'type':'Offense', 'attributes':['Warrior', 'Unit', 'Human','Offense'],
+                 'buy_costs':{'Gold': 2}, 'sell_prices':{'none': 0},
+                 'special':'Deals 5 STR per solider in squad.',
+                 'effects':[], 'icon':'','image':''},
+                 # Warrior
+                'Warrior':{'name':'Warrior', 'category':'Unit', 'description':"Warriors are strong, individualistic fighters.",
+                 'source':'Test - Custom', 'type':'Offense', 'attributes':['Warrior', 'Unit', 'Human','Offense'],
+                 'buy_costs':{'Gold': 4}, 'sell_prices':{'none': 0},
+                 'special':'Deals 5 STR.',
+                 'effects':[], 'icon':'','image':''},
+            }
             counters = save_data['counters']
             sorted_assets = sort_assets_by_category(assets)
             owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
             sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
-
+            # The tabs
             with ui.tabs().classes('w-full') as tabs:
                 main = ui.tab('Main')
-                assets_tab = ui.tab('Assets - Owned')
+                assets = ui.tab('Assets - Owned')
                 store = ui.tab('Assets - Store')
-            
-            with ui.tab_panels(tabs, value=main).classes('w-full'):
+            with ui.tab_panels(tabs, value=main).classes('full flex items-left'):
                 with ui.tab_panel(main):
-                    ui.label('Main Overview').classes('text-2xl font-bold')
-                    with ui.row().classes("w-full justify-between"):
-                        ui.label(f'Save Name: {save_data["name"]}').classes("text-lg")
-                        ui.label(f'Base Game: {save_data["base_game"]}').classes("text-lg")
-                    with ui.row():
-                        for counter, value in counters.items():
-                            with ui.card().tight():
-                                ui.label(f'{counter}: {value}').classes('text-md font-semibold')
-                
-                with ui.tab_panel(assets_tab):
-                    ui.label('Your Owned Assets').classes('text-xl font-bold')
-                    for category, assets_list in sorted_owned_assets.items():
+                        ui.label('Main tab')
+                        with ui.row():
+                            with ui.column():
+                                ui.label('Save Name: ' + save_data['name'])
+                            with ui.column():
+                                ui.label('Base Game: ' + save_data['base_game'])
+                        with ui.row():
+                            for counter in counters:
+                                ui.label(counter + ':  ' + str(counters[counter]))
+                with ui.tab_panel(assets):
+                        ui.label('Owned Assets tab')
+                with ui.tab_panel(store):
+                    ui.label('Assets Store tab')
+                    # Creates each asset_container
+                    for category in sorted_assets:
                         ui.separator()
-<<<<<<< Updated upstream
                         asset_container = ui.row().classes("full flex")
                         with asset_container:
                             with ui.row():
                                 CategoryLabel(category)
                             # Creates cards for each asset
                             for asset in sorted_assets[category]:
-=======
-                        with ui.row():
-                            CategoryLabel(category)
-                        with ui.row().classes("w-full flex-wrap"):
-                            for asset in assets_list:
->>>>>>> Stashed changes
-                                with ui.card().tight():
+                                with ui.card():
                                     with ui.card_section():
-                                        ui.label(asset['name']).classes('text-md font-bold')
-                                        ui.label(f'Source: {asset["source"]}')
-                                        ui.label(f'Buy: {asset["buy_costs"]}')
-                                        ui.label(f'Sell: {asset["sell_prices"]}')
-                
-                with ui.tab_panel(store):
-                    ui.label('Assets Store').classes('text-xl font-bold')
-                    ui.input('Search Assets').on('input', lambda e: filter_assets(e.value))
-                    for category, assets_list in sorted_assets.items():
-                        ui.separator()
-                        with ui.row():
-                            CategoryLabel(category)
-                        with ui.row().classes("w-full flex-wrap"):
-                            for asset in assets_list:
-                                with ui.card().tight():
-                                    with ui.card_section():
-                                        ui.label(asset['name']).classes('text-md font-bold')
-                                        ui.label(f'Source: {asset["source"]}')
-                                        ui.label(f'Buy: {asset["buy_costs"]}')
-                                        ui.label(f'Sell: {asset["sell_prices"]}')
+                                        ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
+                                        ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')
+                                        ui.label().bind_text_from(asset, 'buy_costs', backward=lambda buy_costs: f'{buy_costs}')
+                                        ui.label().bind_text_from(asset, 'sell_prices', backward=lambda sell_prices: f'{sell_prices}')
                                     with ui.card_actions().classes("w-full justify-end"):
-                                        ui.button('Add Asset', on_click=lambda asset=asset: ui.notify(f'Added {asset["name"]}'))
-
-    def filter_assets(search_text):
-        # Implement logic to filter assets based on search_text
-        pass
+                                        ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
+                    

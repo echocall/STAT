@@ -4,4 +4,6 @@ datapacksPath = .\statassets\datapacks
 savesPath = .\statassets\saves
 templateFilePath = .\statassets\templates
 
-[Key Binds]
+[Toggles]
+showWelcome = False
+showExplanations = False

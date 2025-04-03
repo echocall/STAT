@@ -248,7 +248,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     # Turns
     turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted." + "\n")
     new_game["has_turns"] = user_confirm(turns_prompt)
-    if new_games["has_turns"] == true:
+    if new_games["has_turns"] == True:
         turns = define_turns(name_dict["name"])
         new_game["turn_type"] = turns["turn_type"]
         new_game["start_turn"] = turns["start_turn"]
@@ -260,7 +260,7 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     # TODO: create more error handling within this chain.
     create_result = create_folders(name_dict, game_path, datapack_path, saves_path)
     if not create_result:
-        print("Creating folders failed for new game.")
+        error_message = "Creating folders failed for new game."
 
     print()
     try:
@@ -273,8 +273,6 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         return new_game
     else:
         error_message = "Warning: missing fields from new game dictionary."
-        print("Warning: missing fields from new game dictionary.",
-            sep="\n")
         print("Missing Fields: ", sep="\n")
         for field in compare_result["missing_values"]:
             print("Missing from new dictionary: " + field)
@@ -297,8 +295,7 @@ def get_new_game_name(file_path: str) -> dict:
         games = multi_json_names_getter(file_path, "games")
         if name in games:
         # if file_name already exists, ask for another game name and show what games exist.
-        # TODO: Make this true part become recursive.
-            print("\n" + "A game of that name already exists. You may experience difficulties creating folders for this game.", sep="\n")
+            "A game of that name already exists. You may experience difficulties creating folders for this game."
             if user_confirm("Do you want to enter a new name now?"):
                 get_new_game_name(file_path)
             else:
