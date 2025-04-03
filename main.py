@@ -17,8 +17,8 @@ from nicegui import ui
 # Example 1: use a custom page decorator directly and putting the content creation into a separate function
 @ui.page('/')
 def index_page() -> None:
-    with theme.frame('Welcome'):
-        welcome.content()
+    with theme.frame('Home Page'):
+        home_page.content()
 
 create_new_game.create()
 
