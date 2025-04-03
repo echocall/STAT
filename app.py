@@ -16,8 +16,11 @@ print("Game loaded: ")
 print(currentStat.game_loaded_name)
 print()
 
-filePaths = stat_initialize(currentStat.config_file)
-print(filePaths)
+# filePaths = stat_initialize(currentStat.config_file)
+# print(filePaths)
+
+check_load_config = load_config(currentStat.config_file)
+print(check_load_config)
 
 # === NEW GAME ====
 """

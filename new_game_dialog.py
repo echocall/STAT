@@ -132,6 +132,4 @@ async def new_game_dialog():
 
     # when the dialog.submit(...) is called, here's where the value comes out.
     game = await dialog
-    print(game)
-    message(game['description'])
     return game

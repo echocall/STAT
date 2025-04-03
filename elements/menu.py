@@ -1,4 +1,5 @@
 from nicegui import ui
+from fastapi import FastAPI, Depends
 
 def menu() -> None:
     with ui.link(target='/'):

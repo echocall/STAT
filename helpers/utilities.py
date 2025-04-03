@@ -2,6 +2,27 @@ import configparser
 import json
 from pathlib import Path
 
+# load file paths from config.txt
+# Reworked from utilities -> stat_initializer
+def load_config(config_file: str):
+    # Reading from config file
+    configParser = configparser.ConfigParser()
+    configFilePath = config_file
+    configParser.sections()
+    configParser.read(configFilePath)
+
+    config_dict = {}
+    # We want to preserve the sections for organization later
+    for Section in configParser.sections():
+        temp_dict = {}
+        # Create a temporary diction that gets added to the Sectiond ictionary
+        for key, value in configParser[Section].items():
+            temp_dict.update({key:value})
+        config_dict[Section] = temp_dict
+
+    # Return the organized dictionary
+    return config_dict
+
 def stat_initialize(config_file: str) -> dict:
     # Reading from config file
     configParser = configparser.RawConfigParser()

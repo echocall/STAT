@@ -47,12 +47,21 @@ def new_game(game_path: str, saves_path: str, datapack_path: str) -> dict:
         error_message = "Warning, could not save new game to JSON file."
         return error_message
 
-def get_game(gameName: str, filePath: str, type: str) -> dict:
-    game = single_json_getter(gameName, filePath, type)
+def get_game(game_name: str, file_path: str, type: str) -> dict:
+    game = single_json_getter(game_name, file_path, type)
     return game
 
-def get_game_as_obj(gameName: str, filePath: str, type: str) -> object:
-    game = single_json_getter(gameName, filePath, type)
+def get_games(file_path: str) -> dict:
+    game_names = get_games_names(file_path)
+    
+    all_games = {}
+    for name in game_names:
+        all_games[name] = get_game(name, file_path, "game")
+    
+    return all_games
+
+def get_game_as_obj(game_name: str, file_path: str, type: str) -> object:
+    game = single_json_getter(game_name, file_path, type)
     game_object = {}
     game_object = dict_to_game_object(game)
     return game_object
@@ -81,8 +90,8 @@ def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> 
 
 def get_game_saves(filePath: str, gameName: str) -> list:
     # get game name
-    names_test_path = filePath + gameName
-    save_names = multi_json_names_getter(names_test_path)
+    game_saves_path = filePath + gameName
+    save_names = multi_json_names_getter(game_saves_path)
 
     return save_names
 
