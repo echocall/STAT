@@ -14,6 +14,16 @@ def get_game_saves(filePath: str) -> list:
 
     return splitSaveNames
 
+# return a dictionary of all the saves associated with a game
+def get_saves(file_path: str) -> dict:
+    saves = get_game_saves(file_path)
+    
+    save_files = {}
+    for save in saves:
+        save_files['save'] = load_save(save, file_path, "saves")
+    
+    return save_files
+
 def convert_save_name(saveName: str) -> str:
     formatted_name = ""
     try:
@@ -25,8 +35,8 @@ def convert_save_name(saveName: str) -> str:
             print(tb)
     return formatted_name
 
-def load_save(saveName: str, filePath: str, type: str) -> dict:
-    save = single_json_getter(saveName, filePath, type)
+def load_save(save_name: str, file_path: str, type: str) -> dict:
+    save = single_json_getter(save_name, file_path, type)
     return save
 
 def select_save(file_path: str) -> dict:
