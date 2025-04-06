@@ -15,7 +15,7 @@ async def view_games():
 
             # Send the game to the app.storage.user
             app.storage.user['loaded_game'] = selected_game
-            
+            ui.navigate.to("/viewsaves/{selected_game_name}")
 
         # File path for game data
         config = app.storage.user.get("config", {})
@@ -33,10 +33,15 @@ async def view_games():
         game_card_container = ui.row().classes("full flex items-center")
         with game_card_container:
             for game in existing_games.values():
-                with ui.card().tight().style('max-height: 175px; max-width:250px'):
-                    with ui.card_section():
-                        game_name = game['name']
-                        ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
-                        ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
-                    with ui.card_actions().classes("w-full justify-end"):
-                        ui.button('Select Game', on_click=lambda: ui.notify(game_name))
+                await render_game_cards(game)
+
+async def render_game_cards(game: dict)-> ui.element:
+    with ui.button(color="dark", on_click=lambda: ui.navigate.to(f"/viewsaves/{game['name']}", new_tab=False)).style(
+            'max-height: 175px; max-width:250px'
+        ) as card:
+        card.props("align=center")
+        with ui.row():
+            ui.icon("people_outlien", color="light", size="64px").classes("p-1")
+            with ui.column():
+                ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
+                ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')

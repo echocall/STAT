@@ -7,25 +7,14 @@ from handlers.savehandler import *
 # get the location of the saves from the loaded game
 
 # call the function to pull in that info of the saves.
-@ui.page('/viewsaves')
+@ui.page('/viewsaves/{game_name}')
 async def view_saves():
-    def load_save(selected_game_name, existing_saves):
-        loaded_save = {}
-        try:
-            for save in existing_saves:
-                if save['name'] == selected_game_name:
-                    loaded_save = save
-        except:
-            ui.notify("Unable to load save.")
-        finally:
-            # pass back empty dict even if nothing is available.
-            app.storage.user["loaded_save"] = loaded_save
-
     with theme.frame('View Saves'):
         # File path for save data
         loaded_game = app.storage.user.get("loaded_game", {})
+        print(loaded_game)
         saves_paths = loaded_game.get("save_files_path", "Not Set")
-
+        
         existing_saves = {}
         # getting the existing saves for the loaded game
         existing_saves = get_saves(saves_paths)
@@ -54,3 +43,14 @@ async def view_saves():
                                 ui.button('Select Save', on_click=load_save(save_name.name))
 
 
+def load_save(selected_game_name, existing_saves):
+    loaded_save = {}
+    try:
+        for save in existing_saves:
+            if save['name'] == selected_game_name:
+                loaded_save = save
+    except:
+        ui.notify("Unable to load save.")
+    finally:
+        # pass back empty dict even if nothing is available.
+        app.storage.user["loaded_save"] = loaded_save

@@ -10,7 +10,9 @@ def frame(navigation_title: str):
     ui.colors(primary='#262f50', 
               secondary='#ce944e', 
               accent='#994f50', 
-              positive='#cdbb8b')
+              positive='#cdbb8b',
+              light='#C15F7C',
+              dark='#9C4A52')
     with ui.header():
         ui.label('STAT').classes('font-bold')
         ui.space()
