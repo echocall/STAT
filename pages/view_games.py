@@ -10,16 +10,12 @@ from handlers.gamehandler import *
 async def view_games():
     with theme.frame('View Games'):
 
-        def select_game(game_name: str):
-            a = 1+1
-            selected_game = existing_games['game_name']
+        def select_game(selected_game_name: str):
+            selected_game = existing_games[selected_game_name]
 
             # Send the game to the app.storage.user
             app.storage.user['loaded_game'] = selected_game
             
-            # send user to view_saves
-            
-
 
         # File path for game data
         config = app.storage.user.get("config", {})
@@ -39,7 +35,8 @@ async def view_games():
             for game in existing_games.values():
                 with ui.card().tight().style('max-height: 175px; max-width:250px'):
                     with ui.card_section():
-                        ui.label().bind_text_from(game, 'name', backward=lambda name: f'Name: {name}')
+                        game_name = game['name']
+                        ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
                         ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
                     with ui.card_actions().classes("w-full justify-end"):
-                        ui.button('Select Game', on_click=lambda: ui.notify('This will load the game & send to view_saves.'))
+                        ui.button('Select Game', on_click=lambda: ui.notify(game_name))

@@ -36,7 +36,7 @@ async def edit_game():
             'start_turn': 0
         }
         message("Edit the details of the game:")
-
+        # edit loaded game or new game?
         # give user list of games to pick to edit.
         # when user selects game, fetch from JSON file and load in.
         # update screen to show pages.
