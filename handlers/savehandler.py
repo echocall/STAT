@@ -16,13 +16,19 @@ def get_game_saves(filePath: str) -> list:
 
 # return a dictionary of all the saves associated with a game
 def get_saves(file_path: str) -> dict:
-    saves = get_game_saves(file_path)
+    saves_names = get_save_names(file_path)
     
     save_files = {}
-    for save in saves:
-        save_files['save'] = load_save(save, file_path, "saves")
+    for save in saves_names:
+        save_files[save] = load_save(save, file_path, "saves")
     
     return save_files
+
+def get_save_names(filePath: str) -> list:
+    save_names = []
+    save_names = multi_json_names_getter(filePath, "saves")
+
+    return save_names
 
 def convert_save_name(saveName: str) -> str:
     formatted_name = ""
