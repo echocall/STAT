@@ -24,23 +24,20 @@ async def view_saves():
         save_card_container = ui.row().classes("full flex items-center")
         with save_card_container:
             for save in existing_saves.values():
-                ui.label().bind_text_from(save,'name', backward=lambda name: f'{name}')
                 await render_save_cards(existing_saves, save)
 
 def load_save(existing_saves, selected_save_name):
     for name in selected_save_name:
         loaded_save = {}
         save_to_get = convert_save_name(name)
-        print(save_to_get)
-        print(existing_saves)
         try:
-            print(existing_saves[save_to_get])
             loaded_save = existing_saves[save_to_get]
         except:
             ui.notify("Unable to load save.")
         finally:
             # pass back empty dict even if nothing is available.
             app.storage.user["loaded_save"] = loaded_save
+            ui.navigate.to(f"/loadeddash")
 
 async def render_save_cards(existing_saves, save):
     with ui.card().tight().style('max-height: 175px; max-width:250px'):

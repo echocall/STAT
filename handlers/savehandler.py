@@ -16,11 +16,13 @@ def get_game_saves(filePath: str) -> list:
 
 # return a dictionary of all the saves associated with a game
 def get_saves(file_path: str) -> dict:
-    saves_names = get_save_names(file_path)
+    save_names = []
+    save_names = get_save_names(file_path)
     
     save_files = {}
-    for save in saves_names:
-        save_files[save] = load_save(save, file_path, "saves")
+    for save in save_names:
+        save_name = save.lower()
+        save_files[save_name] = load_save(save, file_path, "saves")
     
     return save_files
 

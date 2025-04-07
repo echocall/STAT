@@ -517,14 +517,11 @@ def sort_assets_by_category(assets_to_sort: dict) -> dict:
                 categories_set.add(assets_to_sort[key]['category'])
        # Change set into list for more consistent sorting.
         categories_list = list(categories_set)
-        
         categories_list.sort()
 
         # now that we have the set, create dictionary.
         sorted_assets = asset_sorter(assets_to_sort, categories_list, 'category')
         return sorted_assets
-
-    # actually sorted the assets by category.
 
 def asset_sorter(assets_to_sort: dict, sort_by_list: list, sort_field: str) -> dict:
         #sorted_assets = {'category':[<asset1>,<asset2>]}
@@ -554,3 +551,7 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
                     error_message = 'Owned asset not in list of assets.'
 
         return owned_assets
+
+def fetch_assets() -> dict:
+    a = 1+1
+
