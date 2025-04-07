@@ -2,7 +2,7 @@
     "name":"Spell Strike",
     "category":"Spell",
     "description":"A quick spell that damages your enemy.",
-    "source":"Pathfinder",
+    "source":"Test",
     "type":"Damage",
     "attributes":["Damage", "Arcane", "Magic"],
     "buy_costs":{"1st Level Spell Slot": 1, "Copper": 1},

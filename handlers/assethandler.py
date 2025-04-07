@@ -511,12 +511,20 @@ def sort_assets_by_category(assets_to_sort: dict) -> dict:
         categories_list = []
 
         categories_set = set(categories_set)
+        print('Assets_to_sort printed:')
+        print(assets_to_sort)
 
         for key in assets_to_sort:
             if assets_to_sort[key]['category'] not in categories_set:
                 categories_set.add(assets_to_sort[key]['category'])
+        print()
+        print("The set of categories")
+        print(categories_set)
        # Change set into list for more consistent sorting.
         categories_list = list(categories_set)
+        print()
+        print("The list of categories:")
+        print(categories_list)
         categories_list.sort()
 
         # now that we have the set, create dictionary.

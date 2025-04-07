@@ -2,7 +2,7 @@
     "name":"Soldier",
     "category":"Unit",
     "description":"A basic soldier.",
-    "source":"Delve",
+    "source":"Test",
     "type":"Offense",
     "attributes":["Warrior", "Unit", "Human", "Offense"],
     "buy_costs":{"Gold": 2},

@@ -21,12 +21,8 @@ async def content() -> None:
         ui.label("Welcome to STAT!")
 
         ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
-        new_game = ui.button(
-        "Create New Game",
-        icon="create",
-        )
-        new_game.on("click",
-                    lambda: new_game_dialog())
+        with ui.link(target='/creategame'):
+            ui.button("Create New Game", icon="create")
 
         with ui.link(target='/viewgames'):
-            ui.button('View Games')
+            ui.button("Load Games", icon="view_list")

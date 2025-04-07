@@ -19,5 +19,5 @@ async def index_page() -> None:
     with theme.frame('Home Page'):
         await home_page.content()
 
-ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(600, 800), 
+ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', window_size=(1200, 800), 
        fullscreen=False, storage_secret='teehee a secret for me')

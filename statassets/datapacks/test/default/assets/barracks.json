@@ -2,7 +2,7 @@
     "name":"Barracks",
     "category":"Room",
     "description":"A room for your soldiers to live in.",
-    "source":"Delve",
+    "source":"Test",
     "type":"Buffing",
     "attributes":["Building"],
     "buy_costs":{"Resources": 10},
