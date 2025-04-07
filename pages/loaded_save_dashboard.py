@@ -38,17 +38,28 @@ async def load_dashboard():
                 message("Warning: No game loaded. Please select a game to load: ")
 
     
-        with ui.tab_panels(tabs, value=main_tab).classes('full flex items-left'):
+        with ui.tab_panels(tabs, value=main_tab).classes('full flex'):
             with ui.tab_panel(main_tab):
-                    ui.label('Counters tab')
-                    with ui.row():
+                    with ui.row().classes('full flex items-left'):
                         with ui.column():
-                            ui.label('Save Name: ' + save_data['name'])
+                            with ui.label('Save Name: ' + save_data['name']):
+                                ui.tooltip('The name of the save currently loaded.')
                         with ui.column():
                             ui.label('Base Game: ' + save_data['base_game'])
+                    ui.separator()
                     with ui.row():
                         for counter in counters:
+                            
                             ui.label(counter + ':  ' + str(counters[counter]))
+                            with ui.number(label='counter_value', backward=lambda counter_value: f'{counters[counter]}'):
+                                ui.tooltip('Counter amout')
+                            with ui.number(label='Change Counter by:', value=0, format='%.0f'):
+                                ui.tooltip('Selecte how much to change the counter by.')
+                            with ui.button(icon='add').classes("w-0.25"):
+                                ui.tooltip('Add the amount in the number input to the counter.').classes('bg-green')
+                            with ui.button(icon='remove').classes("w-0.25"):
+                                ui.tooltip('Subtract the amount in the number input from the counter.').classes('bg-green')
+                    ui.separator()
             with ui.tab_panel(assets_tab):
                     ui.label('Owned Assets tab')
             with ui.tab_panel(store_tab):
@@ -62,12 +73,17 @@ async def load_dashboard():
                             CategoryLabel(category)
                         # Creates cards for each asset
                         for asset in sorted_assets[category]:
-                            with ui.card():
-                                with ui.card_section():
-                                    ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
-                                    ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')
-                                    ui.label().bind_text_from(asset, 'buy_costs', backward=lambda buy_costs: f'{buy_costs}')
-                                    ui.label().bind_text_from(asset, 'sell_prices', backward=lambda sell_prices: f'{sell_prices}')
-                                with ui.card_actions().classes("w-full justify-end"):
-                                    ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
-        
+                            with ui.row():
+                                with ui.card():
+                                    with ui.card_section():
+                                        ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
+                                        ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')
+                                        ui.label().bind_text_from(asset, 'buy_costs', backward=lambda buy_costs: f'{buy_costs}')
+                                        ui.label().bind_text_from(asset, 'sell_prices', backward=lambda sell_prices: f'{sell_prices}')
+                                    with ui.card_actions().classes("w-full justify-end"):
+                                        ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
+def counter_add(counters: dict, counter: str, amount: int):
+    b=2+2
+    # Get the amount to add
+
+    # save to save_data and also app.storage.user['loaded_save']

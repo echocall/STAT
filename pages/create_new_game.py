@@ -13,6 +13,7 @@ def new_game():
     with theme.frame('Create a Game'):
         message('Create a Game')
         with ui.card().classes("flex"):
+            # Name of the Game
             with ui.card_section().classes('w-80 items-stretch items-center'):
                 # get the name of the game.
                 ui.label("Enter a name for the game. The name should be unique.").classes()
@@ -114,12 +115,3 @@ def new_game():
 
                 # Disable the button by default until validation is done.
                 submit.disable()
-
-                # Cancel out of dialog.
-                # ui.button("Cancel", on_click=dialog.close)
-
-    # when the dialog.submit(...) is called, here's where the value comes out.
-    game = 'You have finished creating a game! Congrats!'
-    
-    ui.label(game)
-    return game

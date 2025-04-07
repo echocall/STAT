@@ -32,6 +32,7 @@ def load_save(existing_saves, selected_save_name):
         save_to_get = convert_save_name(name)
         try:
             loaded_save = existing_saves[save_to_get]
+            app.storage.user['is_save_loaded']  = True
         except:
             ui.notify("Unable to load save.")
         finally:

@@ -33,6 +33,7 @@ def select_game(existing_games: dict, selected_game_name: str):
         selected_game = {}
         try:
             selected_game = existing_games[name]
+            app.storage.user['is_game_loaded']  = True
         except:
             ui.notify("Warning! Problem with loading game. Please check that game file exists.")
         finally:

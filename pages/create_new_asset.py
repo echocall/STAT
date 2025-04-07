@@ -13,6 +13,7 @@ enable = Enable()
 @ui.page('/createasset')
 def new_asset():
     with theme.frame('Create an Asset'), ui.card().classes("w-full"):
+        
         message('Create an Asset')
         # Input name for the asset.
         with ui.card_section().classes('w-80 items-stretch'):
