@@ -1,4 +1,4 @@
-from nicegui import ui
+from nicegui import app, ui
 from fastapi import FastAPI, Depends
 
 def menu() -> None:
@@ -54,6 +54,8 @@ def menu() -> None:
                          lambda: ui.notify('Selected item 3'), auto_close=False)
             ui.separator()
             ui.menu_item('Close', settings_menu.close)
+            ui.separator()
+            ui.menu_item('Close STAT', on_click=app.shutdown)
 
 
 """ Creating a custom menu_item for toggling dark mode on/off.
