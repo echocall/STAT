@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 
 def menu() -> None:
     with ui.link(target='/'):
-        ui.icon('home').classes('scale-200').props('color="white"')
+        ui.icon('home').props('color="white"')
     # ui.link('A', '/a').classes(replace='text-white')
 
     with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :
@@ -28,7 +28,6 @@ def menu() -> None:
             ui.separator()
             ui.menu_item('Close', general_menu.close)
 
-
     with ui.button(icon='help').classes('scale-75').props('color="secondary"') as help_menu_btn:
         with ui.menu() as help_menu:
             game_help = ui.menu_item('Game Help', auto_close=False)
@@ -46,6 +45,14 @@ def menu() -> None:
                          lambda: ui.notify('Selected item 3'), auto_close=False)
             ui.menu_item('Close', help_menu.close)
 
+    # Are you sure you want to close?
+    with ui.dialog() as confirm_close, ui.card():
+        ui.label(f'Are you sure you want to close STAT?')
+        ui.label(f'Your changes will not be automatically saved.')
+        with ui.row():
+            ui.button('Yes', on_click=app.shutdown)
+            ui.button('No', on_click=confirm_close.close)
+
     with ui.button(icon='settings').classes('scale-75').props('color="secondary"'):
         with ui.menu() as settings_menu:
             ui.menu_item('Menu item 1', lambda: ui.notify('Selected item 1'))
@@ -55,8 +62,7 @@ def menu() -> None:
             ui.separator()
             ui.menu_item('Close', settings_menu.close)
             ui.separator()
-            ui.menu_item('Close STAT', on_click=app.shutdown)
-
+            ui.menu_item('Close STAT', on_click=confirm_close.open)
 
 """ Creating a custom menu_item for toggling dark mode on/off.
 Based on the example on NiceGUI of acustom ToggleButton."""

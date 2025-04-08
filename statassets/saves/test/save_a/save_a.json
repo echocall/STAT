@@ -17,5 +17,6 @@
     "actors":{},
     "current_events":{},
     "current_effects":{},
+    "current_turn": 0,
     "log_file_path":""
 }

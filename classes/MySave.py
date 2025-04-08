@@ -21,6 +21,7 @@ class MySave:
     actors: dict
     current_events: dict
     current_effects: dict
+    current_turn: int
     log_file_path: str
 
     def __post__init__(self, name, createDate, dateLastSave, description, 

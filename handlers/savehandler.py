@@ -67,8 +67,25 @@ def select_save(file_path: str) -> dict:
 def update_save():
     print("TODO: Update a save file.")
 
-def new_save():
+# TODO: Create a new save file
+def new_save(save_name: str, game: dict):
     print("TODO: Create a new save file.")
+    file_save_name = ""
+    new_save_file = {'name': "", 'create_date': "", "date_last_save": "",
+                     "description": "", "asset_customs": False, "asset_customs_path": "",
+                     "actor_customs": False,"actor_customs_path": "",
+                     "event_customs": False, "event_customs_path": "",
+                     "effect_customs": False, "effect_customs_path": "",
+                     "counters":{}, "assets":{}, "actors":{}, "current_events":{},
+                     "current_effects":{},"current_turn":0, "log_file_path":""}
+    # build the save dict
+
+    # Convert save_name to file_name friendly format
+    file_save_name = format_str_for_filename(save_name)
+
+    # Get default values from the game.
+    new_save_file['name'] = save_name;
+    new_save_file['']
 
 def save_current():
     print("TODO: save current STAT instance to save file.")

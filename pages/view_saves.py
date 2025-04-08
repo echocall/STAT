@@ -52,3 +52,14 @@ async def render_save_cards(existing_saves, save):
                                                     backward=lambda last_save: f'Last Save: {last_save}')
             with ui.card_actions().classes("w-full justify-end"):
                 ui.button('Select Save', on_click=lambda: load_save(existing_saves, {save['name']}))
+
+async def new_save_dialog(loaded_game, save_paths):
+    d = 4+4
+    # TODO: 
+    # Are we picking a game to base the save off of now, or presuming a game has already been loaded?
+    # get new save name
+    # grab default values from game
+    # run the 
+
+
+

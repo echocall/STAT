@@ -27,7 +27,7 @@ async def view_games():
             for game in existing_games.values():
                 await render_game_cards(existing_games, game)
 
-
+# Select a game to load into app.storage.user
 def select_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
         selected_game = {}
@@ -40,10 +40,25 @@ def select_game(existing_games: dict, selected_game_name: str):
             app.storage.user['loaded_game'] = selected_game
             ui.navigate.to(f"/viewsaves/{selected_game_name}")
 
+# Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
     with ui.card().tight().style('max-height: 175px; max-width:250px'):
         with ui.card_section():
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Select Game', on_click=lambda: select_game(existing_games, {game['name']}))
+            ui.button('Select', on_click=lambda: select_game(existing_games, {game['name']})).props('dense')
+            with ui.button(icon='edit').props('dense round'):
+                ui.tooltip("Edit game.")
+            with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('dense round'):
+                ui.tooltip("Delete this game and all files associated with it.")
+
+# Confirm we want to delete the game and its files then call
+# TODO: finish
+async def confirm_game_delete()-> ui.element:
+    # Are you sure you want to delete?
+    with ui.dialog() as confirm_delete, ui.card():
+                ui.label('Are you sure you want to delete ALL files?')
+                with ui.row():
+                    ui.button('Yes', on_click=ui.notify("This will delete the game's JSON file.")).props('dense')
+                    ui.button('No', on_click=confirm_delete.close).props('dense')

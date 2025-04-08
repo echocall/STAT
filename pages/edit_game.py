@@ -40,7 +40,6 @@ async def edit_game():
         # give user list of games to pick to edit.
         # when user selects game, fetch from JSON file and load in.
         # update screen to show pages.
-
         
         with ui.column().props('flex'):
             # Name of the Game

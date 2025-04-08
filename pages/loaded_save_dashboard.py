@@ -23,7 +23,6 @@ async def dashboard():
         save_data = load_from_storage("loaded_save")
         loaded_game = load_from_storage("loaded_game")
         saves_paths = loaded_game.get("save_files_path", "Not Set")
-        
 
         # if the dictionaries are not empty
         if bool(save_data) and bool(loaded_game):
@@ -78,6 +77,17 @@ async def dashboard():
                 with ui.column():
                     with ui.label('Base Game: ' + save_data['base_game']):
                         ui.tooltip(f'The base game is {save_data['base_game']}')
+                with ui.column():
+                    with ui.row():
+                        ui.label('Turns: ')
+                        current_turn = save_data['current_turn']
+                        ui.label(current_turn)
+                with ui.column():
+                    with ui.button(icon='update', on_click=ui.notify('TODO: implement advancing turns')).props("round dense size=sm"): 
+                        ui.tooltip(f'Advances the current turn according to turn type (increase or decrease).')
+                ui.space()
+                with ui.column():
+                    ui.button('Save', icon='save', on_click=ui.notify('This will save the current game.')).props("dense size=sm")
 
             ui.separator()
             # The Counters
@@ -132,25 +142,30 @@ async def dashboard():
 # Render the counters.
 @ui.refreshable
 async def render_counter_bar(counters: dict, counter: str) -> ui.element:
-    current_counter = ui.label(f'{counter}:')
+    current_counter = ui.label(f'{counter}:').classes('text-sm')
     with current_counter:
         ui.tooltip(f'Name of counter. Currently {counter}.')
 
-    # Work around for  showing Current Counter amount without being able to fiddle with it.
+    # Work around for showing Current Counter amount without being able to fiddle with it.
     temp_current_amount = counters[counter]
-    current_amount = ui.label(f'{temp_current_amount}')#.classes("size-0.5")
+    current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
     with current_amount:
         ui.tooltip(f'Amount of {counter}. Currently {counters[counter]}.')
 
     # Amount to change
-    amount_to_change =  ui.number(label=f'Change {counter} by this amount: ', value=0, min=0, precision=0)
+    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
     with amount_to_change:
-        ui.tooltip(f'Number input for the add and subtract buttons to update the counter by.')
+        ui.tooltip(f'Amount of change to the counter.')
     # Buttons! :)
     with ui.row().classes('items-center justify-items-center align-middle'):
-        with ui.chip(icon='add', on_click=lambda: counter_add(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='green'):
+        btn_add = ui.button(icon='add', on_click=lambda: counter_add(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='green')
+        btn_add.props('round dense size=sm')
+        with btn_add:
            ui.tooltip(f'Add the amount in the number input to {counter}.')
-        with ui.chip(icon='remove', on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange'):
+        btn_sub = ui.button(icon='remove',
+                             on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange')
+        btn_sub.props('round dense size=sm')
+        with btn_sub:
             ui.tooltip(f'Subtract the amount in the number input from {counter}.')
 
 # Function to increase the amount of a counter.
@@ -210,7 +225,7 @@ async def render_asset_cards(asset) -> ui.element:
                     ui.label(f'{name}: ').classes('font-normal')
                     ui.label(f'{value}').classes('font-normal')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Add Asset', on_click=lambda: ui.notify(f'You tried to add an asset to your owned assets.'))
+            ui.button('Purchase Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
 
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
     for asset in assets:
@@ -229,3 +244,17 @@ def select_game(games_path: str, selected_game_name: str):
         finally:
             app.storage.user['loaded_game'] = selected_game
             render_counter_bar.refresh()
+
+def buy_asset(asset: dict, counters: dict):
+    g = 7+7
+    # Subtract asset's buy_costs from appropriate counters.
+        # if buy_cost['name'] exists in Counters:
+        # subtract amount specified in asset
+    # if it doesn't exist in the Owned_Assets, add it to there.
+    # Increase amount of asset in owned_assets by one.
+    
+
+def save_game():
+    c = 3+3
+    # TODO: write from app.storage.user to .json file
+    # TODO: return result of save.
