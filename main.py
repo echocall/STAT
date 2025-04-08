@@ -7,6 +7,8 @@ import pages.view_saves as view_saves
 import pages.create_new_game as create_new_game
 import pages.create_new_asset as create_new_asset
 import pages.loaded_save_dashboard as loaded_save_dashboard
+import pages.edit_game as edit_game
+
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *

@@ -3,7 +3,7 @@
     "category":"Spell",
     "description":"A quick spell that damages your enemy.",
     "source":"Delve",
-    "type":"Damage",
+    "asset_type":"Damage",
     "attributes":["Damage", "Arcane", "Magic"],
     "buy_costs":{"1st Level Spell Slot": 1, "Copper": 1},
     "sell_prices":{"none": 0},

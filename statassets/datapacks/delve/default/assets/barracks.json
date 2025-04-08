@@ -3,7 +3,7 @@
     "category":"Room",
     "description":"A room for your soldiers to live in.",
     "source":"Delve",
-    "type":"Buffing",
+    "asset_type":"Buffing",
     "attributes":["Building"],
     "buy_costs":{"Resources": 10},
     "sell_prices":{"none": 0},

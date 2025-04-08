@@ -85,7 +85,7 @@ def filter_list_value_with_set(initialList: list, keyInList: str) -> list:
         return filtered_list
     else:
         return error_message
-    
+
 # compare two lists, return bool and missing items.
 def list_compare(initialList: list, secondList: list) -> dict:
     match = False

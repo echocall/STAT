@@ -35,12 +35,13 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
     else:
         merged_assets = default_result["retrieved_list"]
 
-    converted_assets = dict_to_objects(merged_assets)
+    # turns them into MyAsset objects
+    # converted_assets = dict_to_objects(merged_assets)
 
     # build the result from our handler.
     handler_result = handler_result_builder(missing_default, "missing_assets", missing_assets, "converted_assets", converted_assets)
 
-    return handler_result
+    return merged_assets
 
 # Checks that the default assets exist & match the game file
 # retrieves the default files & passes them back + any error message.
@@ -193,6 +194,55 @@ def new_asset_assembler_quiet(file_path: str, for_new_game: bool,
             print("Missing from new dictionary: " + field)
         # call something to fix the game or fix those specific fields.
         return error_message
+    
+# TODO: Finish missing fields: effects, icon, image,
+def new_asset_assembler_silent(file_path: str, for_new_game: bool,
+                               game_name: str,new_asset_values: dict) -> dict:
+    new_asset = {'name': '', 'category': '', 'description': '', 'source': '', 'asset_type':'',
+             'attributes':[], 'buy_costs':{}, 'sell_prices':{}, 'special': '', 
+             'effects':[], 'icon':'', 'image':''}
+    
+    name_dict = {}
+    name_dict = set_new_asset_name(file_path, for_new_game)
+    new_asset['name'] = name_dict['name']
+
+    # Category for a game
+    new_asset['category'] = new_asset_values['category']
+
+    add_description = user_confirm("Do you want to add a description now?")
+    if add_description:
+        new_asset['description'] = new_asset_values['description']
+
+    new_asset['source'] = game_name
+
+    # TODO: Type
+    new_asset['asset_type'] = new_asset_values['asset_type']
+    
+    new_asset['attributes'] = new_asset_values['attributes']
+
+    
+    new_asset['buy_costs'] = new_asset_values['buy_costs']
+
+    new_asset['sell_prices'] = new_asset_values['sell_prices']
+
+    # TODO: add effects
+    new_asset['effects'] = new_asset_values['effects']
+
+    # TODO: add icon
+    new_asset['icon'] = new_asset_values['icon_filepath']
+
+    # TODO: add image
+    new_asset['image'] = new_asset_values['image_filepath']
+
+    # check new_asset against template_asset
+    try:
+        template_asset = get_template_json("game",".\\statassets\\templates")
+        compare_result = dict_key_compare(template_asset, new_asset)
+    except:
+        error_message = "Problem with comparing game_template and the new_game dict."
+
+    return new_asset
+
 # TODO: Finish missing fields: icon, image
 def new_asset_assembler_loud(file_path: str, for_new_game: bool,
                               game_name: str, counter_names: list) -> dict:
@@ -511,24 +561,18 @@ def sort_assets_by_category(assets_to_sort: dict) -> dict:
         categories_list = []
 
         categories_set = set(categories_set)
-        print('Assets_to_sort printed:')
-        print(assets_to_sort)
 
         for key in assets_to_sort:
             if assets_to_sort[key]['category'] not in categories_set:
                 categories_set.add(assets_to_sort[key]['category'])
-        print()
-        print("The set of categories")
-        print(categories_set)
+                
        # Change set into list for more consistent sorting.
         categories_list = list(categories_set)
-        print()
-        print("The list of categories:")
-        print(categories_list)
         categories_list.sort()
 
         # now that we have the set, create dictionary.
         sorted_assets = asset_sorter(assets_to_sort, categories_list, 'category')
+
         return sorted_assets
 
 def asset_sorter(assets_to_sort: dict, sort_by_list: list, sort_field: str) -> dict:
@@ -538,13 +582,14 @@ def asset_sorter(assets_to_sort: dict, sort_by_list: list, sort_field: str) -> d
         # initialize the dictionary of lists by field
         for each in sort_by_list:
             sorted_assets[each] = []
-        
         for key in assets_to_sort:
         # if the asset's category is in the sorted dictionary, add it.
             if assets_to_sort[key][sort_field] in sorted_assets:
-                each = assets_to_sort[key][sort_field]
-                sorted_assets[each].append(assets_to_sort[key])
-            return sorted_assets
+                # get the field we're sorting into
+                sort_field_name = assets_to_sort[key][sort_field]
+                # get the asset and add it to the dictionary for that field.
+                sorted_assets[sort_field_name].append(assets_to_sort[key])
+        return sorted_assets
             
 def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
         # TODO: return an unsorted dictionary of owned assets.

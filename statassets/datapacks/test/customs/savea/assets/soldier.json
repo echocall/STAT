@@ -3,7 +3,7 @@
     "category":"Unit",
     "description":"A basic soldier.",
     "source":"Test",
-    "type":"Offense",
+    "asset_type":"Offense",
     "attributes":["Warrior", "Unit", "Human", "Offense"],
     "buy_costs":{"Gold": 2},
     "sell_prices":{"none": 0},

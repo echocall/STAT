@@ -16,7 +16,7 @@ def frame(navigation_title: str):
     with ui.header():
         ui.label('STAT').classes('font-bold')
         ui.space()
-        ui.label(navigation_title).classes('font-bold')
+        ui.label(navigation_title).classes('font-bold h-2')
         ui.space()
         with ui.row():
             menu()
