@@ -137,8 +137,6 @@ async def dashboard():
             ui.label("Error loading from selected game! Please pick games from below.").classes('w-40')
             ui.select(options=games, with_input=True, on_change=lambda e: select_game(game_paths, e.value))
             
-
-
 # Render the counters.
 @ui.refreshable
 async def render_counter_bar(counters: dict, counter: str) -> ui.element:
