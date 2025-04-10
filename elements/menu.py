@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 
 def menu() -> None:
     with ui.link(target='/'):
-        ui.icon('home').props('color="white"')
+        ui.icon('home').props('color="white"').classes()
     # ui.link('A', '/a').classes(replace='text-white')
 
     with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :

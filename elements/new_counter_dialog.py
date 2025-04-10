@@ -4,14 +4,14 @@ from classes.Enable import Enable
 from nicegui import ui
 from classes.Counter import Counter
 
-new_counter = {'name':'', 'value':0}
 # creating our buddy.
 enable = Enable()
 
 async def new_counter_dialog():
+    
+    new_counter = {'name':'', 'value':0}
     with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a new Counter")
-
         # Get name of counter
         with ui.card_section().classes('w-80 items-stretch'):
             name_input = ui.input("Name of the counter?",
@@ -35,6 +35,8 @@ async def new_counter_dialog():
 
         counter = {}
         counter[new_counter['name']] = new_counter['value']
+
+        ui.notify(new_counter)
 
         with ui.card_actions():
             # The button submits the data in the fields.
