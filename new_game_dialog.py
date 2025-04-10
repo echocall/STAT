@@ -2,7 +2,7 @@ import elements.theme as theme
 from classes.Enable import *
 from classes.MyGame import MyGame
 from elements.message import message
-from new_counter_dialog import new_counter_dialog
+from elements.new_counter_dialog import new_counter_dialog
 from nicegui import ui
 
 enable = Enable()
@@ -18,8 +18,7 @@ game = {'name': '', 'description':'',
 
 # TODO: Fix returns & passing info in.
 # TODO: don't call Create_New_Asset during the creation of a new game, wait until game has been created?
-# COULD pass in the value in the game.name, or have a list of game names passed in in other call cases... hm...
-
+# COULD pass in the value in the game.name, or have a list of game names passed on in other call cases... hm...
 async def new_game_dialog():
     with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a New Game").classes('text-h3')

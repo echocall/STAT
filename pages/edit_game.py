@@ -2,7 +2,7 @@ from nicegui import ui
 import elements.theme as theme
 from elements.message import message
 from classes.Enable import *
-from new_counter_dialog import new_counter_dialog
+from elements.new_counter_dialog import new_counter_dialog
 from classes.MyGame import MyGame
 from elements.message import message
 from typing import Annotated, Awaitable

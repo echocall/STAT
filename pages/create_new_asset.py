@@ -2,8 +2,7 @@ import elements.theme as theme
 from elements.message import message
 from classes.Enable import Enable
 from classes.MyAsset import MyAsset
-from create_new_dict_entry_dialog import new_dict_entry_dialog
-from new_counter_dialog import new_counter_dialog
+from elements.new_dict_entry import new_dict_entry
 from nicegui import ui
 
 # TODO: Fix returns & passing info in.
@@ -59,7 +58,7 @@ def new_asset():
             )
             new_buy_cost.on(
                 "click",
-                lambda: new_dict_entry_dialog('Buy Cost'),
+                lambda: new_dict_entry('Buy Cost'),
             )
 
         # Add Sell Prices

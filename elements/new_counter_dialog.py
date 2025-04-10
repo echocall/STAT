@@ -2,57 +2,60 @@ import elements.theme as theme
 from elements.message import message
 from classes.Enable import Enable
 from nicegui import ui
+from classes.Counter import Counter
 
+new_counter = {'name':'', 'value':0}
+# creating our buddy.
 enable = Enable()
 
-new_dict_entry = {}
-
-# TODO: replace old Enable() class with newer version.
-# TODO: Learn how to pass stuff in properly.
-
-# pass in the name_of_type of w/e it is that this is being written to.
-# example: Counter, Buy Cost, Sell Price, etc.
-# then pass in the object template to be validated
-# Then validate with SchemaValidator or FastAPI's validator
-async def new_dict_entry_dialog(name_of_type: str):
+async def new_counter_dialog():
     with ui.dialog() as dialog, ui.card().classes("w-full"):
-        ui.label("Create a new " + name_of_type)
+        ui.label("Create a new Counter")
+
+        # Get name of counter
         with ui.card_section().classes('w-80 items-stretch'):
-            name_input = ui.input("Name of the " + name_of_type,
+            name_input = ui.input("Name of the counter?",
                             on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+            name_input.bind_value(new_counter, 'name')
             # allows user to clear the field
             name_input.props('clearable')
+
             # This handles the validation of the field.
-            name_input.validation={"Too short!": enable.is_too_short} 
+            # name_input.validation={"Must have a value": enable.not_null} 
+
             # Displays the characters.        
             name_chars_left = ui.label()
 
         # getting the number.
         with ui.card_section().classes('w-80 items-stretch'):
-            value_input = ui.number("Starting value of the " + name_of_type + "?")
+            value_input = ui.number("Starting value of the counter?", value=0, precision=0)
             # This handles the validation of the field. Checking for not null.
-            value_input.validation={"Must have a value.": enable.not_null} 
+            # value_input.validation={"Must have a value.": enable.not_null}
+            value_input.bind_value(new_counter, 'value')
+
+        counter = {}
+        counter[new_counter['name']] = new_counter['value']
 
         with ui.card_actions():
             # The button submits the data in the fields.
             submit = ui.button(
-                "Create " + name_of_type,
-                on_click=lambda: dialog.submit(),
+                "Create Counter",
+                on_click=lambda: ui.notify(counter)
             )
+            
             # This enables or disables the button depending on if the input field has errors or not
-            submit.bind_enabled_from(enable, "no_errors")
+            submit.bind_enabled_from(
+                name_input, "error", backward=lambda x: not x and name_input.value
+            )
 
             # Disable the button by default until validation is done.
-            submit.disable()
+            # submit.disable()
 
             # Cancel out of dialog.
             ui.button("Cancel", on_click=dialog.close)
  
-    # Get value
-    result = await dialog
-    print(result)
-    # creating a new counter as a dict
-    #
-    new_dict_entry[result.name_input] = result.value_input
+    # Get new_counter
+    counter = await dialog
 
-    print(new_dict_entry)
+    ui.notify(counter)
+    # creating a new counter as a dict
