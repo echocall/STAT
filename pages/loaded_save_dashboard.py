@@ -10,7 +10,7 @@ import elements.theme as theme
 # Displays the user's information.
 @ui.page('/loadeddash')
 async def dashboard():
-    with theme.frame('View Saves'):
+    with theme.frame('Dashboard'):
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
@@ -41,16 +41,19 @@ async def dashboard():
                 await assets_to_dictionary(assets, assets_as_dict)
             except:
                 ui.notify("Error creating assets_as_dict", type='negative')
-            # sorting all assets by category
+           
+           # sorting all assets by category
             try:
                 sorted_assets = sort_assets_by_category(assets_as_dict)
             except:
                 ui.notify("Error Sorting Assets", type='negative')
+           
             # getting all owned assets
             try:
                 owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
             except:
                 ui.notify("Error Sorting Owned Assets", type='negative')
+            
             # Sorting the owned assets.
             try:
                 sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
@@ -61,14 +64,10 @@ async def dashboard():
 
             if loaded_game['name'] == "":
                 message("Warning: No game loaded. Please select a game to load: ")
-            ui.separator()
-            # The tabs
-            with ui.tabs().classes('w-full') as tabs:
-                main_tab = ui.tab('Main')
-                assets_tab = ui.tab('Assets - Owned')
-                store_tab = ui.tab('Assets - Store')
+            with ui.row().classes('full flex'):
+                ui.label('')
 
-            # On every tab.
+            # ON EVERY P
             with ui.row().classes('full flex'):
                 ui.separator()
                 with ui.column():
@@ -95,7 +94,13 @@ async def dashboard():
                 for counter in counters:
                     await render_counter_bar(counters, counter)
             ui.separator()
-
+            
+            # The tabs
+            with ui.tabs().classes('w-full') as tabs:
+                main_tab = ui.tab('Main')
+                assets_tab = ui.tab('Assets - Owned')
+                store_tab = ui.tab('Assets - Store')            
+            
             # The Tab Panels
             with ui.tab_panels(tabs, value=main_tab).classes('full flex'):
                 ui.separator()

@@ -10,16 +10,28 @@ from nicegui import ui
 enable = Enable()
 
 @ui.page('/creategame')
-def new_game():
+def create_game():
 
-    newGame = {'name': '','description':'', 'has_counters': False, 
-               'has_actors': False,'actor_default_path':'', 
-               'has_assets': False, 'asset_default_path':'',
-               'has_events': False, 'event_default_path':'',
-               'has_effects': False, 'effect_default_path':'',
-               'icon':'', 'save_files_path':'', 'has_turns':False,
-               'turn_type':'', 'start_turn':0
-               }
+    new_game = {'name': '','description':'', 'has_counters': False,
+                'counters': {}, 'has_actors': False,
+                'actor_default_path':'', 'default_actors':[],
+                'has_assets': False, 'asset_default_path':'',
+                'default_assets':[], 'has_events': False, 
+                'event_default_path':'', 'default_events':[],
+                'has_effects': False, 'effect_default_path':'',
+                'default_effects':[],'icon':'',
+                  'save_files_path':'', 'has_turns':False,
+                'turn_type':'', 'start_turn':0
+                }
+
+    # get the new Counter from New Counter Dialog
+    async def add_counter():
+        result = await new_counter_dialog() 
+        if 'counters' not in new_game:
+            new_game['counters'] = {}
+        ui.notify(len(result))
+        new_game['counters'].update(result)
+        new_counter.bind_text(new_game['counters'])
 
     with theme.frame('Create a Game'):
         message('Create a Game')
@@ -34,14 +46,14 @@ def new_game():
                 name_input.props('clearable')
 
                 name_input.bind_value(new_game, 'name')
-                
+
                 # This handles the validation of the field.
                 name_input.validation={"Too short!": enable.is_too_short} 
                 # Displays the characters.        
                 name_chars_left = ui.label()
-                
+
+            # Description of Game    
             with ui.card_section().classes('w-80 items-stretch'):
-                # input description for the game.
                 ui.label('Enter a description for the new game:').classes()
                 description = ui.input(label='Game Description', placeholder='500 character limit',
                                 on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
@@ -55,22 +67,23 @@ def new_game():
             # Creating counters
             with ui.card_section().classes('w-80 items-stretch'):
                 # Create counters
-                ui.label('Do you want to add counters to your game?')
-                has_counters = ui.switch()
-                has_counters.bind_value(new_game, 'has_counters')
+                with ui.row():
+                    ui.label('Do you want to add counters to your game?')
+                    has_counters = ui.switch()
+                    has_counters.bind_value(new_game, 'has_counters')
 
-                new_counter = ui.button(
-                    "Add Counter",
-                    icon="create",
-                )
-                new_counter.bind_visibility_from(has_counters, 'value')
-                new_counter.on(
-                    "click",
-                    lambda: new_counter_dialog(),
-                )
-                # get data from the dialog, and append it to the dictionary of counters.
-                # new_game['counters'].append(new_counter)
-                
+                    new_counter = ui.button(
+                        "Add Counter",
+                        icon="create",
+                        on_click=add_counter
+                    )
+                    new_counter.bind_visibility_from(has_counters, 'value')
+
+                    with ui.row():
+                        new_counter = ui.label()
+            
+     
+
             # Creating actors
             with ui.card_section().classes('w-80 items-stretch'):
                 ui.label('Do you want to add Actors now?')
@@ -129,11 +142,12 @@ def new_game():
                     turn_type.bind_value(new_game, 'turn_type')
                     start_turn.bind_value(new_game, 'start_turn')
 
+            # Submit button.
             with ui.card_actions():
                 # The button submits the dialog providing the text entered
                 submit = ui.button(
                     "Create Game",
-                    on_click=lambda:  ui.notify("You clicked submit!"),
+                    on_click=lambda:  ui.notify(new_game),
                 )
                 # This enables or disables the button depending on if the input field has errors or not
                 submit.bind_enabled_from(
@@ -142,3 +156,4 @@ def new_game():
 
                 # Disable the button by default until validation is done.
                 submit.disable()
+

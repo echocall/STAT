@@ -7,22 +7,23 @@ from nicegui import app, ui
 
 @ui.page('/')
 async def content() -> None:
+    config_data = load_config('config.txt')
+    structured_data = {}
+    
+    # Create organized nested structure.
+    for key in config_data:
+        structured_data[key] = config_data[key]
 
-        config_data = load_config('config.txt')
-        structured_data = {}
-        
-        # Create organized nested structure.
-        for key in config_data:
-            structured_data[key] = config_data[key]
-
-        # Store as nested dictionary
-        app.storage.user["config"] = structured_data
-        
-        ui.label("Welcome to STAT!")
-
-        ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
+    # Store as nested dictionary
+    app.storage.user["config"] = structured_data
+    
+    ui.label("Welcome to STAT!")
+    ui.label("The Snazzy Tabletop Assistant Tracker")
+    ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
+    with ui.row().classes('flex space-x-4'): 
         with ui.link(target='/creategame'):
-            ui.button("Create New Game", icon="create")
+            ui.button("Create New Game", icon="create").props('size=medium').classes('flex-grow')
 
         with ui.link(target='/viewgames'):
-            ui.button("Load Games", icon="view_list")
+            ui.button("Load Games", icon="view_list").props('size=medium').classes('flex-grow')
+    

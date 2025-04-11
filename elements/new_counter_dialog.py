@@ -8,8 +8,13 @@ from classes.Counter import Counter
 enable = Enable()
 
 async def new_counter_dialog():
-    
+    def submit_values(new_counter: dict) -> dict:
+        counter = {}
+        counter[new_counter['name']] = new_counter['value']
+        return counter
+
     new_counter = {'name':'', 'value':0}
+
     with ui.dialog() as dialog, ui.card().classes("w-full"):
         ui.label("Create a new Counter")
         # Get name of counter
@@ -33,16 +38,11 @@ async def new_counter_dialog():
             # value_input.validation={"Must have a value.": enable.not_null}
             value_input.bind_value(new_counter, 'value')
 
-        counter = {}
-        counter[new_counter['name']] = new_counter['value']
-
-        ui.notify(new_counter)
-
         with ui.card_actions():
             # The button submits the data in the fields.
             submit = ui.button(
                 "Create Counter",
-                on_click=lambda: ui.notify(counter)
+                on_click=lambda: dialog.submit([new_counter['name'], new_counter['value']])
             )
             
             # This enables or disables the button depending on if the input field has errors or not
@@ -50,14 +50,9 @@ async def new_counter_dialog():
                 name_input, "error", backward=lambda x: not x and name_input.value
             )
 
-            # Disable the button by default until validation is done.
-            # submit.disable()
-
             # Cancel out of dialog.
             ui.button("Cancel", on_click=dialog.close)
  
     # Get new_counter
     counter = await dialog
-
-    ui.notify(counter)
-    # creating a new counter as a dict
+    return counter
