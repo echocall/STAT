@@ -29,9 +29,8 @@ def create_game():
         result = await new_counter_dialog() 
         if 'counters' not in new_game:
             new_game['counters'] = {}
-        ui.notify(len(result))
-        new_game['counters'].update(result)
-        new_counter.bind_text(new_game['counters'])
+        new_game['counters'][result[0]] = result[1]
+        ui.notify(new_game['counters'])
 
     with theme.frame('Create a Game'):
         message('Create a Game')
@@ -82,8 +81,6 @@ def create_game():
                     with ui.row():
                         new_counter = ui.label()
             
-     
-
             # Creating actors
             with ui.card_section().classes('w-80 items-stretch'):
                 ui.label('Do you want to add Actors now?')
