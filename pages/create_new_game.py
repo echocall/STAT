@@ -227,7 +227,7 @@ def create_game():
                         submit = ui.button(
                             "Create Game",
                             icon='create',
-                            on_click=lambda:  create_game_json(new_game),
+                            on_click=lambda:  create_game_json(),
                         )
                         # This enables or disables the button depending on if the input field has errors or not
                         submit.bind_enabled_from(
