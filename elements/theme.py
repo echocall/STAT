@@ -13,10 +13,11 @@ def frame(navigation_title: str):
               positive='#cdbb8b',
               light='#C15F7C',
               dark='#9C4A52')
-    with ui.header():
-        ui.label('STAT').classes('font-bold')
+    with ui.header().classes('align-middle'):
+        with ui.link(target='/'):
+            ui.label('STAT').classes('font-bold text-lg align-bottom')
         ui.space()
-        ui.label(navigation_title).classes('font-bold h-2')
+        ui.label(navigation_title).classes('font-bold text-2xl')
         ui.space()
         with ui.row():
             menu()

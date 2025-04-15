@@ -2,10 +2,6 @@ from nicegui import app, ui
 from fastapi import FastAPI, Depends
 
 def menu() -> None:
-    with ui.link(target='/'):
-        ui.icon('home').props('color="white"').classes()
-    # ui.link('A', '/a').classes(replace='text-white')
-
     with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :
         with ui.menu() as general_menu:
             with ui.link(target='/creategame'):

@@ -22,7 +22,7 @@ async def view_games():
         app.storage.user["existing_games"] = existing_games
 
         # Displaying the games.
-        game_card_container = ui.row().classes("full flex items-center")
+        game_card_container = ui.row().classes("full flex items-center content-evenly")
         with game_card_container:
             for game in existing_games.values():
                 await render_game_cards(existing_games, game)
