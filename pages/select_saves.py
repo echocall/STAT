@@ -4,10 +4,8 @@ from pathlib import PurePath, Path
 from nicegui import app, ui
 from handlers.savehandler import *
 
-# get the location of the saves from the loaded game
-
 # call the function to pull in that info of the saves.
-@ui.page('/viewsaves/{game_name}')
+@ui.page('/selectsaves/{game_name}')
 async def view_saves():
     with theme.frame('View Saves'):
         # File path for save data

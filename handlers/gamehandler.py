@@ -13,7 +13,22 @@ def game_handler(is_game_loaded: bool) -> object:
             " or load a preexisting game JSON?", sep="\n"
         )
      
-def new_game(game_path: str, saves_path: str, datapack_path: str) -> dict:
+def new_game(game_path: str, new_game: dict, file_name: str) -> bool:
+    write_successful = False
+    error_message = ""
+
+    try:
+        write_successful = create_new_json_file(file_name, game_path, 'game')
+    except Exception:
+        print(traceback.format_exc())
+
+    if write_successful == True:
+        return True
+    else:
+        error_message = "Warning, could not save new game to JSON file."
+        return False
+     
+def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dict:
     new_game_dict = {}
     new_file_name = ""
     write_successful = False
@@ -110,6 +125,17 @@ def check_template(game: dict) -> object:
         print(error_message)
         print(result["missing_values"])
 
+def check_template_bool(game: dict, template_path: str) -> bool:
+    error_message = ''
+    result = False
+    try:
+        game_template = get_template_json("game", template_path)
+        result = dict_key_compare(game_template, game)
+        return result
+    except Exception:
+        print(traceback.format_exc())
+        return result
+    
 # select game
 def select_game(file_path: str) -> object:
     games = []
@@ -288,7 +314,31 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
         # call something to fix the game or fix those specific fields.
         return error_message
     
-def get_new_game_name(file_path: str) -> dict:
+def get_new_game_name(name: str, file_path: str) -> dict:
+    file_name = ""
+    name = ""
+    games = []
+    game_name = {"name": "", "file":""}
+    valid = False
+    
+    while valid != True:
+        file_name = format_str_for_filename(name)
+
+        # check that a game by that name doesn't already exists
+        games = multi_json_names_getter(file_path, "games")
+        if name in games:
+    # if file_name already exists, append placeholder and alert user
+            valid = True
+            game_name["name"] = name + "_Placeholder"
+            game_name["file"] = file_name + "_placeholder"
+        else:
+            valid = True
+            game_name["name"] = name
+            game_name["file"] = file_name
+
+    return  game_name
+
+def get_new_game_name_console(file_path: str) -> dict:
     file_name = ""
     name = ""
     games = []
@@ -306,7 +356,7 @@ def get_new_game_name(file_path: str) -> dict:
         # if file_name already exists, ask for another game name and show what games exist.
             "A game of that name already exists. You may experience difficulties creating folders for this game."
             if user_confirm("Do you want to enter a new name now?"):
-                get_new_game_name(file_path)
+                get_new_game_name_console(file_path)
             else:
                 print("\n" + "Appending _placeholder to game name. If further folder creation errors persist, please create a new name. " + "\n")
                 valid = True
@@ -358,6 +408,7 @@ def define_turns(game_name: str) -> dict:
 
     return turns
 
+# create the folders for a new game.
 def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_path: str) -> bool:
     folder_created = False
     folders_created = {}

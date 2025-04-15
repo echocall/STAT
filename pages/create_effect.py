@@ -1,0 +1,84 @@
+import elements.theme as theme
+from elements.message import message
+from classes.Enable import Enable
+from nicegui import app, ui
+
+# creating our buddy.
+enable = Enable()
+
+@ui.page('/createeffect')
+def create_effect():
+    new_effect = {'name':'', 'targets':'',
+                   'sources':'', 'turn_duration':0,
+                   'counters_affected':{}, 'source_game':''}
+    
+    affects_counters_bln = False
+
+    with theme.frame('Create a Game'):
+        ui.label("Create a new Effect").classes('h3')
+
+        # Get name of Effect
+        with ui.card_section().classes('w-80 items-stretch'):
+            name_input = ui.input("Name of the effect?",
+                            on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+            name_input.bind_value(new_effect, 'name')
+            # allows user to clear the field
+            name_input.props('clearable')
+            name_input.validation={"Must have a value": enable.not_null} 
+            # Displays the characters.        
+            name_chars_left = ui.label()
+
+        # Effect Source
+        with ui.card_section().classes('w-80 items-stretch'):
+            ui.label("Acceptable source types for the effect?")
+            effect_sources = ui.radio({1: 'Assets', 2: 'Actors', 3:'Other', 5: 'All'}).props('inline')
+            effect_sources.bind_value(new_effect,'sources')
+            effect_sources.value(1)
+
+        # Get Source Game Name
+        with ui.card_section().classes('w-80 items-stretch'):
+            source_game_name = ui.input("Source Game?")
+            source_game_name.bind_value(new_effect, 'name')
+            # allows user to clear the field
+            source_game_name.props('clearable')
+            source_game_name.validation={"Must have a value": enable.not_null} 
+
+        # Get Targets of the Effect
+        with ui.card_section().classes('w-80 items-stretch'):
+            ui.label("Acceptable target types for the effect?")
+            effect_targets = ui.radio({1: 'Assets', 2: 'Actors', 3: 'Counters', 4:'Other', 5: 'All'}).props('inline')
+            effect_targets.bind_value(new_effect,'targets')
+            effect_targets.value(1)
+
+        # Get Turn Duration Count
+        with ui.card_section().classes('w-80 items-stretch'):
+            turn_duration = ui.number(label="Turn duration? Leave 0 if none, -1 if infinity.", value=0, min=-1, precision=-1)
+            turn_duration.bind_value(new_effect,'turn_duration')
+
+        # Get Counters Affected
+        with ui.card_section().classes('w-80 items-stretch'):
+            affects_counters = ui.switch()
+            affects_counters.bind_value(affects_counters_bln)
+
+            new_counter = ui.button(
+                "Add Counter",
+                icon="create",
+                on_click=add_counter
+            )
+            new_counter.bind_visibility_from(affects_counters, 'value')
+
+        # Submitting the form.
+        with ui.card_actions():
+            submit = ui.button(
+                "Create Effect",
+                on_click=lambda: create_effect.submit(new_effect)
+            )
+            
+            # This enables or disables the button depending on if the input field has errors or not
+            submit.bind_enabled_from(
+                name_input, "error", backward=lambda x: not x and name_input.value
+            )
+
+            # Cancel out of dialog.
+            ui.button("Cancel", on_click=dialog.close)
+ 

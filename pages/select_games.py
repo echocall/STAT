@@ -1,14 +1,11 @@
-from elements.message import message
 import elements.theme as theme
-from fastapi import FastAPI, Depends
 from nicegui import app, ui
-from classes.MyGame import MyGame
-import pages.view_saves as view_saves
+import pages.select_saves as select_saves
 from handlers.gamehandler import *
 
-@ui.page('/viewgames')
-async def view_games():
-    with theme.frame('View Games'):
+@ui.page('/selectgames')
+async def seleect_games():
+    with theme.frame('Select Games'):
         # File path for game data
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
@@ -38,7 +35,7 @@ def select_game(existing_games: dict, selected_game_name: str):
             ui.notify("Warning! Problem with loading game. Please check that game file exists.")
         finally:
             app.storage.user['loaded_game'] = selected_game
-            ui.navigate.to(f"/viewsaves/{selected_game_name}")
+            ui.navigate.to(f"/selectsaves/{selected_game_name}")
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
@@ -47,10 +44,10 @@ async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Select', on_click=lambda: select_game(existing_games, {game['name']})).props('dense')
+            ui.button('Select', on_click=lambda: select_game(existing_games, {game['name']}))
             with ui.button(icon='edit').props('dense round'):
                 ui.tooltip("Edit game.")
-            with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('dense round'):
+            with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('round'):
                 ui.tooltip("Delete this game and all files associated with it.")
 
 # Confirm we want to delete the game and its files then call

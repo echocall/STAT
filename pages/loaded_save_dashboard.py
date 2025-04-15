@@ -156,7 +156,7 @@ async def render_counter_bar(counters: dict, counter: str) -> ui.element:
         ui.tooltip(f'Amount of {counter}. Currently {counters[counter]}.')
 
     # Amount to change
-    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
+    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=-1)
     with amount_to_change:
         ui.tooltip(f'Amount of change to the counter.')
     # Buttons! :)

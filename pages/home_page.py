@@ -10,20 +10,20 @@ async def content() -> None:
     config_data = load_config('config.txt')
     structured_data = {}
     
-    # Create organized nested structure.
+    # Create organized nested structure for config.
     for key in config_data:
         structured_data[key] = config_data[key]
 
     # Store as nested dictionary
     app.storage.user["config"] = structured_data
-    
-    ui.label("Welcome to STAT!")
+
+    ui.label("Welcome to STAT!").classes("h3")
     ui.label("The Snazzy Tabletop Assistant Tracker")
     ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
-    with ui.row().classes('flex space-x-4'): 
+    with ui.row().classes('space-x-4 justify-center'):
         with ui.link(target='/creategame'):
             ui.button("Create New Game", icon="create").props('size=medium').classes('flex-grow')
 
-        with ui.link(target='/viewgames'):
+        with ui.link(target='/selectgames'):
             ui.button("Load Games", icon="view_list").props('size=medium').classes('flex-grow')
     
