@@ -18,7 +18,7 @@ def new_game(game_path: str, new_game: dict, file_name: str) -> bool:
     error_message = ""
 
     try:
-        write_successful = create_new_json_file(file_name, game_path, 'game')
+        write_successful = create_new_json_file(file_name, game_path, new_game)
     except Exception:
         print(traceback.format_exc())
 
@@ -52,7 +52,7 @@ def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dic
         print(traceback.format_exc())
     # Save data in a json file.
     try:
-        write_successful = create_new_json_file(new_file_name, game_path, 'game')
+        write_successful = create_new_json_file(new_file_name, game_path, new_game_dict)
     except Exception:
         print(traceback.format_exc())
 
@@ -316,7 +316,6 @@ def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> di
     
 def get_new_game_name(name: str, file_path: str) -> dict:
     file_name = ""
-    name = ""
     games = []
     game_name = {"name": "", "file":""}
     valid = False
@@ -326,6 +325,7 @@ def get_new_game_name(name: str, file_path: str) -> dict:
 
         # check that a game by that name doesn't already exists
         games = multi_json_names_getter(file_path, "games")
+        
         if name in games:
     # if file_name already exists, append placeholder and alert user
             valid = True

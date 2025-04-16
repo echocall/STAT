@@ -4,15 +4,15 @@ from helpers.utilities import *
 import traceback
 
 # CREATE
-def create_new_json_file(passedFileName: str, passedDirectoryPath: str, object: dict) -> bool:
+def create_new_json_file(passedFileName: str, passedDirectoryPath: str, dict_to_convert: dict) -> bool:
     result = False
     error_message = ""
     str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
     str_target_file_name = passedFileName + '.json'
     str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    json_obj = {}
+    json_obj = ''
 
-    json_obj = convert_obj_to_json(object)
+    json_obj = convert_obj_to_json(dict_to_convert)
 
     # casting to Path 
     target_directory_path = Path(str_target_directory_path)
@@ -138,7 +138,7 @@ def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
 
     else:
          # TODO: change to pass error_message back
-        error_message = "Incorrect Path: " + objectType + " Directory not found!"
+        print("Incorrect Path: " + objectType + " directory for names not found!")
 
     if(fetch_success == True):
         return objects

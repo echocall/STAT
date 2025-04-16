@@ -1,12 +1,8 @@
 import elements.theme as theme
 from classes.Enable import *
-from elements.message import message
 from elements.new_counter_dialog import new_counter_dialog
 from elements.new_actor_dialog import new_actor_dialog
-from classes.MyGame import MyGame
 from handlers.gamehandler import *
-from elements.message import message
-from elements.new_dict_entry import new_dict_entry
 from nicegui import app,ui
 import traceback
 
@@ -18,9 +14,11 @@ def create_game():
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
     game_paths = paths.get("gamespath", "Not Set")
-    template_paths = paths.get("templatepaths", "Not Set")
+    template_paths = paths.get("templatefilepath", "Not Set")
+    save_paths = paths.get("savespath", "Not Set")
+    datapack_paths = paths.get("datapackspath", "Not Set")
 
-    new_game = {'name': '','description':'', 'has_counters': False,
+    new_game_dict = {'name': '','description':'', 'has_counters': False,
                 'counters': {}, 'has_actors': False,
                 'actor_default_path':'', 'default_actors':[],
                 'has_assets': False, 'asset_default_path':'',
@@ -35,15 +33,15 @@ def create_game():
     # get the new Counter from New Counter Dialog
     async def add_counter():
         result = await new_counter_dialog() 
-        if 'counters' not in new_game:
-            new_game['counters'] = {}
-        new_game['counters'][result[0]] = result[1]
+        if 'counters' not in new_game_dict:
+            new_game_dict['counters'] = {}
+        new_game_dict['counters'][result[0]] = result[1]
 
     async def add_actor():
         result = await new_actor_dialog()
-        if 'actors' not in new_game:
-            new_game['actors'] = []
-        new_game['actors'].append(result['name'])
+        if 'actors' not in new_game_dict:
+            new_game_dict['actors'] = []
+        new_game_dict['actors'].append(result['name'])
 
     async def create_game_json():
         matches_template = False;
@@ -51,140 +49,175 @@ def create_game():
         create_game_result = False;
     
         try:
-            # make sure it matches the template of the game
-            matches_template = check_template_bool(new_game, template_paths)
+            # Ensure the game matches the template
+            matches_template = check_template_bool(new_game_dict, template_paths)
             if matches_template:
-                # checking if a game with that name already exists
-                game_name = get_new_game_name(new_game['name'], game_paths)
-                # if yes, alert the user.
+                # Check if a game with that name already exists
+                new_game_name = new_game_dict['name']
+
+                game_name = get_new_game_name(new_game_name, game_paths)
                 if "_Placeholder" in game_name['name']:
                     with ui.dialog() as name_existed, ui.card():
                         ui.label("Notice!").classes('h3')
-                        ui.label("A game by the same name already existed in your files.")
-                        ui.label(f"Your game will be saved instead as: " + game_name['name'])
+                        ui.label("A game by the same name already exists.")
+                        ui.label(f"Your game will be saved as: {game_name['name']}")
                         ui.button('Close', on_click=name_existed.close)
-                # Save the game.
-                create_game_result = new_game(game_paths, new_game, game_name['file'])
-                if create_game_result:
-                    with ui.dialog() as game_created, ui.card():
-                        ui.label("Success!").classes('h3')
-                        ui.label("Game file created successfully.")
-                        ui.label("You will now be taken to the screen for your game's assets.")
-                        ui.button('Close', on_click=game_created.close)
-                    # after dialog close:
-                    app.storage.user['loaded_game'] = new_game
-                    ui.navigate.to(f"/viewgame/{view_game['name']}")
-                # Game did NOT save
+                
+                folder_creation_success = create_folders(game_name,game_paths, datapack_paths, save_paths)
+
+                if folder_creation_success:
+                    # Attempt to save the game
+                    try:
+                        create_game_result = new_game(game_paths, new_game_dict, game_name['file'])
+                        if create_game_result:
+                            with ui.dialog() as game_created, ui.card():
+                                ui.label("Success!").classes('h3')
+                                ui.label("Game file created successfully.")
+                                ui.label("You will now be taken to the screen for your game's assets.")
+                                ui.button('Close', on_click=game_created.close)
+                            # Navigate to the game view
+                            app.storage.user['selected_game'] = new_game_dict
+                            # ui.notify(f"/viewgame/{selected_game_name}")
+
+                        else:
+                            raise Exception("Game file could not be created. Please check file permissions.")
+                    except Exception as e:
+                        print(traceback.format_exc())
+                        with ui.dialog() as save_error, ui.card():
+                            ui.label("Error!").classes('h3')
+                            ui.label("Failed to save the game file.")
+                            ui.label(f"Details: {str(e)}")
+                            ui.label("Please ensure the application has write permissions to the target directory.")
+                            ui.button('Close', on_click=save_error.close)
                 else:
-                    with ui.dialog() as game_not_created, ui.card():
+                    with ui.dialog() as folder_creation_failure, ui.card():
                         ui.label("Error!").classes('h3')
-                        ui.label("Game file was not created.")
-                        ui.label("Please make sure you have required fields filled, " \
-                        "and that STAT has permissions to write to target location.")
-                        ui.button('Close', on_click=game_not_created.close)
-            # does not match template, can't save game.    
+                        ui.label("Unable to create the folders.")
+                        ui.label("Please check application has write permissions to the target directory.")
+                        ui.button('Close', on_click=folder_creation_failure.close)
             else:
-                with ui.dialog() as dictionary_mismatch, ui.card():
+                # Template mismatch
+                with ui.dialog() as template_error, ui.card():
                     ui.label("Error!").classes('h3')
-                    ui.label("The new game dictionary does not match the expected game template. Unable to save game.")
-                    ui.button('Close', on_click=dictionary_mismatch.close)
-      
-        # Exceeption
-        except Exception:
+                    ui.label("The new game dictionary does not match the expected game template.")
+                    ui.label("Unable to save the game.")
+                    ui.button('Close', on_click=template_error.close)
+
+        except FileNotFoundError as e:
             print(traceback.format_exc())
-            with ui.dialog() as exception_dialog, ui.card():
-                    ui.label("Error!").classes('h3')
-                    ui.label("Something went wrong with saving the game file. Please check read/write permissions of the app.")
-                    ui.button('Close', on_click=exception_dialog.close)
+            with ui.dialog() as file_error, ui.card():
+                ui.label("Error!").classes('h3')
+                ui.label("File not found.")
+                ui.label(f"Details: {str(e)}")
+                ui.label("Please ensure the specified file paths are correct.")
+                ui.button('Close', on_click=file_error.close)
+
+        except PermissionError as e:
+            print(traceback.format_exc())
+            with ui.dialog() as permission_error, ui.card():
+                ui.label("Error!").classes('h3')
+                ui.label("Permission denied.")
+                ui.label(f"Details: {str(e)}")
+                ui.label("Please ensure the application has the necessary permissions.")
+                ui.button('Close', on_click=permission_error.close)
+
+        except Exception as e:
+            print(traceback.format_exc())
+            with ui.dialog() as general_error, ui.card():
+                ui.label("Error!").classes('h3')
+                ui.label("An unexpected error occurred.")
+                ui.label(f"Details: {str(e)}")
+                ui.label("Please check the application logs for more information.")
+                ui.button('Close', on_click=general_error.close)
 
 
     with theme.frame('Create a Game'):
         with ui.column():
             ui.space()
         with ui.column():
-            with ui.row():
-                message('Create a Game').classes('justify-self-center')
             with ui.row().classes("flex content-center"):
-                with ui.card().classes("flex w-100"):
+                with ui.column().classes("flex w-100"):
                     # Name of the Game
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        # get the name of the game.
-                        ui.label("Enter a name for the game. The name should be unique.").classes()
-                        name_input = ui.input(label='Game Name', placeholder='50 character limit',
-                                        on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-                        # allows user to clear the field
-                        name_input.props('clearable')
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column().classes('items-start'):
+                            name_input = ui.input(label='Game Name: ', placeholder='50 character limit',
+                                            on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+                            # allows user to clear the field
+                            name_input.props('clearable')
 
-                        name_input.bind_value(new_game, 'name')
+                            name_input.bind_value(new_game_dict, 'name')
 
-                        # This handles the validation of the field.
-                        name_input.validation={"Too short!": enable.is_too_short} 
-                        # Displays the characters.        
-                        name_chars_left = ui.label()
+                            # This handles the validation of the field.
+                            name_input.validation={"Too short!": enable.is_too_short} 
+
+                            # Displays the characters.        
+                            name_chars_left = ui.label()
 
                     # Description of Game    
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        ui.label('Enter a description for the new game:').classes()
-                        description = ui.input(label='Game Description', placeholder='500 character limit',
-                                        on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
-                        description.props('clearable')
-                        
-                        description.bind_value(new_game, 'description')
-                        # this handles the validation of the field.
-                        description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
-                        desc_chars_left = ui.label()
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column():
+                            description = ui.input(label='Game Description', placeholder='500 character limit',
+                                            on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
+                            description.props('clearable')
+                            
+                            description.bind_value(new_game_dict, 'description')
+                            # this handles the validation of the field.
+                            description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
+                            with ui.row():
+                                desc_chars_left = ui.label()
                         
                     # Creating counters
-                    with ui.card_section().classes('w-80 items-stretch'):
+                    with ui.row().classes('items-center justify-start space-x-4'):
                         # Create counters
                         with ui.row():
-                            ui.label('Do you want to add counters to your game?')
-                            has_counters = ui.switch()
-                            has_counters.bind_value(new_game, 'has_counters')
+                            with ui.column():
+                                ui.label('Do you want to add counters to your game?')
+                                has_counters = ui.switch()
+                                has_counters.bind_value(new_game_dict, 'has_counters')
 
-                            new_counter = ui.button(
-                                "Add Counter",
-                                icon="create",
-                                on_click=add_counter
-                            )
-                            new_counter.bind_visibility_from(has_counters, 'value')
-
-                            with ui.row():
-                                new_counter = ui.label()
-                    
+                                new_counter = ui.button(
+                                    "Add Counter",
+                                    icon="create",
+                                    on_click=add_counter
+                                )
+                                new_counter.bind_visibility_from(has_counters, 'value')
+               
                     # Creating Actors
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        ui.label('Do you want to add Actors now?')
-                        has_actors = ui.switch()
-                        has_actors.on('click', has_actors.set_value(has_actors.value))
-                        has_actors.bind_value(new_game, 'has_actors')
-                        # The button will pull up a different dialog box for creating an event
-                        create_actors = ui.button('Create Actors',
-                                                icon="create",
-                                                on_click=add_actor)
-                        create_actors.bind_visibility_from(has_actors, 'value')
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column():
+                            ui.label('Do you want to add Actors now?')
+                            has_actors = ui.switch()
+                            has_actors.on('click', has_actors.set_value(has_actors.value))
+                            has_actors.bind_value(new_game_dict, 'has_actors')
+                            # The button will pull up a different dialog box for creating an event
+                            create_actors = ui.button('Create Actors',
+                                                    icon="create",
+                                                    on_click=add_actor)
+                            create_actors.bind_visibility_from(has_actors, 'value')
 
                     # Creating Assets
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        ui.label('Do you want to add Assets?')
-                        has_assets = ui.switch()
-                        has_assets.on('click', has_assets.set_value(has_assets.value))
-                        has_assets.bind_value(new_game, 'has_assets')
-                        asset_notice = ui.label("After completing the initial game setup you'll be taken to a page to add assets to the game.")
-                        asset_notice.bind_visibility_from(has_assets, 'value')
-                        # Button to called the dialog for creating an asset.
-                        # create_assets = ui.button('Create Assets', 
-                        #                        on_click=lambda: ui.notify('You clicked Create Assets!'))
-                        # create_assets.bind_visibility_from(has_assets, 'value')
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column():
+                            ui.label('Do you want to add Assets?') 
+                            has_assets = ui.switch()
+                            has_assets.on('click', has_assets.set_value(has_assets.value))
+                            has_assets.bind_value(new_game_dict, 'has_assets')
+                            asset_notice = ui.label("After completing the initial game setup you'll be taken to a page to add assets to the game.")
+                            asset_notice.bind_visibility_from(has_assets, 'value')
+                            # Button to called the dialog for creating an asset.
+                            # create_assets = ui.button('Create Assets', 
+                            #                        on_click=lambda: ui.notify('You clicked Create Assets!'))
+                            # create_assets.bind_visibility_from(has_assets, 'value')
 
                     # Creating Effects
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        ui.label('Do you want to add Effects?')
-                        has_effects = ui.switch()
-                        has_effects.on('click', has_effects.set_value(has_effects.value))
-                        has_effects.bind_value(new_game, 'has_effects')
-                        effects_notice = ui.label("After completing the initial game setup you'll be taken to a page to add effects to the game.")
-                        effects_notice.bind_visibility_from(has_effects, 'value')
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column():
+                            ui.label('Do you want to add Effects?')
+                            has_effects = ui.switch()
+                            has_effects.on('click', has_effects.set_value(has_effects.value))
+                            has_effects.bind_value(new_game_dict, 'has_effects')
+                            effects_notice = ui.label("After completing the initial game setup you'll be taken to a page to add effects to the game.")
+                            effects_notice.bind_visibility_from(has_effects, 'value')
 
                         """
                         # The button will pull up a different dialog box for creating an effect.
@@ -196,7 +229,7 @@ def create_game():
                     # Creating Events
                     # TODO: Implement later
                     """
-                    with ui.card_section().classes('w-80 items-stretch'):
+                    with ui.row().classes('w-80 items-stretch'):
                         ui.label('Do you want to add Events now?')
                         has_events = ui.switch()
                         has_events.on('click', has_events.set_value(has_events.value))
@@ -208,26 +241,28 @@ def create_game():
                     """
 
                     # Initializing Turns
-                    with ui.card_section().classes('w-80 items-stretch'):
-                        has_turns = ui.switch("Does your game have turns or rounds?")
-                        has_turns.on('click',has_turns.set_value(has_turns.value))
-                        has_turns.bind_value(new_game, 'has_turns')
-                        # These should be invisible unless has_turns == True.
-                        with ui.column().bind_visibility_from(has_turns,'value'):
-                            ui.label("Do they increase or decrease as you play?")
-                            turn_type = ui.radio({1: 'Increasing', 2: 'Decreasing'}).props('inline')
-                            ui.label("What turn or round number does your game start on?")
-                            start_turn = ui.number("Enter a whole number.")
-                            turn_type.bind_value(new_game, 'turn_type')
-                            start_turn.bind_value(new_game, 'start_turn')
+                    with ui.row().classes('items-center justify-start space-x-4'):
+                        with ui.column():
+                            ui.label("Does your game have turns or rounds?")
+                            has_turns = ui.switch()
+                            has_turns.on('click',has_turns.set_value(has_turns.value))
+                            has_turns.bind_value(new_game_dict, 'has_turns')
+                            # These should be invisible unless has_turns == True.
+                            with ui.column().bind_visibility_from(has_turns,'value'):
+                                ui.label("Do the turns increase or decrease as you play?")
+                                turn_type = ui.radio({1: 'Increasing', 2: 'Decreasing'}).props('inline')
+                                ui.label("What turn or round number does your game start on?")
+                                start_turn = ui.number("Enter a whole number.")
+                                turn_type.bind_value(new_game_dict, 'turn_type')
+                                start_turn.bind_value(new_game_dict, 'start_turn')
 
                     # Submit button.
-                    with ui.card_actions():
+                    with ui.row():
                         # The button submits the dialog providing the text entered
                         submit = ui.button(
                             "Create Game",
                             icon='create',
-                            on_click=lambda:  create_game_json(),
+                            on_click=lambda: create_game_json(),
                         )
                         # This enables or disables the button depending on if the input field has errors or not
                         submit.bind_enabled_from(

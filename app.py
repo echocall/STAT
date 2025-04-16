@@ -21,29 +21,26 @@ print()
 
 check_load_config = load_config(currentStat.config_file)
 print(check_load_config)
+print()
+print()
+
 
 # === NEW GAME ====
-"""
-new_game = new_game_assembly(filePaths["gamespath"],filePaths["datapackspath"],filePaths["savespath"])
-print("After creating new-game: ")
-print(type(new_game))
-print(new_game)
-print()
 
-file_name = format_str_for_filename(new_game['name'])
-game_path = filePaths["gamespath"] + "\\" + file_name
+game_template = single_json_getter('template_game','C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\templates','template')
+print(game_template)
 
-file_saved = create_new_json_file(file_name, game_path, new_game)
-print(file_saved)
+new_game_dict = {'name': '','description':'', 'has_counters': False,
+                'counters': {}, 'has_actors': False,
+                'actor_default_path':'', 'default_actors':[],
+                'has_assets': False, 'asset_default_path':'',
+                'default_assets':[], 'has_events': False, 
+                'event_default_path':'', 'default_events':[],
+                'has_effects': False, 'effect_default_path':'',
+                'default_effects':[],'icon':'',
+                  'save_files_path':'', 'has_turns':False,
+                'turn_type':'', 'start_turn':0}
 
-my_new_game = dict_to_game_object(new_game)
 
-print(type(my_new_game))
-print(my_new_game)
-print()
-
-currentStat.gameLoaded(my_new_game, my_new_game.get_name())
-print("After loading new_game into currentStat: ")
-print(currentStat.game_loaded_name)
-print()
-"""
+template_check = check_template_bool(new_game_dict, 'C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\templates')
+print(template_check)

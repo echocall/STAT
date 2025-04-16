@@ -171,13 +171,14 @@ def merge_dict_lists(defaultList: list, customList: list, conflictCheck: dict) -
     return merged_dict_list
 
 # convert a dictionary to json
-def convert_obj_to_json(object: dict) -> dict:
+def convert_obj_to_json(dict_to_convert: dict) -> str:
     # TODO: look into Pydantic along this line.
     try:
-        json_obj = json.dumps(object, indent=4)
+        json_obj = json.dumps(dict_to_convert, indent=4)
         return json_obj
-    except:
-        print("Could not convert object to json file.")
+    except Exception as e:
+        print(f"Could not convert the dictionary to json file: {e}")
+        return ""
 
 # builds the result dictionary
 def handler_result_builder(missing_default: bool, missing_name: str,

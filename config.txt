@@ -1,8 +1,8 @@
 [Paths]
-gamesPath = .\statassets\games
-datapacksPath = .\statassets\datapacks
-savesPath = .\statassets\saves
-templateFilePath = .\statassets\templates
+gamesPath = C:\Users\strip\Documents\github\STAT\statassets\games
+datapacksPath = C:\Users\strip\Documents\github\\STAT\statassets\datapacks
+savesPath = C:\Users\strip\Documents\github\STAT\statassets\saves
+templateFilePath = C:\Users\strip\\Documents\github\STAT\statassets\templates
 
 [Toggles]
 showWelcome = False
