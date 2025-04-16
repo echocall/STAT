@@ -19,7 +19,7 @@ async def select_games():
         app.storage.user["existing_games"] = existing_games
 
         # Displaying the games.
-        game_card_container = ui.row().classes("full flex items-center content-evenly")
+        game_card_container = ui.row().classes("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4")
         with game_card_container:
             for game in existing_games.values():
                 await render_game_cards(existing_games, game)
@@ -55,7 +55,7 @@ def select_game(existing_games: dict, selected_game_name: str):
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
-    with ui.card().tight().style('max-height: 175px; max-width:250px'):
+    with ui.card().tight().style('aspect-ratio: 4 / 3;'):
         with ui.card_section():
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
