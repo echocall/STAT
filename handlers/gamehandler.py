@@ -141,7 +141,6 @@ def select_game(file_path: str) -> object:
     target_game = ''
     target_dict = {}
     game_object = {}
-
     # load list of game names from games folder.
     games = multi_json_names_getter(file_path, 'games')
 
@@ -169,7 +168,7 @@ def dict_to_game_object(targetDict: dict) -> object:
 
 # TODO: Finish Assets, Events, Effects, and Actors
 # TODO: Make 'quiet' and 'loud' variants
-def new_game_assembly(game_path: str, datapack_path: str, saves_path: str) -> dict:
+def new_game_assembly_console(game_path: str, datapack_path: str, saves_path: str) -> dict:
     name_dict = {}
     icon = ""
     turns = {}
@@ -318,7 +317,7 @@ def get_new_game_name(name: str, file_path: str) -> dict:
     games = []
     game_name = {"name": "", "file":""}
     valid = False
-    
+
     while valid != True:
         file_name = format_str_for_filename(name)
 

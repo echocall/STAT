@@ -2,6 +2,7 @@ import elements.theme as theme
 from nicegui import app, ui
 import pages.select_saves as select_saves
 from handlers.gamehandler import *
+from elements.alert_dialog import alert_dialog
 
 @ui.page('/selectgames')
 async def select_games():
@@ -10,11 +11,10 @@ async def select_games():
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
-        ui.notify(paths)
-        ui.notify(game_paths)
 
         existing_games = {}
-        # getting the existing games for the file path.
+
+        # getting the existing games from the file path.
         existing_games = get_games(game_paths)
 
         # setting the game objects into the user storage.
@@ -27,34 +27,32 @@ async def select_games():
                 await render_game_cards(existing_games, game)
 
 # Select a game to load into app.storage.user
-def load_game(existing_games: dict, selected_game_name: str):
+def stat_load_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
         loaded_game = {}
         try:
             loaded_game = existing_games[name]
             app.storage.user['is_game_loaded']  = True
         except:
-            with ui.dialog as alert:
-                ui.label("Warning!")
-                ui.label("Problem with loading the game. " \
-                "Please check that the game file exists.")
-                ui.button(on_click=alert.close)
+            alert_dialog("Problem with loading the game.",
+                         "Please check the game file exists.")
         finally:
             app.storage.user['loaded_game'] = loaded_game
             ui.navigate.to(f"/selectsaves/{name}")
 
-def select_game(existing_games: dict, selected_game_name: str):
+def stat_select_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
         selected_game = {}
         try:
             selected_game = existing_games[name]
             app.storage.user['is_game_selected']  = True
         except:
-            ui.notify("Warning! Problem with selecting the game. " \
-            "Please check that game file exists.")
+            alert_dialog("Problem with selecting the game.",
+                         "Please check the game file exists.")
         finally:
             app.storage.user['selected_game'] = selected_game
             ui.navigate.to(f"/viewgame/{name}")
+
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
@@ -63,8 +61,8 @@ async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('View', on_click=lambda: select_game(existing_games, {game['name']}))
-            ui.button('Load', on_click=lambda: load_game(existing_games, {game['name']}))
+            ui.button('View', on_click=lambda: stat_select_game(existing_games, {game['name']}))
+            ui.button('Load', on_click=lambda: stat_load_game(existing_games, {game['name']}))
             with ui.button(icon='edit').props('round'):
                 ui.tooltip("Edit game.")
             with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('round'):

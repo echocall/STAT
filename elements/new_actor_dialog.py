@@ -1,5 +1,3 @@
-import elements.theme as theme
-from elements.message import message
 from classes.Enable import Enable
 from nicegui import ui
 
