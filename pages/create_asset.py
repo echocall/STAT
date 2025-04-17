@@ -84,7 +84,7 @@ async def new_asset():
             with ui.row():
                 btn_select_game = ui.button('Select Game',on_click=prompt_select_game)
                 # TODO: make
-                btn_select_save = ui.button('Select Save', on_click=prompt_select_same)
+                btn_select_save = ui.button('Select Save', on_click=prompt_select_save)
 
             # If no selected_game, open up prompt to select one
             if not selected_game:

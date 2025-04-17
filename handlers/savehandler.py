@@ -1,5 +1,7 @@
 from helpers.crud import *
 from helpers.utilities import *
+import datetime
+import traceback
 
 def save_handler():
     print("TODO: Handle the saves of various games.")
@@ -25,6 +27,60 @@ def get_saves(file_path: str) -> dict:
         save_files[save_name] = load_save(save, file_path, "saves")
     
     return save_files
+
+# for creating a new save from the gui
+def new_save_gui(datapack_path: str, save_path: str,
+                  new_save_dict: dict, save_name: str) -> dict:
+    write_result = {'result':False,'string':'', 'dict':{}}
+    folders_create = False
+    error_message = ""
+    file_name = ""
+    name_dict = {"name":"","file":""}
+
+    # convert save_name into file_name
+    name_dict['file'] = convert_save_name(save_name)
+    new_save_dict['name'] = name_dict['name']
+        
+    # Get the date of creation
+    date_created = datetime.strptime(str(datetime.today('EDT')), '%\d-%m-%Y %H:%M:%S')
+    new_save_dict['create_date'] = date_created
+    # last save date
+    last_save_date = date_created
+    new_save_dict['date_last_saved'] = last_save_date
+
+    # Create the folders for the customs.
+    game_file = {}
+    game_file = format_str_for_filename_super(new_save_dict['base_game'])
+    
+    if game_file['result']:
+        customs_path = datapack_path + "\\customs\\" + game_file['string'] + "\\" + name_dict['file'] 
+        # assembling the paths that need to be made
+        asset_customs_path = customs_path + "\\assets"
+        effect_customs_path = customs_path + "\\effects"
+        events_customs_path = customs_path + "\\events"
+    else:
+        asset_customs_path = ""
+        effect_customs_path = ""
+        events_customs_path = ""
+    new_save_dict['asset_customs_path'] = asset_customs_path
+    new_save_dict['effect_customs_path'] = effect_customs_path
+    new_save_dict['event_customs_path'] = events_customs_path
+    folders_create = create_save_folders(name_dict, new_save_dict['base_game'], datapack_path, save_path)
+    if not folders_create:
+        # warn user via error message
+        error_mesage = "Error: failed to create directories for new save."
+        g = 2+7
+
+    write_result['result'] = create_new_json_file(file_name, save_path, new_save_dict)
+    
+    # If we wrote the dict to the .JSON file
+    if write_result['result'] == True:
+        write_result['string'] = 'Successfully wrote save to file.'
+        write_result['dict'] = new_save_dict
+        return write_result
+    else:
+        write_result['string'] = "Warning, could not write new save to JSON file."
+        return write_result
 
 def get_save_names(filePath: str) -> list:
     save_names = []
@@ -64,8 +120,16 @@ def select_save(file_path: str) -> dict:
 
     return target_dict
 
-def update_save():
-    print("TODO: Update a save file.")
+# TODO: Test
+# Save a save dictionary to a JSON file
+def update_save(save_dict: dict, save_path: str) -> dict:
+    file_name = ""
+    result = {}
+
+    file_name = convert_save_name(save_dict['name'])
+    result = overwrite_json_file(save_dict, save_path, file_name)
+
+    return result
 
 # TODO: Create a new save file
 def new_save(save_name: str, game: dict):
@@ -87,9 +151,45 @@ def new_save(save_name: str, game: dict):
     new_save_file['name'] = save_name;
     new_save_file['']
 
+# TODO:
 def save_current():
     print("TODO: save current STAT instance to save file.")
     # Call update save functions in MySave
 
+# TODO
 def save_as_new_file():
     print("TODO: Create a new save file.")
+
+# create the folders for a new save.
+def create_save_folders(name_dict: dict, game_name: str, datapack_path: str) -> bool:
+    folder_created = False
+    folders_created = {}
+    result = False
+    folders = []
+    game_file = {}
+
+    game_file = format_str_for_filename_super(game_name)
+    
+    if game_file['result']:
+        customs_path = datapack_path + "\\customs\\" + game_file['string'] + "\\" + name_dict['file'] 
+        # assembling the paths that need to be made
+        asset_customs_path = customs_path + "\\assets"
+        effect_customs_path = customs_path + "\\effects"
+        events_customs_path = customs_path + "\\events"
+
+        folders.append(asset_customs_path)
+        folders.append(effect_customs_path)
+        folders.append(events_customs_path)
+
+        # For each filepath to a directory, create that directory
+        for folder in folders:
+            folder_created = create_new_directory(folder)['created']
+            folders_created['folder']=folder_created
+
+        if False not in folders_created:
+            result = True
+    else:
+        b = 2+2
+        # TODO: error handling for if this doesn't work.
+    
+    return result

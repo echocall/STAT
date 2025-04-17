@@ -69,17 +69,18 @@ def create_game():
                     # Attempt to save the game
                     try:
                         create_game_result = new_game_gui(game_paths, datapack_paths, save_paths, new_game_dict, game_name['file'])
-                        if create_game_result:
+                        if create_game_result['result']:
                             with ui.dialog() as game_created, ui.card():
                                 ui.label("Success!").classes('h3')
                                 ui.label("Game file created successfully.")
                                 ui.label("You will now be taken to the screen for your game's details.")
                                 ui.button('Close', on_click=game_created.close)
                             # Navigate to the game view
-                            app.storage.user['selected_game'] = new_game_dict
+                            # Make sure to get the dictionary back from create_game_result as it handles multiple fields
+                            app.storage.user['selected_game'] = create_game_result['dict']
                             ui.navigate.to(f"/viewgame/{new_game_dict['name']}")
-
                         else:
+                            ui.notify('negative', "Game file could not be created. Please check file permissions.")
                             raise Exception("Game file could not be created. Please check file permissions.")
                     except Exception as e:
                         print(traceback.format_exc())

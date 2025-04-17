@@ -59,6 +59,21 @@ def format_str_for_filename(string: str) -> str:
         return error_message
     else:
         return formatted_string
+    
+def format_str_for_filename_super(string: str) -> dict:
+    # TODO: Upgrade this to use regex to strip unwanted characters.
+    result_dict = {'result':False, 'string':""}
+    error_message = ""
+    formatted_string = ""
+    try:
+        formatted_string = str(string).strip().lower().replace(" ", "_")
+        result_dict['result'] = True
+        result_dict['string'] = formatted_string
+    except:
+        error_message = "An error occured while trying to format the string."
+        result_dict['string'] = formatted_string =  error_message
+    else:
+        return result_dict
 
 # takes in a list of objects (objects[]), and a key, returns all value of key.
 def filter_list_value_with_set(initialList: list, keyInList: str) -> list:

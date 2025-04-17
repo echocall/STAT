@@ -13,7 +13,7 @@
     "effect_customs_path": "",
     "counters":{},
     "assets":{},
-    "actors":{},
+    "actors":[],
     "current_events":{},
     "current_effects":{},
     "current_turn":0,

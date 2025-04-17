@@ -18,7 +18,7 @@ class MySave:
     effect_customs_path: str
     counters: dict
     assets: dict
-    actors: dict
+    actors: list
     current_events: dict
     current_effects: dict
     current_turn: int

@@ -14,7 +14,7 @@ def game_handler(is_game_loaded: bool) -> object:
         )
      
 def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
-    write_successful = False
+    write_result = {'result':False,'string':'', 'dict':{}}
     error_message = ""
 
     try:
@@ -26,15 +26,18 @@ def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_di
         new_game_dict['save_files_path'] = save_path + "\\" + new_game_dict['name']
         new_game_dict['image_file_path'] = game_path + "\\" + new_game_dict['name'] + "\\images"
 
-        write_successful = create_new_json_file(file_name, game_path, new_game_dict)
+        write_result['result'] = create_new_json_file(file_name, game_path, new_game_dict)
     except Exception:
         print(traceback.format_exc())
 
-    if write_successful == True:
-        return True
+    if write_result['result'] == True:
+        write_result['string'] = 'Successfully wrote game to file.'
+        write_result['dict'] = new_game_dict
+        return write_result
     else:
-        error_message = "Warning, could not save new game to JSON file."
-        return False
+        write_result['string'] = "Warning, could not save new game to JSON file."
+        return write_result
+
      
 def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dict:
     new_game_dict = {}
@@ -398,8 +401,8 @@ def create_counters() -> dict:
 
     return counters
 
+# TODO: more try catches
 def define_turns(game_name: str) -> dict:
-    # TODO: more try catches
     turns = {"turn_type" : "", "start_turn" : 0 }
     prompt = "Pick how " + game_name + " increments through turns."
     type_result = ""
@@ -439,6 +442,20 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
     
     return result
 
+# TODO: test
+# updates the game's json
+def update_game(game_dict: dict, game_path: str):
+    result = {}
+    format_result = {}
+
+    format_result = format_str_for_filename_super(game_dict['name'])
+
+    if format_result['result']:
+        result = overwrite_json_file(game_dict, game_path, format_result['string'])
+
+    return result
+
+# TODO: implement
 # delete a game and its files
 def delete_all(name: str, game_path: str, datapack_path: str, saves_path: str) -> bool:
     bln_result = False
@@ -446,6 +463,7 @@ def delete_all(name: str, game_path: str, datapack_path: str, saves_path: str) -
 
     return bln_result
 
+# TODO: implement
 # delete a save
 def delete_save(save_name: str, saves_path: str) -> bool:
     bln_result = False
@@ -453,6 +471,7 @@ def delete_save(save_name: str, saves_path: str) -> bool:
 
     return bln_result
 
+# TODO: implement
 # delete an asset
 def delete_asset(game_name: str, save_name: str, datapack_path: str) -> bool:
     bln_result = False

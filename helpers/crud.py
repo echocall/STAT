@@ -34,6 +34,7 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, dict_to_
         return result
     else:
         print(error_message)
+        return result
 
 # Takes a file path and tries to create it at that location.
 def create_new_directory(passed_directory_path: str) -> dict:
