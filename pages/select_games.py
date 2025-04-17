@@ -39,7 +39,7 @@ def load_game(existing_games: dict, selected_game_name: str):
                 ui.button(on_click=alert.close)
         finally:
             app.storage.user['loaded_game'] = loaded_game
-            ui.navigate.to(f"/selectsaves/{selected_game_name}")
+            ui.navigate.to(f"/selectsaves/{name}")
 
 def select_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
@@ -48,10 +48,11 @@ def select_game(existing_games: dict, selected_game_name: str):
             selected_game = existing_games[name]
             app.storage.user['is_game_selected']  = True
         except:
-            ui.notify("Warning! Problem with selecting the game. Please check that game file exists.")
+            ui.notify("Warning! Problem with selecting the game. " \
+            "Please check that game file exists.")
         finally:
             app.storage.user['selected_game'] = selected_game
-            ui.navigate.to(f"/viewgame/{selected_game_name}")
+            ui.navigate.to(f"/viewgame/{name}")
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:

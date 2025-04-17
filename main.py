@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from typing import Annotated
-import configparser
 import pages.home_page as home_page
 import pages.select_games as select_games
 import pages.select_saves as select_saves
@@ -8,6 +7,7 @@ import pages.create_new_game as create_new_game
 import pages.create_new_asset as create_new_asset
 import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.edit_game as edit_game
+import pages.view_game as view_game
 
 from pages import *
 import elements.theme as theme
