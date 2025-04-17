@@ -9,15 +9,15 @@ from handlers.savehandler import *
 async def view_saves():
     with theme.frame('View Saves'):
         # File path for save data
-        loaded_game = app.storage.user.get("loaded_game", {})
-        saves_paths = loaded_game.get("save_files_path", "Not Set")
+        selected_game = app.storage.user.get("selected_game", {})
+        saves_paths = selected_game.get("save_files_path", "Not Set")
         
         existing_saves = {}
         # getting the existing saves for the loaded game
         existing_saves = get_saves(saves_paths)
         ui.button("Create New Save")
 
-        ui.label("Select a save to load!")
+        ui.label("Select a save to load:").classes('h-4')
     
         save_card_container = ui.row().classes("full flex items-center")
         with save_card_container:
@@ -51,7 +51,7 @@ async def render_save_cards(existing_saves, save):
             with ui.card_actions().classes("w-full justify-end"):
                 ui.button('Select Save', on_click=lambda: load_save(existing_saves, {save['name']}))
 
-async def new_save_dialog(loaded_game, save_paths):
+async def new_save_dialog(selected_game, save_paths):
     d = 4+4
     # TODO: 
     # Are we picking a game to base the save off of now, or presuming a game has already been loaded?
