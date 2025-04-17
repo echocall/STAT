@@ -3,6 +3,7 @@ from classes.Enable import Enable
 from elements.new_dict_entry import new_dict_entry
 from elements.target_counter_dialog import target_counter_dialog
 from elements.select_game_dialog import prompt_select_game
+from elements.select_save_dialog import prompt_select_save
 from nicegui import app, ui
 
 # TODO: Fix returns & passing info in.
@@ -35,23 +36,22 @@ async def new_asset():
 
     # getting the buy costs
     async def get_buy_cost():
-        result = await new_dict_entry()
+        result = await target_counter_dialog('Buy Cost for Asset')
         if 'buy_costs' not in new_asset_dict:
             new_asset_dict['buy_costs'] = {}
         new_asset_dict['buy_costs'][result[0]] = result[1]
     
     # getting the sell prices
     async def get_sell_price():
-        result = await new_dict_entry()
+        result = await target_counter_dialog('Sell Price for Asset')
         if 'sell_prices' not in new_asset_dict:
             new_asset_dict['sell_prices'] = {}
         new_asset_dict['sell_prices'][result[0]] = result[1]
 
+    # Calls the methods to write the asset to .json
     async def create_asset(asset_type: str):
-        Z = 26 + 26
-
         # if Default or Custom pick where to put asset
-        if asset_type is 'Default':
+        if asset_type == 'Default':
             x = 24 + 24
             if not selected_game['has_assets']:
                 selected_game['has_assets'] = True
@@ -61,7 +61,7 @@ async def new_asset():
             # save the assets information into .json file in appropriate location
             # update the selected game's list of assets with the new asset's information
             try:
-                # save the assets data
+                # save the asset data
                 a = 1+1
             except:
                 # return some error or call alert_dialog.py
@@ -78,16 +78,13 @@ async def new_asset():
             # save the assets information into .json file in appropriate location
             # update the selected game's list of assets with the new asset's information
 
-       
-
 
     with theme.frame('Create an Asset'):
-
-
         with ui.column():
             with ui.row():
                 btn_select_game = ui.button('Select Game',on_click=prompt_select_game)
-                btn_select_save = ui.button('Select Save', on_click=prompt_select_game)
+                # TODO: make
+                btn_select_save = ui.button('Select Save', on_click=prompt_select_same)
 
             # If no selected_game, open up prompt to select one
             if not selected_game:
@@ -129,7 +126,6 @@ async def new_asset():
                     desc_chars_left = ui.label()
                 
                 # Create Buy Costs
-                # TODO: Pass in counters from selected_game
                 ui.label("Do you want to add a Buy Cost to your asset?").classes('h-4')
                 has_buy_costs = ui.switch()
                 has_buy_costs.bind_value_to(bln_has_buy_costs)
@@ -143,7 +139,6 @@ async def new_asset():
                     )
 
                 # Add Sell Prices
-                # TODO: Pass in counters from selected_game
                 ui.label("Do you want to add a Sell Price to your asset?").classes('h-4')
                 has_sell_costs = ui.switch()
                 has_sell_costs.bind_value_to(bln_has_sell_prices)
