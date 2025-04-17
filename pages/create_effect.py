@@ -2,6 +2,8 @@ import elements.theme as theme
 from elements.message import message
 from classes.Enable import Enable
 from nicegui import app, ui
+from elements.target_counter_dialog import target_counter_dialog
+
 
 # creating our buddy.
 enable = Enable()
@@ -13,6 +15,13 @@ def create_effect():
                    'counters_affected':{}, 'source_game':''}
     
     affects_counters_bln = False
+
+    # get the new Counter from New Counter Dialog
+    async def add_counter():
+        result = await target_counter_dialog() 
+        if 'counters_affected' not in new_effect:
+            new_effect['counters_affected'] = {}
+        new_effect['counters_affected'][result[0]] = result[1]
 
     with theme.frame('Create a Game'):
         ui.label("Create a new Effect").classes('h3')
@@ -66,6 +75,8 @@ def create_effect():
                 on_click=add_counter
             )
             new_counter.bind_visibility_from(affects_counters, 'value')
+
+        btn_show_counters = ui.button()
 
         # Submitting the form.
         with ui.card_actions():

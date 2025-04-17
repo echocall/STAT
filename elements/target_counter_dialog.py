@@ -1,53 +1,51 @@
-import elements.theme as theme
-from elements.message import message
 from classes.Enable import Enable
 from nicegui import app, ui
-from classes.Counter import Counter
 
 # creating our buddy.
 enable = Enable()
 
-async def target_counter_dialog():
+async def target_counter_dialog(purpose: str):
     target_counter = {'name':'', 'value':0}
-    loaded_game = app.storage.user.get("loaded_game", {})
+    selected_game = app.storage.user.get("selected_game", {})
+    # get the counters as a dictionary of name: value pair
+    counters = selected_game['counters']
+    # list of keys
+    counter_names = list(counters.keys())
+    
+    def is_valid():
+        return counter_name_select.value and not counter_name_select.error and value_input.value is not None
 
     with ui.dialog() as dialog, ui.card().classes("w-full"):
-        ui.label("Select Counter to be Targeted").classes('h3')
+        ui.label(f"{purpose}").classes('h-3')
+        ui.label("Select Counter to be added").classes('h-4')
+        with ui.column().classes('items-stretch'):
         # Get name of counter
-        with ui.card_section().classes('w-80 items-stretch'):
-            name_input = ui.input("Name of the counter?",
-                            on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-            name_input.bind_value(target_counter, 'name')
-            # allows user to clear the field
-            name_input.props('clearable')
+            with ui.card_section().classes():
+                counter_name_select = ui.select(options=counter_names, with_input=True)
+                counter_name_select.bind_value(target_counter, 'name')
+                # This handles the validation of the field.
+                counter_name_select.validation={"Must have a value": enable.not_null} 
 
-            # This handles the validation of the field.
-            name_input.validation={"Must have a value": enable.not_null} 
+            # getting the number.
+            with ui.card_section().classes():
+                ui.label("Enter the appropriate value.").classes('h-4')
+                value_input = ui.number("Value: ", value=0, precision=0)
+                # This handles the validation of the field. Checking for not null.
+                value_input.validation={"Must have a value.": enable.not_null}
+                value_input.bind_value(target_counter, 'value')
 
-            # Displays the characters.        
-            name_chars_left = ui.label()
+            with ui.card_actions():
+                # The button submits the data in the fields.
+                submit = ui.button(
+                    "Add Counter",
+                    submit.on_click(lambda: dialog.submit(target_counter))
+                )
+                # Testing new enabling
+                submit.bind_enabled_from(counter_name_select, "value", backward=lambda _: is_valid())
+                submit.bind_enabled_from(value_input, "value", backward=lambda _: is_valid())  
 
-        # getting the number.
-        with ui.card_section().classes('w-80 items-stretch'):
-            value_input = ui.number("Starting value of the counter?", value=0, precision=0)
-            # This handles the validation of the field. Checking for not null.
-            value_input.validation={"Must have a value.": enable.not_null}
-            value_input.bind_value(target_counter, 'value')
-
-        with ui.card_actions():
-            # The button submits the data in the fields.
-            submit = ui.button(
-                "Create Counter",
-                on_click=lambda: dialog.submit([target_counter['name'], target_counter['value']])
-            )
-            
-            # This enables or disables the button depending on if the input field has errors or not
-            submit.bind_enabled_from(
-                name_input, "error", backward=lambda x: not x and name_input.value
-            )
-
-            # Cancel out of dialog.
-            ui.button("Cancel", on_click=dialog.close)
+                # Cancel out of dialog.
+                ui.button("Cancel", on_click=dialog.close)
  
     # Get the result
     counter = await dialog

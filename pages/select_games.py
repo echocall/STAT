@@ -46,7 +46,7 @@ def select_game(existing_games: dict, selected_game_name: str):
         selected_game = {}
         try:
             selected_game = existing_games[name]
-            app.storage.user['is_game_loaded']  = True
+            app.storage.user['is_game_selected']  = True
         except:
             ui.notify("Warning! Problem with selecting the game. Please check that game file exists.")
         finally:
@@ -60,8 +60,9 @@ async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Load', on_click=lambda: select_game(existing_games, {game['name']}))
-            with ui.button(icon='edit').props('dense round'):
+            ui.button('View', on_click=lambda: select_game(existing_games, {game['name']}))
+            ui.button('Load', on_click=lambda: load_game(existing_games, {game['name']}))
+            with ui.button(icon='edit').props('round'):
                 ui.tooltip("Edit game.")
             with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('round'):
                 ui.tooltip("Delete this game and all files associated with it.")
@@ -73,5 +74,5 @@ async def confirm_game_delete()-> ui.element:
     with ui.dialog() as confirm_delete, ui.card():
                 ui.label('Are you sure you want to delete ALL files?')
                 with ui.row():
-                    ui.button('Yes', on_click=ui.notify("This will delete the game's JSON file.")).props('dense')
-                    ui.button('No', on_click=confirm_delete.close).props('dense')
+                    ui.button('Yes', on_click=ui.notify("This will delete the game's JSON file."))
+                    ui.button('No', on_click=confirm_delete.close)

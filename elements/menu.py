@@ -24,23 +24,6 @@ def menu() -> None:
             ui.separator()
             ui.menu_item('Close', general_menu.close)
 
-    with ui.button(icon='help').classes('scale-75').props('color="secondary"') as help_menu_btn:
-        with ui.menu() as help_menu:
-            game_help = ui.menu_item('Game Help', auto_close=False)
-            with ui.menu() as game_help:
-                ui.menu_item('What is a Game?', lambda: ui.notify('In the context of STAT'
-                ' a game is a file that contians the default information for a playtime of that game.'), auto_close=False)
-                ui.menu_item("What is a counter?", lambda: ui.notify('A counter is meant to keep track of any resource where you just need to keep track of the Name and Amount you have.'
-                ' This could be health,  money, points for victory, spell slots you expend by using spells, or other uses.'), auto_close=False)
-                ui.menu_item('Close game menu', game_help.close)    
-            asset_help = ui.menu_item('Help Topic 2', lambda: ui.notify('Selected help item 2'))
-            with ui.menu() as asset_help:
-                ui.menu_item('What is an Asset?', lambda: ui.notify('An asset is anything you want to track the amount you have'
-                ' as well as any possible changes to your counters upon gaining, using, or selling the item.'))
-            ui.menu_item('Help item 3 (keep open)',
-                         lambda: ui.notify('Selected item 3'), auto_close=False)
-            ui.menu_item('Close', help_menu.close)
-
     # Are you sure you want to close?
     with ui.dialog() as confirm_close, ui.card():
         ui.label(f'Are you sure you want to close STAT?')
