@@ -213,7 +213,7 @@ def load_from_storage(target:str):
     return target_dict
 
 async def render_asset_cards(asset) -> ui.element:
-    with ui.card():
+    with ui.card().style('width: 100%; max-width: 300px; aspect-ratio: 4 / 3;'):
         with ui.card_section():
             ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
             ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')

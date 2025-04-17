@@ -10,6 +10,8 @@ async def select_games():
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
+        ui.notify(paths)
+        ui.notify(game_paths)
 
         existing_games = {}
         # getting the existing games for the file path.

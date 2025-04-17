@@ -25,5 +25,5 @@ async def content() -> None:
             ui.button("Create New Game", icon="create").props('size=medium').classes('flex-grow')
 
         with ui.link(target='/selectgames'):
-            ui.button("Load Games", icon="view_list").props('size=medium').classes('flex-grow')
+            ui.button("View Games", icon="view_list").props('size=medium').classes('flex-grow')
     

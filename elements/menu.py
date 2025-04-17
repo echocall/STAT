@@ -2,21 +2,31 @@ from nicegui import app, ui
 from fastapi import FastAPI, Depends
 
 def menu() -> None:
+    # Dynamically determine the target for "View Game File"
+    def get_view_game_target():
+        selected_game = app.storage.user.get("selected_game", None)
+        if selected_game:
+            return f"/viewgame/{selected_game['name']}"  # Assuming 'name' is the key for the game name
+        return "/selectgames"
+    
     with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :
         with ui.menu() as general_menu:
             with ui.link(target='/creategame'):
                 ui.menu_item('Create New Game')
             with ui.link(target='/editgame'):
                 ui.menu_item('Edit Game File')
-            with ui.link(target='/viewgames'):
+            with ui.link(target='/selectgames'):
                 ui.menu_item('Load Game File')
+            with ui.link(target=get_view_game_target()):
+                ui.menu_item('View Game File')
+            
             ui.separator()
             ui.menu_item('New Save Start')
             ui.separator()
             with ui.link(target='/loadeddash'):
                 ui.menu_item('Current Session Dashboard')
             ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
-            with ui.link(target='/viewsaves'):
+            with ui.link(target='/selectsaves'):
                 ui.menu_item('Load Session', lambda: ui.notify('This will call the Save_session function in the future.'))
             ui.separator()
             with ui.link(target='/createasset'):

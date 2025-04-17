@@ -13,15 +13,13 @@ def frame(navigation_title: str):
               positive='#cdbb8b',
               light='#C15F7C',
               dark='#9C4A52')
-    with ui.header().classes('items-center justify-center w-screen'):
+    with ui.header().classes('items-center justify-center w-full'):
         with ui.link(target='/'):
             ui.label('STAT').classes('font-bold text-lg')
-        ui.space()
-        ui.label(navigation_title).classes('font-bold text-2xl')
-        ui.space()
+        ui.label(navigation_title).classes('font-bold text-2xl text-center flex-grow')
         with ui.row():
             menu()
-    with ui.column().classes('items-center justify-center w-screen'):
+    with ui.column().classes('items-center justify-center w-full'):
         yield
     with ui.footer().props(f' color=#d5c7ba'):
         ui.label('STAT').classes('font-bold')
