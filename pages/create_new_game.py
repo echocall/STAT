@@ -20,13 +20,13 @@ def create_game():
 
     new_game_dict = {'name': '','description':'', 'has_counters': False,
                 'counters': {}, 'has_actors': False,
-                'actor_default_path':'', 'default_actors':[],
+                'actor_default_path':'', 'default_actors':["Player"],
                 'has_assets': False, 'asset_default_path':'',
                 'default_assets':[], 'has_events': False, 
                 'event_default_path':'', 'default_events':[],
                 'has_effects': False, 'effect_default_path':'',
                 'default_effects':[],'icon':'',
-                  'save_files_path':'', 'has_turns':False,
+                'save_files_path':'', 'has_turns':False,
                 'turn_type':'', 'start_turn':0
                 }
 
@@ -63,21 +63,21 @@ def create_game():
                         ui.label(f"Your game will be saved as: {game_name['name']}")
                         ui.button('Close', on_click=name_existed.close)
                 
-                folder_creation_success = create_folders(game_name,game_paths, datapack_paths, save_paths)
+                folder_creation= create_folders(game_name, game_paths, datapack_paths, save_paths)
 
-                if folder_creation_success:
+                if folder_creation:
                     # Attempt to save the game
                     try:
-                        create_game_result = new_game(game_paths, new_game_dict, game_name['file'])
+                        create_game_result = new_game_gui(game_paths, datapack_paths, save_paths, new_game_dict, game_name['file'])
                         if create_game_result:
                             with ui.dialog() as game_created, ui.card():
                                 ui.label("Success!").classes('h3')
                                 ui.label("Game file created successfully.")
-                                ui.label("You will now be taken to the screen for your game's assets.")
+                                ui.label("You will now be taken to the screen for your game's details.")
                                 ui.button('Close', on_click=game_created.close)
                             # Navigate to the game view
                             app.storage.user['selected_game'] = new_game_dict
-                            # ui.notify(f"/viewgame/{selected_game_name}")
+                            ui.navigate.to(f"/viewgame/{new_game_dict['name']}")
 
                         else:
                             raise Exception("Game file could not be created. Please check file permissions.")
@@ -179,7 +179,6 @@ def create_game():
                         new_counter.bind_visibility_from(has_counters, 'value')
                         # TODO: give user way to view counters added
                         
-        
             # Creating Actors
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column():

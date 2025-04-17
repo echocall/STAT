@@ -1,5 +1,3 @@
-from elements.message import message
-from new_game_dialog import new_game_dialog
 import elements.theme as theme
 from helpers.utilities import *
 

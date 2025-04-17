@@ -13,12 +13,20 @@ def game_handler(is_game_loaded: bool) -> object:
             " or load a preexisting game JSON?", sep="\n"
         )
      
-def new_game(game_path: str, new_game: dict, file_name: str) -> bool:
+def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
     write_successful = False
     error_message = ""
 
     try:
-        write_successful = create_new_json_file(file_name, game_path, new_game)
+        # Write the paths for the folder locations
+        new_game_dict['actor_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\actors"
+        new_game_dict['asset_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\assets"
+        new_game_dict['effect_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\effects"
+        new_game_dict['event_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\events"
+        new_game_dict['save_files_path'] = save_path + "\\" + new_game_dict['name']
+        new_game_dict['image_file_path'] = game_path + "\\" + new_game_dict['name'] + "\\images"
+
+        write_successful = create_new_json_file(file_name, game_path, new_game_dict)
     except Exception:
         print(traceback.format_exc())
 
@@ -43,7 +51,7 @@ def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dic
         b = 2+2
 
     try:
-        new_game_dict = new_game_assembly(game_path, saves_path, datapack_path)
+        new_game_dict = new_game_assembly_console(game_path, saves_path, datapack_path)
     except Exception:
         print(traceback.format_exc())
     try:
@@ -281,7 +289,7 @@ def new_game_assembly_console(game_path: str, datapack_path: str, saves_path: st
     # Turns
     turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted." + "\n")
     new_game["has_turns"] = user_confirm(turns_prompt)
-    if new_games["has_turns"] == True:
+    if new_game["has_turns"] == True:
         turns = define_turns(name_dict["name"])
         new_game["turn_type"] = turns["turn_type"]
         new_game["start_turn"] = turns["start_turn"]

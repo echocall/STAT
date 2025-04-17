@@ -19,5 +19,6 @@
     "save_files_path":"",
     "has_turns": false,
     "turn_type": "",
-    "start_turn": 0
+    "start_turn": 0,
+    "image_file_path":""
 }

@@ -24,6 +24,7 @@ class MyGame:
     has_turns: bool
     turn_type: str
     start_turn: int
+    image_file_path: str
 
     
     def __post__init__ (self, name: str, description: str, has_counters: bool, counters: dict,
@@ -31,8 +32,8 @@ class MyGame:
                   has_assets: bool, asset_default_path: str, default_assets: list, 
                  has_events: bool, event_default_path: str, default_events: list, 
                  has_effects: bool, effect_default_path: str, default_effects: list,
-                   icon: str, save_files_path: str,
-                 has_turns: bool, turn_type: str, start_turn: int):
+                   icon: str, save_files_path: str, has_turns: bool, 
+                   turn_type: str, start_turn: int, image_file_path: str):
         self.name = name
         self.description = description
         self.has_counters = has_counters
@@ -54,6 +55,7 @@ class MyGame:
         self.has_turns = has_turns
         self.turn_type = turn_type
         self.start_turn = start_turn
+        self.image_file_path = image_file_path
 
     def set_from_dict(self, gameDict):
         if self is None and gameDict is not None:
