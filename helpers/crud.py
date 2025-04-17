@@ -1,3 +1,4 @@
+import os
 import json
 from pathlib import PurePath, Path
 from helpers.utilities import *
@@ -168,54 +169,69 @@ def get_template_json(template_type: str, directory_path: str) -> dict:
     return template
 
 # UPDATE
-def overwrite_json_file(object: dict, directoryPath: str, fileName: str) -> bool:
-    error_message = ""
-    str_target_directory_path = directoryPath + '\\' + fileName
-    str_target_file_name = fileName + '.json'
-    str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    result = False
-    json_obj = {}
+# TODO: test
+def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict:
+    """
+    Overwrites or creates a JSON file in the specified directory.
 
-    json_obj = convert_obj_to_json(object)
+    Args:
+        data (dict): The dictionary to write to the JSON file.
+        directory_path (str): The directory where the file is located.
+        file_name (str): The name of the file (without extension).
 
-     # casting to Path 
-    target_directory_path = Path(str_target_directory_path)
-    target_file_path = Path(str_target_file_path)
+    Returns:
+        dict: A result dictionary with 'success' (bool) and 'message' (str).
+    """
+    result = {'success': False, 'message': ''}
+    try:
+        # Construct paths using pathlib
+        target_directory_path = Path(directory_path)
+        target_file_path = target_directory_path / f"{file_name}.json"
 
-    # test if gamePath is valid path
-    if target_directory_path.exists():
-        # game directory is valid, check if file exists
-        if(target_file_path.exists()):
-            # TODO: Add "are you sure you want to overwrite?" forgiveness
-            # overwrite existing file
-            f = open(str_target_file_path, "w")
+        # Ensure the directory exists
+        if not target_directory_path.exists():
+            result['message'] = f"Directory not found: {directory_path}"
+            return result
+
+        # Convert the dictionary to a JSON string
+        json_obj = json.dumps(data, indent=4)
+
+        # Check if the file exists
+        if target_file_path.exists():
+            # Add confirmation logic (e.g., user confirmation)
+            print(f"File {target_file_path} already exists. Overwriting...")
+
+        # Write the JSON data to the file
+        with open(target_file_path, "w", encoding="utf-8") as f:
             f.write(json_obj)
-            f.close()
-            result = True
-        else:
-            error_message = "Error: " + str_target_file_name + " not found within Directory. Creating new file."
-            f = open(str_target_file_name, "w")
-            f.write(json_obj)
-            f.close()
-            result = True
-    else:
-        error_message = "Incorrect Path: games directory not found!"
 
-    if result == True:
-        print(error_message)
+        result['success'] = True
+        result['message'] = f"File successfully written to {target_file_path}"
         return result
-    else:
-        print(error_message)
 
-def append_json_file(object: dict, directoryPath: str, fileName: str) -> bool:
+    except FileNotFoundError as e:
+        result['message'] = f"FileNotFoundError: {e}"
+    except PermissionError as e:
+        result['message'] = f"PermissionError: {e}"
+    except Exception as e:
+        result['message'] = f"An unexpected error occurred: {e}\n{traceback.format_exc()}"
+
+    return result
+
+#TODO: finish
+def append_json_file(object: dict, directory_path: str, file_name: str) -> bool:
     print("TODO: fill this in.")
 
 # DELETE
 
 # Delete a folder & contents
-def delete_directory(directoryPath: str,):
+# TODO: this
+def delete_directory(directory_path: str,):
    result =  user_confirm("Are you sure you want to do this?")
-    
+
+# TODO: this
+def delete_file(file_path: str):
+    a = 1+1
 
 # TODO: Save this for when Error Handler is more up and running >__> 
 # And the forgiveness helpers. wtb confirm boxes.

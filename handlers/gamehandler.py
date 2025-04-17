@@ -87,12 +87,11 @@ def get_games_names(filePath: str) -> list:
 
     return game_names
 
+# TODO: finish
 def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> bool:
     game = {}
     result = False
-    # start by loading in the game
-    print("TODO: Update this to us the game Class Object instead")
-    game = get_game(gameName, filePath, type)
+    
 
     # Find the value we want to change and change it in the object
     print(game[key])
@@ -432,3 +431,25 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
         result = True
     
     return result
+
+# delete a game and its files
+def delete_all(name: str, game_path: str, datapack_path: str, saves_path: str) -> bool:
+    bln_result = False
+
+
+    return bln_result
+
+# delete a save
+def delete_save(save_name: str, saves_path: str) -> bool:
+    bln_result = False
+
+
+    return bln_result
+
+# delete an asset
+def delete_asset(game_name: str, save_name: str, datapack_path: str) -> bool:
+    bln_result = False
+
+
+
+    return bln_result
