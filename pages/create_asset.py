@@ -92,7 +92,7 @@ async def new_asset():
             else:
                 # Name the source game
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label('Source Game: ').classes('h-4')
+                    ui.label('Source Game: ').classes('font-bold')
                     ui.label(f'{selected_game['name']}')
                 
                 # Is this a Default or Custom Asset?
@@ -101,7 +101,7 @@ async def new_asset():
 
                 # Input name for the asset.
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label('Enter a name for the new asset: ').classes('h-4')
+                    ui.label('Enter a name for the new asset: ').classes('font-bold')
                     name_input = ui.input(label='Asset Name', placeholder='50 character limit',
                                 on_change=lambda e: name_chars_left.set_text(len(e) + ' of 50 characters used.'))
                     name_input.props('clearable')
@@ -109,7 +109,7 @@ async def new_asset():
                     name_chars_left = ui.label()
 
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label('Enter a category for the new asset: ').classes('h-4')
+                    ui.label('Enter a category for the new asset: ').classes('font-bold')
                     category_input = ui.input(label='Category', placeholder='50 character limit',
                                 on_change=lambda e: category_chars_left.set_text(len(e) + ' of 50 characters used.'))
                     category_input.props('clearable')
@@ -118,7 +118,7 @@ async def new_asset():
 
                 # Input description for the asset.
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label('Enter a description for the new asset:').classes('h-4')
+                    ui.label('Enter a description for the new asset:').classes('font-bold')
                     description = ui.input(label='Asset Description', placeholder='500 character limit',
                                     on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
                     # this handles the validation of the field.
@@ -126,39 +126,34 @@ async def new_asset():
                     desc_chars_left = ui.label()
                 
                 # Create Buy Costs
-                ui.label("Do you want to add a Buy Cost to your asset?").classes('h-4')
+                ui.label("Do you want to add a Buy Cost to your asset?").classes('font-bold')
                 has_buy_costs = ui.switch()
-                has_buy_costs.bind_value_to(bln_has_buy_costs)
+                # has_buy_costs.bind_value_to(bln_has_buy_costs)
                 # Add Buy Costs
                 with ui.column().classes('w-80 items-stretch').bind_visibility_from(has_buy_costs, 'value'):
                     ui.label('You can add more than one buy cost to the asset.')
                     new_buy_cost = ui.button(
                         "Add Buy Cost",
                         icon="create",
-                        on_click=get_buy_cost(selected_game['counters'])
+                        on_click=get_buy_cost
                     )
 
                 # Add Sell Prices
-                ui.label("Do you want to add a Sell Price to your asset?").classes('h-4')
+                ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
                 has_sell_costs = ui.switch()
-                has_sell_costs.bind_value_to(bln_has_sell_prices)
+                # has_sell_costs.bind_value_to(bln_has_sell_prices)
                 # display based on above
                 with ui.column().classes('w-80 items.stretch').bind_visibility_from(has_sell_costs, 'value'):
                     ui.label("You can add more than one sell price to the asset.")
                     new_sell_cost = ui.button(
                         "Add Sell Cost",
                         icon="create",
-                        on_click=get_sell_price(selected_game['counters'])
-                    )
-                    # Pull up the new_dict_entry_dialog to set new sell price.
-                    new_sell_cost.on(
-                        "click",
-                        lambda: new_dict_entry('Sell Price'),
+                        on_click=get_sell_price
                     )
 
                 # Add any extra special text to the asset.
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label('Enter any special text for the new asset:').classes('h-4')
+                    ui.label('Enter any special text for the new asset:').classes('font-bold')
                     special = ui.input(label='Special Text', placeholder='500 character limit',
                                         on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
                     # this handles the validation of the field.
@@ -173,19 +168,27 @@ async def new_asset():
                     # before trying to add them to assets."
                 """
         
-                # icon
-                with ui.column().classes('w-80 items-stretch'):
-                    ui.label("Select an image you want to use as an icon:").classes('h-4')
-                    ui.label("Suggested icon size: 50x50px")
-                    async def choose_file():
-                        files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-                        for file in files:
-                            asset_icon = file
-                        ui.button('choose file', on_click=choose_file)
+            # Icon selection
+            with ui.column().classes('w-80 items-stretch'):
+                ui.label("Select an image you want to use as an icon:").classes('font-bold')
+                ui.label("Suggested icon size: 50x50px")
+
+                async def choose_file():
+                    # Create a new window for the file dialog
+                    new_window = app.native.create_window('Select Icon', width=400, height=300)
+                    try:
+                        files = await new_window.create_file_dialog(allow_multiple=False)
+                        if files:
+                            asset_icon = files[0]  # Assuming single file selection
+                            print(f"Selected icon: {asset_icon}")
+                    finally:
+                        new_window.close()  # Close the new window after selection
+
+                ui.button('Choose File', on_click=choose_file)
 
                 # image
                 with ui.column().classes('w-80 items-stretch'):
-                    ui.label("Select an image you want to associate with the asset:").classes('h-4')
+                    ui.label("Select an image you want to associate with the asset:").classes('font-bold')
                     async def choose_file():
                         files = await app.native.main_window.create_file_dialog(allow_multiple=True)
                         for file in files:
