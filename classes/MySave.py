@@ -5,6 +5,7 @@ import json
 @dataclass
 class MySave:
     name: str
+    base_game: str
     create_date: str
     date_last_save: str
     description: str
@@ -24,12 +25,13 @@ class MySave:
     current_turn: int
     log_file_path: str
 
-    def __post__init__(self, name, createDate, dateLastSave, description, 
+    def __post__init__(self, name, baseGame, createDate, dateLastSave, description, 
                  assetCustoms, assetCustomsPath, actorCustoms, actorCustomsPath,
                  eventCustoms,eventCustomsPath, effectCustoms, effectCustomsPath,
                    counters, assets, actors, currentEvents,
                      currentEffects, logFilePath ):
         self.name = name
+        self.base_game = baseGame
         self.create_date = datetime.strptime(str(createDate), '%\d-%m-%Y %H:%M:%S')
         self.date_last_save = datetime.strptime(str(dateLastSave), '%\d-%m-%Y %H:%M:%S')
         self.description = description

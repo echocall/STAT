@@ -17,7 +17,6 @@ def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_di
     write_result = {'result':False,'string':'', 'dict':{}}
     error_message = ""
     save_location = ""
-    game_file_name = ""
 
     try:
         # Write the paths for the folder locations

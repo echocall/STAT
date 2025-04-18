@@ -220,7 +220,6 @@ def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict
     return result
 
 # DELETE
-
 # Delete a folder & contents
 # TODO: this
 def delete_directory(directory_path: str,):

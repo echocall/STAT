@@ -15,7 +15,8 @@ async def view_saves():
         existing_saves = {}
         # getting the existing saves for the loaded game
         existing_saves = get_saves(saves_paths)
-        ui.button("Create New Save")
+        with ui.link(target='/createsave'):
+            ui.button("Create New Save")
 
         ui.label("Select a save to load:").classes('h-4')
     

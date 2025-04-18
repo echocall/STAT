@@ -1,6 +1,6 @@
 from helpers.crud import *
 from helpers.utilities import *
-import datetime
+from datetime import datetime
 import traceback
 
 def save_handler():
@@ -30,48 +30,52 @@ def get_saves(file_path: str) -> dict:
 
 # for creating a new save from the gui
 def new_save_gui(datapack_path: str, save_path: str,
-                  new_save_dict: dict, save_name: str) -> dict:
+                  new_save_dict: dict, file_name: str) -> dict:
     write_result = {'result':False,'string':'', 'dict':{}}
     folders_create = False
     error_message = ""
-    file_name = ""
-    name_dict = {"name":"","file":""}
 
-    # convert save_name into file_name
-    name_dict['file'] = convert_save_name(save_name)
-    new_save_dict['name'] = name_dict['name']
-        
     # Get the date of creation
-    date_created = datetime.strptime(str(datetime.today('EDT')), '%\d-%m-%Y %H:%M:%S')
+    date_created = datetime.now().strftime('%b-%d-%Y %H:%M:%S')
     new_save_dict['create_date'] = date_created
     # last save date
     last_save_date = date_created
-    new_save_dict['date_last_saved'] = last_save_date
+    new_save_dict['date_last_save'] = last_save_date
 
     # Create the folders for the customs.
     game_file = {}
     game_file = format_str_for_filename_super(new_save_dict['base_game'])
     
     if game_file['result']:
-        customs_path = datapack_path + "\\customs\\" + game_file['string'] + "\\" + name_dict['file'] 
+        customs_path = datapack_path + game_file['string'] + "\\customs\\"  + file_name + "\\"
         # assembling the paths that need to be made
-        asset_customs_path = customs_path + "\\assets"
-        effect_customs_path = customs_path + "\\effects"
-        events_customs_path = customs_path + "\\events"
+        actor_customs_path = customs_path + "actors\\"
+        asset_customs_path = customs_path + "assets\\"
+        effect_customs_path = customs_path + "effects\\"
+        events_customs_path = customs_path + "events\\"
     else:
+        actor_customs_path = ""
         asset_customs_path = ""
         effect_customs_path = ""
         events_customs_path = ""
+    new_save_dict['actor_customs_path'] = actor_customs_path
     new_save_dict['asset_customs_path'] = asset_customs_path
     new_save_dict['effect_customs_path'] = effect_customs_path
     new_save_dict['event_customs_path'] = events_customs_path
-    folders_create = create_save_folders(name_dict, new_save_dict['base_game'], datapack_path, save_path)
+    new_save_dict['log_file_path'] = save_path + "\\" + game_file['string'] + "\\"
+    
+    folders_create = create_save_folders(file_name, new_save_dict['base_game'], datapack_path)
     if not folders_create:
         # warn user via error message
         error_mesage = "Error: failed to create directories for new save."
         g = 2+7
 
-    write_result['result'] = create_new_json_file(file_name, save_path, new_save_dict)
+    save_path_full = save_path + '\\' + game_file['string'] + '\\' + file_name
+
+    # create the folder where the save goes
+    save_folder_blns = create_new_directory(save_path_full)
+
+    write_result['result'] = create_new_json_file(file_name, save_path_full, new_save_dict)
     
     # If we wrote the dict to the .JSON file
     if write_result['result'] == True:
@@ -120,6 +124,41 @@ def select_save(file_path: str) -> dict:
 
     return target_dict
 
+def check_template_bool(save: dict, template_path: str) -> bool:
+    error_message = ''
+    result = False
+    try:
+        save_template = get_template_json("save", template_path)
+        result = dict_key_compare(save_template, save)
+        return result
+    except Exception:
+        print(traceback.format_exc())
+        return result
+
+def get_new_save_name(name: str, file_path: str) -> dict:
+    file_name = ""
+    saves = []
+    save_name = {"name": "", "file":""}
+    valid = False
+
+    while not valid:
+        file_name = format_str_for_filename(name)
+
+        # check that a game by that name doesn't already exists
+        saves = multi_json_names_getter(file_path, "saves")
+        
+        if name in saves:
+    # if file_name already exists, append placeholder and alert user
+            valid = True
+            save_name["name"] = name + "_Placeholder"
+            save_name["file"] = file_name + "_placeholder"
+        else:
+            valid = True
+            save_name["name"] = name
+            save_name["file"] = file_name
+
+    return  save_name
+
 # TODO: Test
 # Save a save dictionary to a JSON file
 def update_save(save_dict: dict, save_path: str) -> dict:
@@ -161,7 +200,7 @@ def save_as_new_file():
     print("TODO: Create a new save file.")
 
 # create the folders for a new save.
-def create_save_folders(name_dict: dict, game_name: str, datapack_path: str) -> bool:
+def create_save_folders(file_name: str, game_name: str, datapack_path: str) -> bool:
     folder_created = False
     folders_created = {}
     result = False
@@ -171,12 +210,14 @@ def create_save_folders(name_dict: dict, game_name: str, datapack_path: str) -> 
     game_file = format_str_for_filename_super(game_name)
     
     if game_file['result']:
-        customs_path = datapack_path + "\\customs\\" + game_file['string'] + "\\" + name_dict['file'] 
+        customs_path = datapack_path+ "\\"+ game_file['string']  + "\\customs\\" + file_name + '\\'
         # assembling the paths that need to be made
-        asset_customs_path = customs_path + "\\assets"
-        effect_customs_path = customs_path + "\\effects"
-        events_customs_path = customs_path + "\\events"
+        actors_customs_path = customs_path + "actors\\"
+        asset_customs_path = customs_path + "assets\\"
+        effect_customs_path = customs_path + "effects\\"
+        events_customs_path = customs_path + "events\\"
 
+        folders.append(actors_customs_path)
         folders.append(asset_customs_path)
         folders.append(effect_customs_path)
         folders.append(events_customs_path)

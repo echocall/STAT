@@ -1,0 +1,28 @@
+{
+    "name": "!3-2id",
+    "base_game": "Test",
+    "create_date": "Apr-18-2025 00:44:14",
+    "date_last_save": "Apr-18-2025 00:44:14",
+    "description": "",
+    "asset_customs": false,
+    "asset_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\!3-2id\\assets\\",
+    "actor_customs": false,
+    "actor_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\!3-2id\\actors\\",
+    "event_customs": false,
+    "event_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\!3-2id\\events\\",
+    "effect_customs": false,
+    "effect_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\!3-2id\\effects\\",
+    "counters": {
+        "Gold": 10,
+        "Silver": 25,
+        "Copper": 100,
+        "Health": 100,
+        "1st Level Spell Slot": 3
+    },
+    "assets": {},
+    "actors": [],
+    "current_events": {},
+    "current_effects": {},
+    "current_turn": 0,
+    "log_file_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\saves\\test\\"
+}
