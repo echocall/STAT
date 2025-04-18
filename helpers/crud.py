@@ -8,7 +8,7 @@ import traceback
 def create_new_json_file(passedFileName: str, passedDirectoryPath: str, dict_to_convert: dict) -> bool:
     result = False
     error_message = ""
-    str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
+    str_target_directory_path = passedDirectoryPath
     str_target_file_name = passedFileName + '.json'
     str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
     json_obj = ''
@@ -23,7 +23,7 @@ def create_new_json_file(passedFileName: str, passedDirectoryPath: str, dict_to_
         if(target_file_path.exists()):
             error_message = "Error: " + str_target_file_name + " already exists."
         else:
-            f = open(str_target_file_name, "w")
+            f = open(str_target_file_path, "w")
             f.write(json_obj)
             f.close()
             result = True
@@ -43,12 +43,12 @@ def create_new_directory(passed_directory_path: str) -> dict:
     error_message = ""
 
     try:
-        Path(passed_directory_path).mkdir(parents=False, exist_ok=False)
+        Path(passed_directory_path).mkdir(parents=True, exist_ok=False)
         result['created'] = True
         result['create_folder_message'] = "Successfully created the folder!"
     except Exception:
         result['create_folder_message'] = traceback.format_exc()
-        result['created'] = False;
+        result['created'] = False
     
     return result
 
@@ -218,10 +218,6 @@ def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict
         result['message'] = f"An unexpected error occurred: {e}\n{traceback.format_exc()}"
 
     return result
-
-#TODO: finish
-def append_json_file(object: dict, directory_path: str, file_name: str) -> bool:
-    print("TODO: fill this in.")
 
 # DELETE
 

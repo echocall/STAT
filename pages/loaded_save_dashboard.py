@@ -16,21 +16,22 @@ async def dashboard():
         game_paths = paths.get("gamespath", "Not Set")
 
         # Getting assets sorted.
-        loaded_game = {}
+        selected_game = {}
         save_data = {}
         sorted_assets = {}
         counters = {}
-        save_data = load_from_storage("loaded_save")
-        loaded_game = load_from_storage("loaded_game")
-        saves_paths = loaded_game.get("save_files_path", "Not Set")
+        save_data = load_from_storage("selected_save")
+        selected_game = load_from_storage("selected_game")
+        saves_paths = selected_game.get("save_files_path", "Not Set")
+        turn_type = ""
 
         # if the dictionaries are not empty
-        if bool(save_data) and bool(loaded_game):
+        if bool(save_data) and bool(selected_game):
             # Everything has loaded properly, go for it!
             counters = save_data['counters']
 
-            assets = asset_handler(loaded_game['asset_default_path'],
-                                       loaded_game['default_assets'],
+            assets = asset_handler(selected_game['asset_default_path'],
+                                       selected_game['default_assets'],
                                        save_data['asset_customs'],
                                        save_data['asset_customs_path'])
                
@@ -62,12 +63,12 @@ async def dashboard():
 
             ui.tooltip().default_classes('bg-blue')
 
-            if loaded_game['name'] == "":
+            if selected_game['name'] == "":
                 message("Warning: No game loaded. Please select a game to load: ")
             with ui.row().classes('full flex'):
                 ui.label('')
 
-            # ON EVERY P
+            # ON EVERY TAB
             with ui.row().classes('full flex'):
                 ui.separator()
                 with ui.column():
@@ -78,7 +79,7 @@ async def dashboard():
                         ui.tooltip(f'The base game is {save_data['base_game']}')
                 with ui.column():
                     with ui.row():
-                        ui.label('Turns: ')
+                        ui.label('Turns: ').classes('h-4')
                         current_turn = save_data['current_turn']
                         ui.label(current_turn)
                 with ui.column():
@@ -123,12 +124,12 @@ async def dashboard():
                 with ui.tab_panel(store_tab):
                     # Creates each asset_container
                     for category in sorted_assets:
-                        asset_container = ui.row().classes("full flex w-full")
+                        asset_container = ui.row().classes("full flex")
                         with asset_container:
-                            with ui.row().classes("w-1/4"):
+                            with ui.row().classes("w-100"):
                                 CategoryLabel(category)
                             # Creates cards for each asset
-                            with ui.row().classes("w-3/4"):
+                            with ui.row().classes("w-100"):
                                 for asset in sorted_assets[category]:
                                     await render_asset_cards(asset)
                         
@@ -138,7 +139,7 @@ async def dashboard():
             games = []
             games = get_games_names(game_paths)
             # Didn't load properly from app.storage.user
-            # Ask user to pic files to load.
+            # Ask user to pick files to load.
             ui.label("Error loading from selected game! Please pick games from below.").classes('w-40')
             ui.select(options=games, with_input=True, on_change=lambda e: select_game(game_paths, e.value))
             
@@ -180,7 +181,7 @@ def counter_add(counters: dict, current_counter: str, current_amount: str, amoun
     try:
         new_value = initial_amount + amount
         counters[counter_name] = new_value
-        app.storage.user['loaded_save']['counters'] = counters
+        app.storage.user['selected_save']['counters'] = counters
     except:
        ui.notify("Error: could not update the counter!")
 
@@ -195,7 +196,7 @@ def counter_sub(counters: dict, current_counter: str, current_amount: str, amoun
     try:
         new_value = initial_amount - amount
         counters[counter_name] = new_value
-        app.storage.user['loaded_save']['counters'] = counters
+        app.storage.user['selected_save']['counters'] = counters
     except:
        ui.notify("Error: could not update the counter!")
 
@@ -212,6 +213,7 @@ def load_from_storage(target:str):
     
     return target_dict
 
+# used to create the individual cards.
 async def render_asset_cards(asset) -> ui.element:
     with ui.card().style('width: 100%; max-width: 300px; aspect-ratio: 4 / 3;'):
         with ui.card_section():
@@ -230,6 +232,7 @@ async def render_asset_cards(asset) -> ui.element:
         with ui.card_actions().classes("w-full justify-end"):
             ui.button('Purchase Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
 
+# gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
     for asset in assets:
         assets_as_dict[asset['name']] = asset
@@ -245,7 +248,7 @@ def select_game(games_path: str, selected_game_name: str):
         except:
             ui.notify("Warning! Problem with loading game. Please check that game file exists.")
         finally:
-            app.storage.user['loaded_game'] = selected_game
+            app.storage.user['selected_game'] = selected_game
             render_counter_bar.refresh()
 
 def buy_asset(asset: dict, counters: dict):

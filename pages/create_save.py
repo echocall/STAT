@@ -6,8 +6,10 @@ import traceback
 
 enable = Enable()
 
-@ui.page('/creategame')
+@ui.page('/createsave')
 def create_game():
         with theme.frame('Create New Save'):
             with ui.column().classes("flex content-center w-100"):
-                a = 1+1
+               a = 1+1
+
+               ui.label()

@@ -26,16 +26,16 @@ async def view_saves():
 
 def load_save(existing_saves, selected_save_name):
     for name in selected_save_name:
-        loaded_save = {}
+        selected_save = {}
         save_to_get = convert_save_name(name)
         try:
-            loaded_save = existing_saves[save_to_get]
+            selected_save = existing_saves[save_to_get]
             app.storage.user['is_save_loaded']  = True
         except:
             ui.notify("Unable to load save.")
         finally:
             # pass back empty dict even if nothing is available.
-            app.storage.user["loaded_save"] = loaded_save
+            app.storage.user["selected_save"] = selected_save
             ui.navigate.to(f"/loadeddash")
 
 async def render_save_cards(existing_saves, save):

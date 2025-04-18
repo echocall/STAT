@@ -7,7 +7,7 @@ from classes.Enable import *
 
 @ui.page('/viewgame/{game_name}')
 async def game_detail():
-    with theme.frame('{game_name} Details'):
+    with theme.frame(f'Game Details'):
         selected_game = app.storage.user.get("selected_game", {})
 
         with ui.row():

@@ -16,17 +16,26 @@ def game_handler(is_game_loaded: bool) -> object:
 def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
     write_result = {'result':False,'string':'', 'dict':{}}
     error_message = ""
+    save_location = ""
+    game_file_name = ""
 
     try:
         # Write the paths for the folder locations
-        new_game_dict['actor_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\actors"
-        new_game_dict['asset_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\assets"
-        new_game_dict['effect_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\effects"
-        new_game_dict['event_default_path'] = datapack_path + "\\" + new_game_dict['name'] + "\\events"
-        new_game_dict['save_files_path'] = save_path + "\\" + new_game_dict['name']
-        new_game_dict['image_file_path'] = game_path + "\\" + new_game_dict['name'] + "\\images"
+        save_location = game_path + "\\" + file_name
+        new_game_dict['actor_default_path'] = datapack_path + "\\" + file_name + "\\default\\actors\\"
+        new_game_dict['asset_default_path'] = datapack_path + "\\" + file_name + "\\default\\assets\\"
+        new_game_dict['effect_default_path'] = datapack_path + "\\" + file_name + "\\default\\effects\\"
+        new_game_dict['event_default_path'] = datapack_path + "\\" + file_name + "\\default\\events\\"
+        new_game_dict['save_files_path'] = save_path + "\\" + file_name + "\\"
+        new_game_dict['image_file_path'] = game_path + "\\" + file_name + "\\images\\"
 
-        write_result['result'] = create_new_json_file(file_name, game_path, new_game_dict)
+        create_new_directory(new_game_dict['actor_default_path'])
+        create_new_directory(new_game_dict['asset_default_path'])
+        create_new_directory(new_game_dict['effect_default_path'])
+        create_new_directory(new_game_dict['event_default_path'])
+        create_new_directory(new_game_dict['actor_default_path'])
+        
+        write_result['result'] = create_new_json_file(file_name, save_location, new_game_dict)
     except Exception:
         print(traceback.format_exc())
 
@@ -423,15 +432,24 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
     folders_created = {}
     result = False
     folders = []
-    game_folder = game_path + "\\" + name_dict["file"]
-    datapack_folder = datapack_path + "\\" + name_dict["file"]
-    save_folder = saves_path + "\\" + name_dict["file"]
+
+    game_folder = game_path + "\\" + name_dict["file"] + "\\"
+    datapack_folder = datapack_path + "\\" + name_dict["file"] + "\\"
+    save_folder = saves_path + "\\" + name_dict["file"] + "\\"
     images_folder = game_path + "\\" + name_dict["file"] + "\\images\\"
+    actors_folder = datapack_path + "\\" + name_dict["file"] + "\\default\\actors\\"
+    asset_folder = datapack_path + "\\" + name_dict["file"] + "\\default\\assets\\"
+    effects_folder = datapack_path + "\\" + name_dict["file"] + "\\default\\effects\\"
+    events_folder = datapack_path + "\\" + name_dict["file"] + "\\default\\events\\"
 
     folders.append(game_folder)
     folders.append(datapack_folder)
     folders.append(save_folder)
     folders.append(images_folder)
+    folders.append(actors_folder)
+    folders.append(asset_folder)
+    folders.append(effects_folder)
+    folders.append(events_folder)
 
     for folder in folders:
         folder_created = create_new_directory(folder)['created']
