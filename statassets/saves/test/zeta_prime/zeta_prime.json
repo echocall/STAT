@@ -1,0 +1,28 @@
+{
+    "name": "Zeta Prime",
+    "base_game": "Test",
+    "create_date": "Apr-19-2025 07:58:48",
+    "date_last_save": "Apr-19-2025 07:58:48",
+    "description": "SO SLOW",
+    "asset_customs": false,
+    "asset_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\zeta_prime\\assets\\",
+    "actor_customs": false,
+    "actor_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\zeta_prime\\actors\\",
+    "event_customs": false,
+    "event_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\zeta_prime\\events\\",
+    "effect_customs": false,
+    "effect_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapackstest\\customs\\zeta_prime\\effects\\",
+    "counters": {
+        "Gold": 10,
+        "Silver": 25,
+        "Copper": 100,
+        "Health": 100,
+        "1st Level Spell Slot": 3
+    },
+    "assets": {},
+    "actors": [],
+    "current_events": {},
+    "current_effects": {},
+    "current_turn": 0,
+    "log_file_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\saves\\test\\"
+}
