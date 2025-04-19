@@ -14,8 +14,6 @@ enable = Enable()
 @ui.page('/createasset')
 async def new_asset():
     # pulling in the information of game etc
-    selected_game = {}
-    selected_save = {}
     # load in selected_game, if there is one.
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
@@ -38,14 +36,18 @@ async def new_asset():
         result = await target_counter_dialog('Buy Cost for Asset')
         if 'buy_costs' not in new_asset_dict:
             new_asset_dict['buy_costs'] = {}
-        new_asset_dict['buy_costs'][result['name']] = result['value']
+        new_asset_dict['buy_costs'][result['name']] = int(result['value'])
+        print("inside get_buy_cost")
+        print(new_asset_dict['buy_costs'])
+        render_counter_bar.refresh()
     
     # getting the sell prices
     async def get_sell_price():
         result = await target_counter_dialog('Sell Price for Asset')
         if 'sell_prices' not in new_asset_dict:
             new_asset_dict['sell_prices'] = {}
-        new_asset_dict['sell_prices'][result['name']] = result['value']
+        new_asset_dict['sell_prices'][result['name']] = int(result['value'])
+        render_counter_bar.refresh()
 
     async def choose_game():
         game_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
@@ -71,10 +73,10 @@ async def new_asset():
             if not selected_game['has_assets']:
                 selected_game['has_assets'] = True
             else:
+                file_location = selected_game['asset_default_path']
+                # update the selected game's list of assets with the new asset's information
                 selected_game['default_assets'].append(new_asset_dict['name'])
-            file_location = selected_game['asset_default_path']
             # save the assets information into .json file in appropriate location
-            # update the selected game's list of assets with the new asset's information
             try:
                 # save the asset data
                 a = 1+1
@@ -93,48 +95,41 @@ async def new_asset():
             # save the assets information into .json file in appropriate location
             # update the selected game's list of assets with the new asset's information
 
-    with theme.frame('Create an Asset'):
-        with ui.column():
-            #with ui.row():
-                # btn_select_game = ui.button('Select Game',on_click=prompt_select_game)
-                # TODO: make
-                # btn_select_save = ui.button('Select Save', on_click=prompt_select_save)
-            
-            ui.label("An asset is assumed to belong to the selected game.").classes('text-2xl')
 
+    with theme.frame('Create an Asset'):
+        buy_costs = new_asset_dict['buy_costs']
+        sell_prices = new_asset_dict['sell_prices']
+
+        with ui.column():
             # If no selected_game, open up prompt to select one
-            if not selected_game:
-                with ui.dialog() as no_game, ui.card():
-                    ui.label('Warning: No selected game detected.')
-                    ui.label('Please select a game.')
-                    ui.button('Find Game File', on_click=choose_game)
-                    ui.button('Close', on_click=no_game.close)
+            if not selected_game or 'name' not in selected_game:
+                with ui.row():
+                    ui.icon('warning').classes('text-3xl')
+                    ui.label('Warning: No selected game detected.').classes('text-2xl')
+                ui.label('Cannot create asset with no game selected.')
+                ui.label('Please select a game from \'Select Games\'.')
+                with ui.link(target = '/selectgames'):
+                    ui.button('Find Game File')
             else:
                 # Name the source game
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Source Game: ').classes('font-bold')
                     ui.label(f'{selected_game['name']}')
                 
-            
-                
                 # Is this a Default or Custom Asset?
                 # If Custom, pick associated Save
-                with ui.column().classes('items-stretch'):
+                with ui.column():
                     ui.label("Is this for a default asset?")
-                    is_default = ui.toggle({True:'Default', False:'Custom'}).bind_value(bln_is_default)
-                    ui.button('set_value', on_click=lambda: is_default)
-
-                    if not bln_is_default:
+                    is_default = ui.toggle({True:'Default', False:'Custom'})
+                    if not is_default.value:
                         # If no selected_save, open up prompt to select one
-                        if not selected_game:
-                            with ui.dialog() as no_save, ui.card():
-                                ui.label('Warning: No selected save detected.')
-                                ui.label('Please select a save.')
-                                ui.button('Choose save File', on_click=choose_save)
-                                ui.button('Close', on_click=no_save.close)
-                            ui.button('Find Save File', on_click=choose_save)
+                        if not selected_save or 'name' not in selected_save:
+                            ui.label('Warning: No selected save detected.')
+                            ui.label('Please select a save .json file.')
+                            with ui.link(target=f'/selectsaves/{selected_game['name']}'):
+                                ui.button('Find Save File')
                         else:
-                            # Name the source game
+                            # Name the source save
                             with ui.column().classes('w-80 items-stretch'):
                                 ui.label('Source Save: ').classes('font-bold')
                                 ui.label(f'{selected_save['name']}')
@@ -142,7 +137,8 @@ async def new_asset():
                 # Input name for the asset.
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Enter a name for the new asset: ').classes('font-bold')
-                    name_input = ui.input(label='Asset Name', placeholder='50 character limit')
+                    name_input = ui.input(label='Asset Name', placeholder='50 character limit',
+                                on_change=lambda e: name_chars_left.set_text(len(e.value) + ' of 50 characters used.'))
                     name_input.props('clearable')
                     name_input.validation={"Too short!": enable.is_too_short} 
                     name_chars_left = ui.label()
@@ -151,7 +147,7 @@ async def new_asset():
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Enter a category for the new asset: ').classes('font-bold')
                     category_input = ui.input(label='Category', placeholder='50 character limit',
-                                on_change=lambda e: category_chars_left.set_text(len(e) + ' of 50 characters used.'))
+                                on_change=lambda e: category_chars_left.set_text(len(e.value) + ' of 50 characters used.'))
                     category_input.props('clearable')
                     category_input.validation={"Too short!": enable.is_too_short} 
                     category_chars_left = ui.label()
@@ -167,8 +163,9 @@ async def new_asset():
                 
                 # Create Buy Costs
                 ui.label("Do you want to add a Buy Cost to your asset?").classes('font-bold')
-                has_buy_costs = ui.switch()
-                # has_buy_costs.bind_value_to(bln_has_buy_costs)
+                has_buy_costs = ui.switch("Yes")
+                has_buy_costs.props('colors="orange"')
+                
                 # Add Buy Costs
                 with ui.column().classes('w-80 items-stretch').bind_visibility_from(has_buy_costs, 'value'):
                     ui.label('You can add more than one buy cost to the asset.')
@@ -178,34 +175,16 @@ async def new_asset():
                         on_click=get_buy_cost
                     )
 
-                # TODO: Add way to view added buy costs
-                display_buy_costs = ui.toggle({'True':'Yes', 'False':'No'})
-                with ui.row().bind_visibility_from(display_buy_costs,'key'):
-                    for counter in new_asset_dict['buy_costs']:
-                        ui.label(counter['name'] + counter['value'])
-                    
-                    added_buy_costs = ui.aggrid({
-                        'defaultColDef': {'flex':1},
-                        'columnDefs': [
-                            {'headerName': 'Name', 'field': 'name'},
-                            {'headerName': 'Cost', 'field': 'value'}
-                        ],
-                        'rowData': [
-                            {'name':'Gold', 'value': 10},
-                            {'name':'Silver','value': 50}
-                        ],
-                        'rowSelection':'multiple',
-                    }).classes('max-h-40')
-
-                    def update_buy_costs():
-                        print(new_asset_dict['buy_costs'])
-                        added_buy_costs.update()
-                    ui.button('Update Grid', on_click=update_buy_costs)
+                    # TODO: Add way to view added buy costs
+                    ui.label('Buy Costs Added:')
+                    with ui.row().classes('full flex'):
+                        for buy_cost in buy_costs:
+                            await render_counter_bar(buy_costs, buy_cost)
 
                 # Add Sell Prices
                 ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
-                has_sell_costs = ui.switch()
-                # has_sell_costs.bind_value_to(bln_has_sell_prices)
+                has_sell_costs = ui.switch("Yes")
+                has_sell_costs.props('color="orange"')
                 # display based on above
                 with ui.column().classes('w-80 items.stretch').bind_visibility_from(has_sell_costs, 'value'):
                     ui.label("You can add more than one sell price to the asset.")
@@ -214,6 +193,11 @@ async def new_asset():
                         icon="create",
                         on_click=get_sell_price
                     )
+                    # TODO: Add way to see already added sell costs
+                    ui.label('Sell Prices Added:')
+                    for sell_price in sell_prices:
+                        await render_counter_bar(sell_prices, sell_price)
+
 
                 # Add any extra special text to the asset.
                 with ui.column().classes('w-80 items-stretch'):
@@ -241,7 +225,7 @@ async def new_asset():
                         icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
                         for file in icon_files:
                             asset_icon = file
-                        new_asset_dict['icon'] = file;
+                        new_asset_dict['icon'] = file
                         return asset_icon
                     
                     ui.button('choose file', on_click=choose_icon)
@@ -258,3 +242,18 @@ async def new_asset():
                     ui.button('choose file', on_click=choose_image)
 
 
+# Render the counters.
+@ui.refreshable
+async def render_counter_bar(counters: dict, counter: str) -> ui.element:
+    print("inside render_counter_bar")
+    current_counter = ui.label(f'{counter}:').classes('text-sm')
+    print(counters)
+    print(counter)
+    # Work around for showing Current Counter amount without being able to fiddle with it.
+    temp_current_amount = counters[counter]
+    current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
+
+# Loads the page
+@ui.refreshable
+def load_page() -> ui.element:
+    a = 1+1

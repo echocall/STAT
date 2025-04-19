@@ -15,7 +15,7 @@ async def content() -> None:
     # Store as nested dictionary
     app.storage.user["config"] = structured_data
 
-    ui.label("Welcome to STAT!").classes("bold")
+    ui.label("Welcome to STAT!").classes('text-2xl')
     ui.label("The Snazzy Tabletop Assistant Tracker")
     ui.label('Do you want to add a new game to STAT, or work with a preexisting game?')
     with ui.row().classes('space-x-4 justify-center'):

@@ -157,7 +157,7 @@ async def render_counter_bar(counters: dict, counter: str) -> ui.element:
         ui.tooltip(f'Amount of {counter}. Currently {counters[counter]}.')
 
     # Amount to change
-    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=-1)
+    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
     with amount_to_change:
         ui.tooltip(f'Amount of change to the counter.')
     # Buttons! :)
@@ -180,10 +180,10 @@ def counter_add(counters: dict, current_counter: str, current_amount: str, amoun
 
     try:
         new_value = initial_amount + amount
-        counters[counter_name] = new_value
+        counters[counter_name] = int(new_value)
         app.storage.user['selected_save']['counters'] = counters
     except:
-       ui.notify("Error: could not update the counter!")
+       ui.notify("Error: could not add to the counter!")
 
     # refresh the element on the page.
     render_counter_bar.refresh()
@@ -195,10 +195,10 @@ def counter_sub(counters: dict, current_counter: str, current_amount: str, amoun
 
     try:
         new_value = initial_amount - amount
-        counters[counter_name] = new_value
+        counters[counter_name] = int(new_value)
         app.storage.user['selected_save']['counters'] = counters
     except:
-       ui.notify("Error: could not update the counter!")
+       ui.notify("Error: could not remove from the counter!")
 
     # refresh the element on the page.
     render_counter_bar.refresh()
