@@ -2,6 +2,7 @@ from nicegui import app, ui
 
 async def choose_file():
     files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+    print(type(files))
     for file in files:
         ui.notify(file)
 

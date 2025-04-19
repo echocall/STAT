@@ -4,6 +4,7 @@ from elements.new_dict_entry import new_dict_entry
 from elements.target_counter_dialog import target_counter_dialog
 from elements.select_game_dialog import prompt_select_game
 from elements.select_save_dialog import prompt_select_save
+from helpers.crud import single_json_getter_fullpath
 from nicegui import app, ui
 
 # TODO: Fix returns & passing info in.
@@ -19,7 +20,6 @@ async def new_asset():
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
 
-
     new_asset_dict = {
         'name': '', 'category':'',
         'description': '', 'source': '',
@@ -29,24 +29,39 @@ async def new_asset():
         'icon':'', 'image':'str'
     }
 
-
+    bln_is_default = False
     bln_has_buy_costs = False
     bln_has_sell_prices = False
-
 
     # getting the buy costs
     async def get_buy_cost():
         result = await target_counter_dialog('Buy Cost for Asset')
         if 'buy_costs' not in new_asset_dict:
             new_asset_dict['buy_costs'] = {}
-        new_asset_dict['buy_costs'][result[0]] = result[1]
+        new_asset_dict['buy_costs'][result['name']] = result['value']
     
     # getting the sell prices
     async def get_sell_price():
         result = await target_counter_dialog('Sell Price for Asset')
         if 'sell_prices' not in new_asset_dict:
             new_asset_dict['sell_prices'] = {}
-        new_asset_dict['sell_prices'][result[0]] = result[1]
+        new_asset_dict['sell_prices'][result['name']] = result['value']
+
+    async def choose_game():
+        game_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+        for file in game_files:
+            game = single_json_getter_fullpath(file)
+            # Get the game from the path
+        selected_game = game
+        app.storage.user['selected_game'] = game
+
+    async def choose_save():
+        save_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+        for file in save_files:
+            save = single_json_getter_fullpath(file)
+            # Get the game from the path
+        selected_save = save
+        app.storage.user['selected_save'] = save
 
     # Calls the methods to write the asset to .json
     async def create_asset(asset_type: str):
@@ -78,36 +93,61 @@ async def new_asset():
             # save the assets information into .json file in appropriate location
             # update the selected game's list of assets with the new asset's information
 
-
     with theme.frame('Create an Asset'):
         with ui.column():
-            with ui.row():
-                btn_select_game = ui.button('Select Game',on_click=prompt_select_game)
+            #with ui.row():
+                # btn_select_game = ui.button('Select Game',on_click=prompt_select_game)
                 # TODO: make
-                btn_select_save = ui.button('Select Save', on_click=prompt_select_save)
+                # btn_select_save = ui.button('Select Save', on_click=prompt_select_save)
+            
+            ui.label("An asset is assumed to belong to the selected game.").classes('text-2xl')
 
             # If no selected_game, open up prompt to select one
             if not selected_game:
-                selected_game = await prompt_select_game
+                with ui.dialog() as no_game, ui.card():
+                    ui.label('Warning: No selected game detected.')
+                    ui.label('Please select a game.')
+                    ui.button('Find Game File', on_click=choose_game)
+                    ui.button('Close', on_click=no_game.close)
             else:
                 # Name the source game
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Source Game: ').classes('font-bold')
                     ui.label(f'{selected_game['name']}')
                 
-                # Is this a Default or Custom Asset?
-                    # If Custom, pick associated Save
+            
                 
+                # Is this a Default or Custom Asset?
+                # If Custom, pick associated Save
+                with ui.column().classes('items-stretch'):
+                    ui.label("Is this for a default asset?")
+                    is_default = ui.toggle({True:'Default', False:'Custom'}).bind_value(bln_is_default)
+                    ui.button('set_value', on_click=lambda: is_default)
 
+                    if not bln_is_default:
+                        # If no selected_save, open up prompt to select one
+                        if not selected_game:
+                            with ui.dialog() as no_save, ui.card():
+                                ui.label('Warning: No selected save detected.')
+                                ui.label('Please select a save.')
+                                ui.button('Choose save File', on_click=choose_save)
+                                ui.button('Close', on_click=no_save.close)
+                            ui.button('Find Save File', on_click=choose_save)
+                        else:
+                            # Name the source game
+                            with ui.column().classes('w-80 items-stretch'):
+                                ui.label('Source Save: ').classes('font-bold')
+                                ui.label(f'{selected_save['name']}')
+                        
                 # Input name for the asset.
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Enter a name for the new asset: ').classes('font-bold')
-                    name_input = ui.input(label='Asset Name', placeholder='50 character limit',
-                                on_change=lambda e: name_chars_left.set_text(len(e) + ' of 50 characters used.'))
+                    name_input = ui.input(label='Asset Name', placeholder='50 character limit')
                     name_input.props('clearable')
                     name_input.validation={"Too short!": enable.is_too_short} 
                     name_chars_left = ui.label()
 
+                # Input category for the asset
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label('Enter a category for the new asset: ').classes('font-bold')
                     category_input = ui.input(label='Category', placeholder='50 character limit',
@@ -137,6 +177,30 @@ async def new_asset():
                         icon="create",
                         on_click=get_buy_cost
                     )
+
+                # TODO: Add way to view added buy costs
+                display_buy_costs = ui.toggle({'True':'Yes', 'False':'No'})
+                with ui.row().bind_visibility_from(display_buy_costs,'key'):
+                    for counter in new_asset_dict['buy_costs']:
+                        ui.label(counter['name'] + counter['value'])
+                    
+                    added_buy_costs = ui.aggrid({
+                        'defaultColDef': {'flex':1},
+                        'columnDefs': [
+                            {'headerName': 'Name', 'field': 'name'},
+                            {'headerName': 'Cost', 'field': 'value'}
+                        ],
+                        'rowData': [
+                            {'name':'Gold', 'value': 10},
+                            {'name':'Silver','value': 50}
+                        ],
+                        'rowSelection':'multiple',
+                    }).classes('max-h-40')
+
+                    def update_buy_costs():
+                        print(new_asset_dict['buy_costs'])
+                        added_buy_costs.update()
+                    ui.button('Update Grid', on_click=update_buy_costs)
 
                 # Add Sell Prices
                 ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
@@ -168,31 +232,29 @@ async def new_asset():
                     # before trying to add them to assets."
                 """
         
-            # Icon selection
-            with ui.column().classes('w-80 items-stretch'):
-                ui.label("Select an image you want to use as an icon:").classes('font-bold')
-                ui.label("Suggested icon size: 50x50px")
+                # Icon selection
+                with ui.column().classes('w-80 items-stretch'):
+                    ui.label("Select an image you want to use as an icon:").classes('font-bold')
+                    ui.label("Suggested icon size: 50x50px")
 
-                async def choose_file():
-                    # Create a new window for the file dialog
-                    new_window = app.native.create_window('Select Icon', width=400, height=300)
-                    try:
-                        files = await new_window.create_file_dialog(allow_multiple=False)
-                        if files:
-                            asset_icon = files[0]  # Assuming single file selection
-                            print(f"Selected icon: {asset_icon}")
-                    finally:
-                        new_window.close()  # Close the new window after selection
-
-                ui.button('Choose File', on_click=choose_file)
+                    async def choose_icon():
+                        icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                        for file in icon_files:
+                            asset_icon = file
+                        new_asset_dict['icon'] = file;
+                        return asset_icon
+                    
+                    ui.button('choose file', on_click=choose_icon)
 
                 # image
                 with ui.column().classes('w-80 items-stretch'):
                     ui.label("Select an image you want to associate with the asset:").classes('font-bold')
-                    async def choose_file():
-                        files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-                        for file in files:
+                    async def choose_image():
+                        image_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                        for file in image_files:
                             asset_image = file
-                        ui.button('choose file', on_click=choose_file)
+                        new_asset_dict['image'] = asset_image
+
+                    ui.button('choose file', on_click=choose_image)
 
 

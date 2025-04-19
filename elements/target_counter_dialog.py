@@ -6,7 +6,11 @@ enable = Enable()
 
 async def target_counter_dialog(purpose: str):
     target_counter = {'name':'', 'value':0}
+
+    # populates self from the counters 
+    # associated with the currently selected game
     selected_game = app.storage.user.get("selected_game", {})
+    
     # get the counters as a dictionary of name: value pair
     counters = selected_game['counters']
     # list of keys
@@ -38,7 +42,7 @@ async def target_counter_dialog(purpose: str):
                 # The button submits the data in the fields.
                 submit = ui.button(
                     "Add Counter",
-                    submit.on_click(lambda: dialog.submit(target_counter))
+                    on_click=lambda: dialog.submit(target_counter)
                 )
                 # Testing new enabling
                 submit.bind_enabled_from(counter_name_select, "value", backward=lambda _: is_valid())

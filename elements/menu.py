@@ -90,9 +90,10 @@ def menu() -> None:
             with ui.menu_item('Assets Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
-                    with ui.menu().props('anchor="top end" self="top start" auto-close'):
-                        with ui.link(target='/createasset'):
-                            ui.menu_item('Create an Asset')
+                with ui.menu().props('anchor="top end" self="top start" auto-close'):  
+                    with ui.link(target='/createasset'):
+                        ui.menu_item('Create an Asset')
+                        
             ui.separator()
             ui.menu_item('Close', general_menu.close)
 

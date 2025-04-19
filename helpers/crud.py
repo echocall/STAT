@@ -53,7 +53,7 @@ def create_new_directory(passed_directory_path: str) -> dict:
     return result
 
 # READ
-# Singe file getter with known file name & file path.
+# Single JSON getter with known file name & file path.
 def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType: str) -> dict:
 # This handles loading a JSON File
     error_message = ""
@@ -83,6 +83,28 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
             error_message = "Error: " + str_target_file_name + " not found within Directory."
     else:
         error_message = "Error getting JSON File: \n Incorrect Path. " + objectType + " directory not found!"
+
+    if fetch_success == True:
+        return target_object
+    else:
+        print(error_message)
+
+# single JSON getter with known, full file path
+def single_json_getter_fullpath(passed_file_path: str) -> dict:
+# This handles loading a JSON File
+    error_message = ""
+    target_object = ""
+    fetch_success = False
+
+    target_file_path = Path(passed_file_path)
+
+    if(target_file_path.exists()):
+        with open(passed_file_path) as f:
+            target_object = json.load(f)
+        f.close()
+        fetch_success = True
+    else:
+        error_message = "Error: " + passed_file_path + " unable to be returned."
 
     if fetch_success == True:
         return target_object
