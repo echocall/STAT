@@ -134,10 +134,10 @@ def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
             y = PurePath(x)
             unsplit_objects.append(y.name)
         fetch_success = True
-        # Split the names and then make them capitilized
+        # Split the names
         for object in unsplit_objects:
             name = object.split(".")
-            object_names.append(name[0].title())
+            object_names.append(name[0])
     else:
          # TODO: change to pass error_message back
         print("Incorrect Path: " + objectType + " directory for names not found!")

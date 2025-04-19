@@ -14,7 +14,12 @@ async def view_saves():
         
         existing_saves = {}
         # getting the existing saves for the loaded game
-        existing_saves = get_saves(saves_paths)
+        try:
+            existing_saves = get_saves(saves_paths)
+        except Exception as e:
+            ui.notify(f"Error loading saves: {str(e)}")
+            return
+        
         with ui.link(target='/createsave'):
             ui.button("Create New Save")
 
@@ -22,8 +27,11 @@ async def view_saves():
     
         save_card_container = ui.row().classes("full flex items-center")
         with save_card_container:
-            for save in existing_saves.values():
-                await render_save_cards(existing_saves, save)
+            if existing_saves:
+                for save in existing_saves.values():
+                    await render_save_cards(existing_saves, save)
+            else:
+                ui.label("No saves to display!")
 
 def load_save(existing_saves, selected_save_name):
     for name in selected_save_name:
@@ -51,14 +59,5 @@ async def render_save_cards(existing_saves, save):
                                                     backward=lambda last_save: f'Last Save: {last_save}')
             with ui.card_actions().classes("w-full justify-end"):
                 ui.button('Select Save', on_click=lambda: load_save(existing_saves, {save['name']}))
-
-async def new_save_dialog(selected_game, save_paths):
-    d = 4+4
-    # TODO: 
-    # Are we picking a game to base the save off of now, or presuming a game has already been loaded?
-    # get new save name
-    # grab default values from game
-    # run the 
-
 
 

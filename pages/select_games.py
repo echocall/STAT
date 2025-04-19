@@ -3,6 +3,7 @@ from nicegui import app, ui
 import pages.select_saves as select_saves
 from handlers.gamehandler import *
 from elements.alert_dialog import alert_dialog
+from helpers.utilities import format_str_for_filename_super
 
 @ui.page('/selectgames')
 async def select_games():
@@ -29,16 +30,20 @@ async def select_games():
 # Select a game to load into app.storage.user
 def view_game_saves(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
+        # getting the name to be correct.
+        file_name = format_str_for_filename_super(name)['string']
         selected_game = {}
+
+        # trying to get the specified game
         try:
-            selected_game = existing_games[name]
+            selected_game = existing_games[file_name]
             app.storage.user['is_game_loaded']  = True
         except:
             alert_dialog("Problem with loading the game.",
                          "Please check the game file exists.")
         finally:
             app.storage.user['selected_game'] = selected_game
-            ui.navigate.to(f"/selectsaves/{name}")
+            ui.navigate.to(f"/selectsaves/{file_name}")
 
 def game_view_details(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
@@ -65,7 +70,8 @@ async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
             ui.button('View Saves', on_click=lambda: view_game_saves(existing_games, {game['name']}))
             with ui.button(icon='edit').props('round'):
                 ui.tooltip("Edit game.")
-            with ui.button(icon='delete', on_click=ui.notify("TODO: Call confirm delete dialog to erase all files")).props('round'):
+            # TODO: Erase game and ALL associated children folders/files
+            with ui.button(icon='delete').props('round'):
                 ui.tooltip("Delete this game and all files associated with it.")
 
 # Confirm we want to delete the game and its files then call

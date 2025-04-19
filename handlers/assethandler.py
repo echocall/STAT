@@ -608,3 +608,19 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
 def fetch_assets() -> dict:
     a = 1+1
 
+
+# TODO: implement
+# delete an asset
+# Call BEFORE deleting save or a game if deleting all.
+def delete_asset(game_dict: dict, save_dict: dict, asset_dict: dict) -> bool:
+    bln_result = False
+    # Remove targeted asset from its parents (save and game)
+        # What if asset is used in multiple saves?
+        # What if asset is a default asset?
+
+    # delete the asset's file
+        # Get file path to asset
+        # call: shutil.rmtree('/path/to/folder')
+        # set bln_result to True
+
+    return bln_result

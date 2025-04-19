@@ -3,6 +3,7 @@ from helpers.utilities import *
 from handlers.assethandler import * # TODO: Change this later.
 import classes.MyGame as mg
 import traceback
+import os, shutil
 
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
@@ -45,7 +46,6 @@ def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_di
     else:
         write_result['string'] = "Warning, could not save new game to JSON file."
         return write_result
-
      
 def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dict:
     new_game_dict = {}
@@ -474,25 +474,25 @@ def update_game(game_dict: dict, game_path: str):
 
 # TODO: implement
 # delete a game and its files
-def delete_all(name: str, game_path: str, datapack_path: str, saves_path: str) -> bool:
+def delete_all(name: str, game_dict: dict, game_path: str, datapack_path: str, saves_path: str) -> bool:
     bln_result = False
-
+    
+    for filename in os.listdir(saves_path):
+        file_path = os.path.join(saves_path, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print("failed to delete %s. Reason: %s: " % (file_path, e))
 
     return bln_result
 
-# TODO: implement
-# delete a save
-def delete_save(save_name: str, saves_path: str) -> bool:
-    bln_result = False
-
-
-    return bln_result
-
-# TODO: implement
-# delete an asset
-def delete_asset(game_name: str, save_name: str, datapack_path: str) -> bool:
-    bln_result = False
-
-
-
-    return bln_result
+# TODO:
+# This be called AFTER delete_save in save_handler
+# and AFTER delete_asset(s) in asset_handler
+def delete_game(game_dict: dict):
+    omega = "end"
+    # ensure no children (assets, saves, or effects) exist
+    # delte folder with shutil.rmtree('/path/to/folder')

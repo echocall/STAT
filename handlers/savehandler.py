@@ -234,3 +234,12 @@ def create_save_folders(file_name: str, game_name: str, datapack_path: str) -> b
         # TODO: error handling for if this doesn't work.
     
     return result
+
+# TODO: implement
+# delete a save
+def delete_save(save_name: str, saves_path: str) -> bool:
+    bln_result = False
+    # Ensure custom assets fields are empty (whether due to deletion or moving)
+    # delete save folders by calling: shutil.rmtree('/path/to/folder')
+
+    return bln_result

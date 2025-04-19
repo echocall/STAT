@@ -65,7 +65,7 @@ def create_save():
                         # Navigate to the game view
                         # Make sure to get the dictionary back from create_game_result as it handles multiple fields
                         app.storage.user['selected_save'] = create_save_result['dict']
-                        ui.navigate.to(f"/viewgame/{new_save_dict['name']}")
+                        
                     else:
                         ui.notify('negative', "Game file could not be created. Please check file permissions.")
                         raise Exception("Game file could not be created. Please check file permissions.")
@@ -112,13 +112,14 @@ def create_save():
 
     async def handle_create_save():
         await create_save_json()
+        ui.navigate.to(f"/loadeddash/")
 
     with theme.frame('Create New Save'):
         with ui.column().classes("flex content-center w-100"):
         # Name of the Save
-            with ui.row().classes('items-center justify-start space-x-4'):
-                ui.label("All we need from you is the name of the save and a description. " \
-                "We'll handle the rest!").classes('h-5')
+            with ui.column().classes('items-center justify-start space-x-4'):
+                ui.label("All we need from you is the name of the save and a description. ").classes('h-5')
+                ui.label("We'll handle the rest!")
                 with ui.column().classes('items-start'):
                     name_input = ui.input(label='Save Name: ', placeholder='50 character limit',
                                     on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
@@ -146,7 +147,7 @@ def create_save():
                 # Handle the rest behind the scenes
 
             # Submit button.
-            with ui.row():
+            with ui.row().classes('justify-center items-center w-full mt-4'):
                 # The button submits the dialog providing the text entered
                 submit = ui.button(
                     "Create Save",
