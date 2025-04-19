@@ -1,0 +1,19 @@
+{
+    "name": "Inn",
+    "category": "Room",
+    "description": "Draws adventurers from near and far",
+    "source": "",
+    "asset_type": "",
+    "attributes": [],
+    "buy_costs": {
+        "Gold": 250
+    },
+    "sell_prices": {
+        "Gold": 150,
+        "Silver": 200
+    },
+    "special": "Enables you to recruit a random unit from the roll table in the pdf.",
+    "effects": [],
+    "icon": "C:\\Users\\strip\\Pictures\\base pixels\\gbc_hm_chicken_spritersresource.png",
+    "image": "C:\\Users\\strip\\Pictures\\base pixels\\gbc_hm_chicken_spritersresource.png"
+}

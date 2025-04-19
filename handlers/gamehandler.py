@@ -239,7 +239,7 @@ def new_game_assembly_console(game_path: str, datapack_path: str, saves_path: st
         # call assetsHandler's create Assets.
         assets_to_create = okay_user_int(0,"How many default assets do you want to create?")
         for index in range(assets_to_create):
-            created_asset = new_asset(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations,
+            created_asset = new_asset_console(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations,
                                       new_game['counters'])
             created_assets[created_asset.get_name()] = created_asset
         

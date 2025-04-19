@@ -62,6 +62,7 @@ def create_game():
                         ui.label("A game by the same name already exists.")
                         ui.label(f"Your game will be saved as: {game_name['name']}")
                         ui.button('Close', on_click=name_existed.close)
+                    name_existed.open
                 
                 folder_creation= create_folders(game_name, game_paths, datapack_paths, save_paths)
 
@@ -75,6 +76,7 @@ def create_game():
                                 ui.label("Game file created successfully.")
                                 ui.label("You will now be taken to the screen for your game's details.")
                                 ui.button('Close', on_click=game_created.close)
+                            game_created.open
                             # Navigate to the game view
                             # Make sure to get the dictionary back from create_game_result as it handles multiple fields
                             app.storage.user['selected_game'] = create_game_result['dict']
@@ -83,19 +85,21 @@ def create_game():
                             ui.notify('negative', "Game file could not be created. Please check file permissions.")
                             raise Exception("Game file could not be created. Please check file permissions.")
                     except Exception as e:
-                        print(traceback.format_exc())
                         with ui.dialog() as save_error, ui.card():
                             ui.label("Error!").classes('h3')
                             ui.label("Failed to save the game file.")
                             ui.label(f"Details: {str(e)}")
                             ui.label("Please ensure the application has write permissions to the target directory.")
                             ui.button('Close', on_click=save_error.close)
+                        save_error.open
                 else:
+                    # failed to create folder
                     with ui.dialog() as folder_creation_failure, ui.card():
                         ui.label("Error!").classes('h3')
                         ui.label("Unable to create the folders.")
                         ui.label("Please check application has write permissions to the target directory.")
                         ui.button('Close', on_click=folder_creation_failure.close)
+                    folder_creation_failure.open
             else:
                 # Template mismatch
                 with ui.dialog() as template_error, ui.card():
@@ -103,15 +107,16 @@ def create_game():
                     ui.label("The new game dictionary does not match the expected game template.")
                     ui.label("Unable to save the game.")
                     ui.button('Close', on_click=template_error.close)
+                template_error.open
 
         except FileNotFoundError as e:
-            print(traceback.format_exc())
             with ui.dialog() as file_error, ui.card():
                 ui.label("Error!").classes('h3')
                 ui.label("File not found.")
                 ui.label(f"Details: {str(e)}")
                 ui.label("Please ensure the specified file paths are correct.")
                 ui.button('Close', on_click=file_error.close)
+            file_error.open
 
         except PermissionError as e:
             print(traceback.format_exc())
@@ -121,6 +126,7 @@ def create_game():
                 ui.label(f"Details: {str(e)}")
                 ui.label("Please ensure the application has the necessary permissions.")
                 ui.button('Close', on_click=permission_error.close)
+            permission_error.open
 
         except Exception as e:
             print(traceback.format_exc())
@@ -130,6 +136,8 @@ def create_game():
                 ui.label(f"Details: {str(e)}")
                 ui.label("Please check the application logs for more information.")
                 ui.button('Close', on_click=general_error.close)
+            general_error.open
+
 
 
     with theme.frame('Create a Game'):
@@ -263,7 +271,7 @@ def create_game():
                 submit = ui.button(
                     "Create Game",
                     icon='create',
-                    on_click=lambda: create_game_json(),
+                    on_click=lambda: create_game_json()
                 )
                 # This enables or disables the button depending on if the input field has errors or not
                 submit.bind_enabled_from(

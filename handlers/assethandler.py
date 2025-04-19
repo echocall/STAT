@@ -88,8 +88,55 @@ def asset_loader(asset_objects: dict):
     # Organize assets by asset type
     # prep the types for being seen
 
+# create new asset from the gui
+def new_asset_gui(is_default: bool, new_asset: dict, game_dict: dict, save_dict: dict, file_name: str) -> dict:
+    write_result = { 'result': False, 'message': ''}
+    error_message = ""
+    save_location = {}
+
+    format_result = format_str_for_filename_super(new_asset['name'])
+
+    if format_result['result']:
+        file_name = format_result['string']
+
+        # is this a default asset for a game?
+        if is_default: 
+            # update the game file
+            game_dict['default_assets'].append(new_asset['name'])
+
+            # write asset to appropriate location
+            write_result['result'] = create_new_json_file(file_name, game_dict['asset_default_path'], new_asset)
+            # Check write_result
+            if write_result['result']:
+                write_result['message'] = 'Saved asset as .json file successfully!'
+                return write_result
+            else:
+                write_result['message'] = 'Failed to save the default asset as a .json file.'
+                return write_result
+            
+        # Custom asset
+        else:
+            # update the save file
+            save_dict['asset_customs'].append(new_asset['name'])
+
+            #write asset to appropriate location
+            write_result['result'] = create_new_json_file(file_name, save_dict['asset_customs_path'], new_asset)
+            # Check write result
+            if write_result['result']:
+                write_result['message'] = 'Saved asset as .json file successfully!'
+                return write_result
+            else:
+                write_result['message'] = 'Failed to save the custom asset as a .json file.'
+                return write_result
+
+    else:
+        write_result['message'] = 'Formatting the asset name to a file name failed!'
+        # could not format the name @_@
+    return write_result
+
+
 # TODO finish
-def new_asset(is_default: bool, for_new_game: bool, default_path: str,
+def new_asset_console(is_default: bool, for_new_game: bool, default_path: str,
                custom_path: str, game_name: str, 
                asset_explanations: bool, counters: dict) -> object:
     file_path = ""
@@ -320,11 +367,12 @@ def new_asset_assembler_loud(file_path: str, for_new_game: bool,
         # call something to fix the game or fix those specific fields.
         return error_message
 
+# Checks that the asset doesn't already exist.
 def set_new_asset_name(file_path: str, for_new_game: bool) -> dict:
     file_name = ""
     name = ""
     assets = []
-    asset_name = {"name": "", "file":""}
+    asset_name = {"name": "", "file":"", "message": ""}
     valid = False
     
     while valid != True:
@@ -526,6 +574,8 @@ def set_image() -> str:
     # TODO: make this fetch the file path/move the image file to the images folder.
     f = 6+6
 
+
+# ###################################
 # Takes singular asset dictionary and returns
 # a singular asset object.
 def dict_to_asset_object(targetDict: dict) -> object:
@@ -552,6 +602,32 @@ def dict_to_objects(targetDict: dict) -> dict:
     return class_objects
 
     # Sort the assets by category
+
+# gets an asset_name, converts it to file format, checks if already exists.
+def get_new_asset_name(name: str, file_path: str) -> dict:
+    file_name = ""
+    assets = []
+    asset_name = {"name": "", "file":""}
+    valid = False
+
+    while valid != True:
+        format_result = format_str_for_filename_super(name)
+        if format_result['result']:
+            # check that a game by that name doesn't already exists
+            # Send the Directory Path
+            assets = multi_json_names_getter(file_path, "assets")
+            
+            if format_result['string'] in assets:
+        # if file_name already exists, append placeholder and alert user
+                valid = True
+                asset_name["name"] = name + "_Placeholder"
+                asset_name["file"] = file_name + "_placeholder"
+            else:
+                valid = True
+                asset_name["name"] = name
+                asset_name["file"] = file_name
+
+    return  asset_name
 
 # SORTING
 def sort_assets_by_category(assets_to_sort: dict) -> dict:
@@ -608,6 +684,16 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
 def fetch_assets() -> dict:
     a = 1+1
 
+def check_template_bool(asset: dict, template_path: str) -> bool:
+    error_message = ''
+    result = False
+    try:
+        asset_template = get_template_json("asset", template_path)
+        result = dict_key_compare(asset_template, asset)
+        return result
+    except Exception:
+        print(traceback.format_exc())
+        return result
 
 # TODO: implement
 # delete an asset
