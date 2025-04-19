@@ -82,7 +82,9 @@ def create_game():
                             app.storage.user['selected_game'] = create_game_result['dict']
                             ui.navigate.to(f"/viewgame/{new_game_dict['name']}")
                         else:
-                            ui.notify('negative', "Game file could not be created. Please check file permissions.")
+                            ui.notify("Game file could not be created. Please check file permissions.",
+                                      type='negative',
+                                      position="top",)
                             raise Exception("Game file could not be created. Please check file permissions.")
                     except Exception as e:
                         with ui.dialog() as save_error, ui.card():
@@ -210,10 +212,6 @@ def create_game():
                     has_assets.bind_value(new_game_dict, 'has_assets')
                     asset_notice = ui.label("After completing the initial game setup you'll be taken to a page to add assets to the game.")
                     asset_notice.bind_visibility_from(has_assets, 'value')
-                    # Button to called the dialog for creating an asset.
-                    # create_assets = ui.button('Create Assets', 
-                    #                        on_click=lambda: ui.notify('You clicked Create Assets!'))
-                    # create_assets.bind_visibility_from(has_assets, 'value')
 
             # Creating Effects
             with ui.row().classes('items-center justify-start space-x-4'):
@@ -225,12 +223,6 @@ def create_game():
                     effects_notice = ui.label("After completing the initial game setup you'll be taken to a page to add effects to the game.")
                     effects_notice.bind_visibility_from(has_effects, 'value')
 
-                """
-                # The button will pull up a different dialog box for creating an effect.
-                create_effects = ui.button('Create Effect', 
-                                        on_click=lambda: ui.notify('You clicked Create Effects!'))
-                create_effects.bind_visibility_from(has_effects, 'value')
-                """
 
             # Creating Events
             # TODO: Implement later

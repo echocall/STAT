@@ -41,25 +41,25 @@ async def dashboard():
             try:
                 await assets_to_dictionary(assets, assets_as_dict)
             except:
-                ui.notify("Error creating assets_as_dict", type='negative')
+                ui.notify("Error creating assets_as_dict", type='negative', position="top",)
            
            # sorting all assets by category
             try:
                 sorted_assets = sort_assets_by_category(assets_as_dict)
             except:
-                ui.notify("Error Sorting Assets", type='negative')
+                ui.notify("Error Sorting Assets", type='negative', position="top",)
            
             # getting all owned assets
             try:
                 owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
             except:
-                ui.notify("Error Sorting Owned Assets", type='negative')
+                ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
             
             # Sorting the owned assets.
             try:
                 sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
             except:
-                ui.notify("Error Sorting Owned Assets", type='negative')
+                ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
 
             ui.tooltip().default_classes('bg-blue')
 
@@ -183,7 +183,7 @@ def counter_add(counters: dict, current_counter: str, current_amount: str, amoun
         counters[counter_name] = int(new_value)
         app.storage.user['selected_save']['counters'] = counters
     except:
-       ui.notify("Error: could not add to the counter!")
+       ui.notify("Error: could not add to the counter!", type='negative', position="top",)
 
     # refresh the element on the page.
     render_counter_bar.refresh()
@@ -198,7 +198,7 @@ def counter_sub(counters: dict, current_counter: str, current_amount: str, amoun
         counters[counter_name] = int(new_value)
         app.storage.user['selected_save']['counters'] = counters
     except:
-       ui.notify("Error: could not remove from the counter!")
+       ui.notify("Error: could not remove from the counter!",type='negative', position="top",)
 
     # refresh the element on the page.
     render_counter_bar.refresh()
@@ -209,7 +209,7 @@ def load_from_storage(target:str):
     try:
         target_dict = app.storage.user.get(target, {})
     except:
-        ui.notify(f"Could not load {target} from app.storage.user!")
+        ui.notify(f"Could not load {target} from app.storage.user!",type='negative',position="top",)
     
     return target_dict
 
@@ -246,7 +246,7 @@ def select_game(games_path: str, selected_game_name: str):
             selected_game = get_game(selected_game_name, games_path, 'games')
             app.storage.user['is_game_loaded']  = True
         except:
-            ui.notify("Warning! Problem with loading game. Please check that game file exists.")
+            ui.notify("Warning! Problem with loading game. Please check that game file exists.", type='warning', position="top",)
         finally:
             app.storage.user['selected_game'] = selected_game
             render_counter_bar.refresh()

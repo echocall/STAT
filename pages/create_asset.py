@@ -1,9 +1,9 @@
 import elements.theme as theme
 from classes.Enable import Enable
-from elements.new_dict_entry import new_dict_entry
 from elements.target_counter_dialog import target_counter_dialog
 from elements.select_game_dialog import prompt_select_game
 from elements.select_save_dialog import prompt_select_save
+from elements.new_string_dialog import new_string_dialog
 from helpers.crud import single_json_getter_fullpath
 from helpers.utilities import format_str_for_filename_super
 from handlers.assethandler import new_asset_gui, check_template_bool, get_new_asset_name
@@ -81,7 +81,6 @@ async def new_asset():
             if matches_template:
                 # Try to format the name.
                 new_asset_name = new_asset_dict['name']
-                print(new_asset_name)
 
                 format_result = {}
                 name_result = {}
@@ -113,6 +112,9 @@ async def new_asset():
                                 ui.label('Feel free to leave this page now.')
                                 ui.button('Close', on_click=success_create.close)
                             success_create.open
+                            ui.notify("Congrats! Asset created!", 
+                                      type='positive', 
+                                      position="top",)
                             # clear page somehow
                     except:
                         # failed to create the asset
@@ -130,7 +132,7 @@ async def new_asset():
                     ui.label("Error!").classes('h3')
                     ui.label("The new asset dictionary does not match the expected asset template.")
                     ui.label("Unable to save the asset.")
-                    ui.button('Close', on_click=template_error.close)
+                    ui.button('Close', on_click=template_error.close())
                 template_error.open
 
         except FileNotFoundError as e:
@@ -154,7 +156,6 @@ async def new_asset():
             permission_error.open
 
         except Exception as e:
-            print(traceback.format_exc())
             with ui.dialog() as general_error, ui.card():
                 ui.label("Error!").classes('h3')
                 ui.label("An unexpected error occurred.")
@@ -229,60 +230,78 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Enter a description for the new asset:').classes('font-bold')
-                        description = ui.input(label='Asset Description', placeholder='500 character limit',
-                                        on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
+                        description = ui.input(label='Asset Description', placeholder='type here',
+                                        on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                         # this handles the validation of the field.
-                        description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
                         desc_chars_left = ui.label()
                         description.bind_value(new_asset_dict, 'description')
 
+                # Asset Type
+                with ui.row().classes('items-center justify-start space-x-4'): 
+                    with ui.column().classes('items-start'):
+                        ui.label("Asset Type").classes('font-bold')
+                        asset_type_input = ui.input(label='Asset Type', placeholder='type here',
+                                            on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
+                        asset_type_chars_left = ui.label()
+                        asset_type_input.bind_value(new_asset_dict, 'asset_type')
+
+                # Attributes
+                with ui.row().classes('items-center justify-start space-x-4'): 
+                    with ui.column().classes('items-start'):
+                        ui.label("Do you want to add an attribute to your asset?").classes('font-bold')
+                        ui.button(
+                            "Add Attribute", 
+                                  icon="create", 
+                                  on_click=lambda: new_string_dialog('Attribute')
+                                  )
+
                 # Add Buy Costs
                 with ui.row().classes('items-center justify-start space-x-4'): 
-                    with ui.column():
+                    with ui.column().classes('items-start'):
                         ui.label("Do you want to add a Buy Cost to your asset?").classes('font-bold')
                         has_buy_costs = ui.switch("Yes")
                         has_buy_costs.props('color="orange"')
-                    with ui.column().bind_visibility_from(has_buy_costs, 'value'):
-                        # Add Buy Costs
-                        ui.label('You can add more than one buy cost to the asset.')
-                        new_buy_cost = ui.button(
-                            "Add Buy Cost",
-                            icon="create",
-                            on_click=get_buy_cost
-                        )
-                        # TODO: Add way to view added buy costs
-                        # ui.label('Buy Costs Added:')
-                        with ui.row().classes('full flex'):
-                            for buy_cost in buy_costs:
-                                await render_counter_bar(buy_costs, buy_cost)
-                
+                        with ui.column().bind_visibility_from(has_buy_costs, 'value'):
+                            # Add Buy Costs
+                            ui.label('You can add more than one buy cost to the asset.')
+                            new_buy_cost = ui.button(
+                                "Add Buy Cost",
+                                icon="create",
+                                on_click=get_buy_cost
+                            )
+                            # TODO: Add way to view added buy costs
+                            # ui.label('Buy Costs Added:')
+                            with ui.row().classes('full flex'):
+                                for buy_cost in buy_costs:
+                                    await render_counter_bar(buy_costs, buy_cost)
+                    
                 # Add Sell Prices
                 with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column():
+                    with ui.column().classes('items-start'):
                         ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
                         has_sell_prices = ui.switch("Yes")
                         has_sell_prices.props('color="orange"')
-                    # display based on above
-                    with ui.column().bind_visibility_from(has_sell_prices, 'value'):
-                        ui.label("You can add more than one sell price to the asset.")
-                        new_sell_cost = ui.button(
-                            "Add Sell Cost",
-                            icon="create",
-                            on_click=get_sell_price
-                        )
-                        # TODO: Add way to see already added sell costs
-                        # ui.label('Sell Prices Added:')
-                        with ui.row().classes('full flex'):
-                            for sell_price in sell_prices:
-                                await render_counter_bar(sell_prices, sell_price)
+                        # display based on above
+                        with ui.column().bind_visibility_from(has_sell_prices, 'value'):
+                            ui.label("You can add more than one sell price to the asset.")
+                            new_sell_cost = ui.button(
+                                "Add Sell Cost",
+                                icon="create",
+                                on_click=get_sell_price
+                            )
+                            # TODO: Add way to see already added sell costs
+                            # ui.label('Sell Prices Added:')
+                            with ui.row().classes('full flex'):
+                                for sell_price in sell_prices:
+                                    await render_counter_bar(sell_prices, sell_price)
 
 
                 # Add any extra special text to the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Enter any special text for the new asset:').classes('font-bold')
-                        special = ui.input(label='Special Text', placeholder='500 character limit',
-                                            on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.')).props('clearable')
+                        special = ui.input(label='Special Text', placeholder='type here',
+                                            on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                         special_chars_left = ui.label()
                         special.bind_value(new_asset_dict, 'special')
                 

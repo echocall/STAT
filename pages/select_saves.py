@@ -17,7 +17,7 @@ async def view_saves():
         try:
             existing_saves = get_saves(saves_paths)
         except Exception as e:
-            ui.notify(f"Error loading saves: {str(e)}")
+            ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
             return
         
         with ui.link(target='/createsave'):
@@ -41,7 +41,7 @@ def load_save(existing_saves, selected_save_name):
             selected_save = existing_saves[save_to_get]
             app.storage.user['is_save_loaded']  = True
         except:
-            ui.notify("Unable to load save.")
+            ui.notify("Unable to load save.", type='negative', position="top",)
         finally:
             # pass back empty dict even if nothing is available.
             app.storage.user["selected_save"] = selected_save

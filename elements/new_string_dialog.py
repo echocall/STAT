@@ -1,0 +1,40 @@
+from classes.Enable import Enable
+from nicegui import ui
+
+# creating our buddy.
+enable = Enable()
+
+async def new_string_dialog(string_name):
+    new_string = ''
+
+    with ui.dialog() as dialog, ui.card().classes("w-full"):
+        ui.label(f"Create a new {string_name}").classes('h3')
+        # Get name of counter
+        with ui.card_section().classes('w-80 items-stretch'):
+            string_input = ui.input("Name of the counter?",
+                            on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' characters used.'))
+            string_input.bind_value(new_string)
+            # allows user to clear the field
+            string_input.props('clearable')
+            # This handles the validation of the field.
+            string_input.validation={"Must have a value": enable.not_null} 
+            # Displays the characters.        
+            name_chars_left = ui.label()
+
+        with ui.card_actions():
+            # The button submits the data in the fields.
+            submit = ui.button(
+                f"Create {string_name}",
+                on_click=lambda: dialog.submit(new_string)
+            )
+            
+            # This enables or disables the button depending on if the input field has errors or not
+            submit.bind_enabled_from(
+                string_input, "error", backward=lambda x: not x and string_input.value
+            )
+
+            # Cancel out of dialog.
+            ui.button("Cancel", on_click=dialog.close)
+    # return the value
+    new_string = await dialog
+    return new_string

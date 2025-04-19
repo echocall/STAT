@@ -67,7 +67,9 @@ def create_save():
                         app.storage.user['selected_save'] = create_save_result['dict']
                         
                     else:
-                        ui.notify('negative', "Game file could not be created. Please check file permissions.")
+                        ui.notify("Game file could not be created. Please check file permissions.",
+                                  type='negative',
+                                  position="top",)
                         raise Exception("Game file could not be created. Please check file permissions.")
                 except Exception as e:
                         print(traceback.format_exc())
