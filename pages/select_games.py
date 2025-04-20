@@ -6,21 +6,33 @@ from elements.alert_dialog import alert_dialog
 from helpers.utilities import format_str_for_filename_super
 
 @ui.page('/selectgames')
-
 async def select_games():
-    with theme.frame('Select Games'):
+    with theme.frame('All Games'):
         # File path for game data
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
-        
-        existing_games = {}
 
-        # getting the existing games from the file path.
-        existing_games = get_games(game_paths)
-        
-        # setting the game objects into the user storage.
-        app.storage.user["existing_games"] = existing_games
+        selected_game = app.storage.user.get("selected_game", {})
+        existing_games = app.storage.user.get("existing_games", {})
+
+        if not existing_games:
+            # getting the existing games from the file path.
+            existing_games = get_games(game_paths)
+            # setting the game objects into the user storage.
+            app.storage.user["existing_games"] = existing_games
+
+        ui.label("Select a game to use it as the basis for creating an asset, save, or effect.").classes('text-xl')
+        ui.label("Please note that selecting a game will your currently selected save and you will lose your changes.")
+        ui.label("Make sure you save your data before doing this!")
+
+        # Buttons!!!
+        with ui.row():
+            print(selected_game['name'])
+            btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game['name']))
+            btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
+            btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves({game['name']}))
+            btn_saves.bind_enabled_from(bool(app.storage.user["existing_games"]))
 
         # Displaying the games.
         game_card_container = ui.row().classes("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4")
@@ -29,7 +41,22 @@ async def select_games():
                 await render_game_cards(existing_games, game)
 
 # Select a game to load into app.storage.user
-def view_game_saves(existing_games: dict, selected_game_name: str):
+def view_game_saves(selected_game_name: str):
+    for name in selected_game_name:
+        # getting the name to be correct.
+        file_name = format_str_for_filename_super(name)['string']
+
+        ui.navigate.to(f"/selectsaves/{file_name}")
+
+def game_view_details(selected_game_name: str):
+    for name in selected_game_name:
+        # getting the name to be correct.
+        file_name = format_str_for_filename_super(name)['string']
+        selected_game = {}
+
+        ui.navigate.to(f"/viewgame/{name}")
+
+def select_target_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
         # getting the name to be correct.
         file_name = format_str_for_filename_super(name)['string']
@@ -44,25 +71,8 @@ def view_game_saves(existing_games: dict, selected_game_name: str):
                          "Please check the game file exists.")
         finally:
             app.storage.user['selected_game'] = selected_game
-            ui.navigate.to(f"/selectsaves/{file_name}")
-
-def game_view_details(existing_games: dict, selected_game_name: str):
-    for name in selected_game_name:
-        # getting the name to be correct.
-        file_name = format_str_for_filename_super(name)['string']
-        selected_game = {}
-
-        # trying to get the specified game
-        try:
-            selected_game = existing_games[file_name]
-            app.storage.user['is_game_loaded']  = True
-        except:
-            alert_dialog("Problem with loading the game.",
-                         "Please check the game file exists.")
-        finally:
-            app.storage.user['selected_game'] = selected_game
-            ui.navigate.to(f"/viewgame/{name}")
-
+            app.storage.user['selected_save'] = {}
+            ui.notify(f"Success! You selected {name}", type='positive', position='top')
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
@@ -71,8 +81,7 @@ async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('View Details', on_click=lambda: game_view_details(existing_games, {game['name']}))
-            ui.button('View Saves', on_click=lambda: view_game_saves(existing_games, {game['name']}))
+            ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']}))
             with ui.button(icon='edit').props('round'):
                 ui.tooltip("Edit game.")
             # TODO: Erase game and ALL associated children folders/files

@@ -27,9 +27,14 @@ async def create_effect():
 
     with theme.frame('Create Effect'):
         ui.label("Create a new Effect").classes('h3')
-        if not selected_game:
-            ui.label('No game selected, please select a game.')
-            selected_game = await prompt_select_game
+        if not selected_game or 'name' not in selected_game:
+            with ui.row():
+                ui.icon('warning').classes('text-3xl')
+                ui.label('Warning: No selected game detected.').classes('text-2xl')
+            ui.label('Cannot create asset with no game selected.')
+            ui.label('Please select a game from \'Select Games\'.')
+            with ui.link(target = '/selectgames'):
+                ui.button('Find Game File')
         else:
             # Get name of Effect
             with ui.card_section().classes('w-80 items-stretch'):

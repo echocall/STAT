@@ -37,7 +37,7 @@ async def edit_game():
 
                 # Description
                 with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column():
+                    with ui.column().classes('items-start'):
                         description = ui.textarea(label='Game Description', placeholder='Type description here.',
                                         on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.'))
                         description.props('clearable')
