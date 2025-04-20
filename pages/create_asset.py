@@ -11,8 +11,6 @@ import traceback
 from nicegui import app, ui
 
 # TODO: Fix returns & passing info in.
-# TODO: don't call during the creation of a new game, wait until game has been created?
-# COULD pass in the value in the game.name, or have a list of game names passed in in other call cases... hm...
 enable = Enable()
 @ui.page('/createasset')
 async def new_asset():
@@ -200,7 +198,7 @@ async def new_asset():
                                     ui.button('Find Save File')
                             else:
                                 # Name the source save
-                                with ui.column().classes('w-80 items-stretch'):
+                                with ui.column().classes('items-start'):
                                     ui.label('Source Save: ').classes('font-bold')
                                     ui.label(f'{selected_save['name']}')
                             
@@ -230,7 +228,7 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Enter a description for the new asset:').classes('font-bold')
-                        description = ui.input(label='Asset Description', placeholder='type here',
+                        description = ui.textarea(label='Asset Description', placeholder='type here',
                                         on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                         # this handles the validation of the field.
                         desc_chars_left = ui.label()
@@ -300,7 +298,7 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Enter any special text for the new asset:').classes('font-bold')
-                        special = ui.input(label='Special Text', placeholder='type here',
+                        special = ui.textarea(label='Special Text', placeholder='type here',
                                             on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                         special_chars_left = ui.label()
                         special.bind_value(new_asset_dict, 'special')

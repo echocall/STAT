@@ -151,27 +151,20 @@ def create_game():
                                     on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                     # allows user to clear the field
                     name_input.props('clearable')
-
                     name_input.bind_value(new_game_dict, 'name')
-
                     # This handles the validation of the field.
                     name_input.validation={"Too short!": enable.is_too_short} 
-
                     # Displays the characters.        
                     name_chars_left = ui.label()
 
             # Description of Game    
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column():
-                    description = ui.input(label='Game Description', placeholder='500 character limit',
-                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
+                    description = ui.textarea(label='Game Description', placeholder='Type description here.',
+                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.'))
                     description.props('clearable')
-                    
                     description.bind_value(new_game_dict, 'description')
-                    # this handles the validation of the field.
-                    description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
-                    with ui.row():
-                        desc_chars_left = ui.label()
+                    desc_chars_left = ui.label()
                 
             # Creating counters
             with ui.row().classes('items-center justify-start space-x-4'):

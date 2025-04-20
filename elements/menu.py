@@ -42,6 +42,7 @@ def menu() -> None:
             return f"'/selectsaves/{selected_game['name']}"
         # if no selected_game
         else:
+            # ui.notify("You've got no game! You must have a game selected to view its saves.", type='warning', position='top')
             with ui.dialog() as no_game:
                     ui.label("You've got no game! You must have a game AND a save selected to view the dashboard.").classes('break-all')
                     ui.label("Redirecting to the page to select a game.")
@@ -79,6 +80,7 @@ def menu() -> None:
                         ui.menu_item('Load Save')
                     with ui.link(target=get_view_save_target()):
                         ui.menu_item('View Save')
+                    ui.menu_item('Edit Save')
 
             # Dashboard
             with ui.link(target=get_view_dashboard_target()):
@@ -92,9 +94,18 @@ def menu() -> None:
                     ui.icon('keyboard_arrow_right')
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):  
                     with ui.link(target='/createasset'):
-                        ui.menu_item('Create an Asset')
+                        ui.menu_item('Create Asset')
+                    ui.menu_item('View Asset')
+                    ui.menu_item('Edit Asset')
                         
             ui.separator()
+            with ui.menu_item('Effects Menu', auto_close=False):
+                with ui.item_section().props('side'):
+                    ui.icon('keyboard_arrow_right')
+                with ui.menu().props('anchor="top end" self="top start" auto-close'):
+                    with ui.link(target='/createeffect'):
+                        ui.menu_item('Create Effect')
+                    ui.menu_item('View Effect')
             ui.menu_item('Close', general_menu.close)
 
     # SETTINGS MENU AREA

@@ -6,18 +6,19 @@ from elements.alert_dialog import alert_dialog
 from helpers.utilities import format_str_for_filename_super
 
 @ui.page('/selectgames')
+
 async def select_games():
     with theme.frame('Select Games'):
         # File path for game data
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
-
+        
         existing_games = {}
 
         # getting the existing games from the file path.
         existing_games = get_games(game_paths)
-
+        
         # setting the game objects into the user storage.
         app.storage.user["existing_games"] = existing_games
 
@@ -47,12 +48,16 @@ def view_game_saves(existing_games: dict, selected_game_name: str):
 
 def game_view_details(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
+        # getting the name to be correct.
+        file_name = format_str_for_filename_super(name)['string']
         selected_game = {}
+
+        # trying to get the specified game
         try:
-            selected_game = existing_games[name]
-            app.storage.user['is_game_selected']  = True
+            selected_game = existing_games[file_name]
+            app.storage.user['is_game_loaded']  = True
         except:
-            alert_dialog("Problem with selecting the game.",
+            alert_dialog("Problem with loading the game.",
                          "Please check the game file exists.")
         finally:
             app.storage.user['selected_game'] = selected_game
@@ -83,3 +88,5 @@ async def confirm_game_delete()-> ui.element:
                 with ui.row():
                     ui.button('Yes', on_click=ui.notify("This will delete the game's JSON file."))
                     ui.button('No', on_click=confirm_delete.close)
+
+
