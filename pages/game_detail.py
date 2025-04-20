@@ -27,6 +27,7 @@ async def game_detail():
                     btn_create_event.bind_enabled_from(bool(selected_game))
 
             # If no game is selected, prompt the user to select one
+            print(selected_game)
             if not selected_game or 'name' not in selected_game:
                 with ui.row():
                     ui.icon('warning').classes('text-3xl')
