@@ -27,7 +27,6 @@ async def game_detail():
                     btn_create_event.bind_enabled_from(bool(selected_game))
 
             # If no game is selected, prompt the user to select one
-            print(selected_game)
             if not selected_game or 'name' not in selected_game:
                 with ui.row():
                     ui.icon('warning').classes('text-3xl')
@@ -39,10 +38,11 @@ async def game_detail():
             else:
                 # Toggle for editing or not
                 with ui.row().classes('items-center justify-start space-x-4'):
-                    toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
+                    with ui.column():
+                        toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
                 
                     # IMAGE
-                    with ui.column().classes('items-start'):
+                    with ui.column():
                         # DISPLAY
                         game_image = ui.image(f'{selected_game['image_file_path']}')
                         with ui.button("Reload Image", on_click=game_image.force_reload):
@@ -65,7 +65,7 @@ async def game_detail():
                         btn_reload_new.bind_visibility_from(toggle_edit, 'value')
 
                     # ICON
-                    with ui.column().classes('items-start'):
+                    with ui.column():
                         game_icon = ui.image(f'{selected_game['icon']}')
                         ui.button("Reload Icon", on_click=game_icon.force_reload)
                             
@@ -73,7 +73,7 @@ async def game_detail():
                 # Section for rest of the data
                 with ui.row().classes('items-center justify-start space-x-4'):
                     # NAME
-                    with ui.column().classes('items-start'):
+                    with ui.column():
                         # DISPLAY section
                         lbl_game_name = ui.label("Current Name :").classes('font-bold')
                         game_name = ui.label(f"{selected_game['name']}")
@@ -94,7 +94,7 @@ async def game_detail():
                         name_edit.bind_visibility_from(toggle_edit, 'value')
 
                     # DESCRIPTION
-                    with ui.column().classes('items-start'):
+                    with ui.column():
                         # DISPLAY section
                         lbl_descript = ui.label("Description: ").classes('font-bold')
                         lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
@@ -109,7 +109,7 @@ async def game_detail():
                         descript_edit.bind_visibility_from(toggle_edit, 'value')
                 
                     # Counters in editable format
-                    with ui.column().classes('items-start'):
+                    with ui.column():
                         lbl_counters = ui.label("Default Counters:").classes('font-bold')
                 # View lists of actors of the selected game
                     # Show the filepath

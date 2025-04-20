@@ -28,7 +28,6 @@ async def select_games():
 
         # Buttons!!!
         with ui.row():
-            print(selected_game['name'])
             btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game['name']))
             btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
             btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves({game['name']}))
