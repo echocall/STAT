@@ -258,7 +258,6 @@ def buy_asset(asset: dict, counters: dict):
         # subtract amount specified in asset
     # if it doesn't exist in the Owned_Assets, add it to there.
     # Increase amount of asset in owned_assets by one.
-    
 
 def save_game():
     c = 3+3
