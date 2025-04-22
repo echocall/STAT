@@ -32,7 +32,6 @@ async def select_games():
             btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
             btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves({game['name']}))
             btn_saves.bind_enabled_from(bool(app.storage.user["existing_games"]))
-
         # Displaying the games.
         game_card_container = ui.row().classes("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4")
         with game_card_container:
@@ -51,7 +50,6 @@ def game_view_details(selected_game_name: str):
     for name in selected_game_name:
         # getting the name to be correct.
         file_name = format_str_for_filename_super(name)['string']
-        selected_game = {}
 
         ui.navigate.to(f"/viewgame/{name}")
 
@@ -71,7 +69,8 @@ def select_target_game(existing_games: dict, selected_game_name: str):
         finally:
             app.storage.user['selected_game'] = selected_game
             app.storage.user['selected_save'] = {}
-            ui.notify(f"Success! You selected {name}", type='positive', position='top')
+            ui.notify(f"Success! You selected {name}.", type='positive', position='top')
+            ui.navigate.reload()
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:

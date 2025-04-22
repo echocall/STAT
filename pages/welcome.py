@@ -3,7 +3,7 @@ from elements.message import message
 from nicegui import ui
 
 @ui.page('/welcome')
-def content() -> None:
+async def content() -> None:
     message('Welcome to STAT: the Snazzy Tabletop Assistant Tracker.').classes('font-bold')
     ui.label('Presentation')
     ui.label('By Pam Pepper')

@@ -230,6 +230,7 @@ async def new_asset():
                         ui.label('Enter a description for the new asset:').classes('font-bold')
                         description = ui.textarea(label='Asset Description', placeholder='type here',
                                         on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
+                        description.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
                         # this handles the validation of the field.
                         desc_chars_left = ui.label()
                         description.bind_value(new_asset_dict, 'description')
@@ -300,8 +301,9 @@ async def new_asset():
                         ui.label('Enter any special text for the new asset:').classes('font-bold')
                         special = ui.textarea(label='Special Text', placeholder='type here',
                                             on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
-                        special_chars_left = ui.label()
+                        special.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
                         special.bind_value(new_asset_dict, 'special')
+                        special_chars_left = ui.label()
                 
                 # effects
                 """

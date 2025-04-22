@@ -1,11 +1,15 @@
+[Preferences]
+darkmode = True
+
 [Paths]
-customPaths = True
-gamesPath = C:\Users\strip\Documents\github\STAT\statassets\games
-datapacksPath = C:\Users\strip\Documents\github\STAT\statassets\datapacks
-savesPath = C:\Users\strip\Documents\github\STAT\statassets\saves
-templateFilePath = C:\Users\strip\\Documents\github\STAT\statassets\templates
+defaultwindowspath = C:\Program Files
+custompaths = True
+gamespath = C:\Users\strip\Documents\github\STAT\statassets\games
+datapackspath = C:\Users\strip\Documents\github\STAT\statassets\datapacks
+savespath = C:\Users\strip\Documents\github\STAT\statassets\saves
+templatefilepath = C:\Users\strip\\Documents\github\STAT\statassets\templates
 
 [Toggles]
-showWelcome = False
-showExplanations = False
-darkMode = False
+showwelcome = False
+showexplanations = False
+

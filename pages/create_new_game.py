@@ -71,20 +71,20 @@ def create_game():
                     try:
                         create_game_result = new_game_gui(game_paths, datapack_paths, save_paths, new_game_dict, game_name['file'])
                         if create_game_result['result']:
-                            with ui.dialog() as game_created, ui.card():
-                                ui.label("Success!").classes('h3')
-                                ui.label("Game file created successfully.")
-                                ui.label("You will now be taken to the screen for your game's details.")
-                                ui.button('Close', on_click=game_created.close)
-                            game_created.open
-                            # Navigate to the game view
-                            # Make sure to get the dictionary back from create_game_result as it handles multiple fields
                             app.storage.user['selected_game'] = create_game_result['dict']
-                            ui.navigate.to(f"/viewgame/{new_game_dict['name']}")
+                            ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
+                                    You can view it on the select games screen.""",
+                                      multi_line = True,
+                                      type='positive',
+                                      position="top")
+                            
+                            # ui.navigate.reload()
+                            
                         else:
                             ui.notify("Game file could not be created. Please check file permissions.",
                                       type='negative',
-                                      position="top",)
+                                      position="top",
+                                      multi_line = True,)
                             raise Exception("Game file could not be created. Please check file permissions.")
                     except Exception as e:
                         with ui.dialog() as save_error, ui.card():
@@ -94,22 +94,23 @@ def create_game():
                             ui.label("Please ensure the application has write permissions to the target directory.")
                             ui.button('Close', on_click=save_error.close)
                         save_error.open
+                # failed to create folder
                 else:
-                    # failed to create folder
-                    with ui.dialog() as folder_creation_failure, ui.card():
-                        ui.label("Error!").classes('h3')
-                        ui.label("Unable to create the folders.")
-                        ui.label("Please check application has write permissions to the target directory.")
-                        ui.button('Close', on_click=folder_creation_failure.close)
-                    folder_creation_failure.open
+                    ui.notify("""Error! Unable to create the folders.
+                              Please check application has write permissions and folder locations and try again.""",
+                                type='negative',
+                                position="top",
+                                multi_line = True,
+                                )
+
+            # Template Mismatch
             else:
-                # Template mismatch
-                with ui.dialog() as template_error, ui.card():
-                    ui.label("Error!").classes('h3')
-                    ui.label("The new game dictionary does not match the expected game template.")
-                    ui.label("Unable to save the game.")
-                    ui.button('Close', on_click=template_error.close)
-                template_error.open
+                ui.notify("""Error! The new game dictionary does not match the expected game template.
+                          Please check the template jsons and try again.""", 
+                          type='negative',
+                          position="top",
+                          multi_line = True,
+                          )
 
         except FileNotFoundError as e:
             with ui.dialog() as file_error, ui.card():
@@ -147,7 +148,8 @@ def create_game():
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
-                    name_input = ui.input(label='Game Name: ', placeholder='50 character limit',
+                    ui.label("Game Name: ").classes('font-bold')
+                    name_input = ui.input(placeholder='50 character limit',
                                     on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                     # allows user to clear the field
                     name_input.props('clearable')
@@ -159,9 +161,11 @@ def create_game():
 
             # Description of Game    
             with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column():
-                    description = ui.textarea(label='Game Description', placeholder='Type description here.',
+                with ui.column().classes('items-start'):
+                    ui.label('Game Description:').classes('font-bold')
+                    description = ui.textarea(placeholder='Type description here.',
                                     on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.'))
+                    description.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
                     description.props('clearable')
                     description.bind_value(new_game_dict, 'description')
                     desc_chars_left = ui.label()
@@ -169,9 +173,8 @@ def create_game():
             # Creating counters
             with ui.row().classes('items-center justify-start space-x-4'):
                 # Create counters
-                with ui.row():
-                    with ui.column():
-                        ui.label('Do you want to add counters to your game?')
+                    with ui.column().classes('items-start'):
+                        ui.label('Do you want to add counters to your game?').classes('font-bold')
                         has_counters = ui.switch()
                         has_counters.bind_value(new_game_dict, 'has_counters')
 
@@ -182,11 +185,14 @@ def create_game():
                         )
                         new_counter.bind_visibility_from(has_counters, 'value')
                         # TODO: give user way to view counters added
+                        ui.label("Counters added: ")
+                        # for counter in new_game_dict['counters']:
+                        #    ui.label(f'{counter}: {new_game_dict['counters']['counter']}')
                         
             # Creating Actors
             with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column():
-                    ui.label('Do you want to add Actors now?')
+                with ui.column().classes('items-start'):
+                    ui.label('Do you want to add Actors now?').classes('font-bold')
                     has_actors = ui.switch()
                     has_actors.on('click', has_actors.set_value(has_actors.value))
                     has_actors.bind_value(new_game_dict, 'has_actors')
@@ -198,8 +204,8 @@ def create_game():
 
             # Creating Assets
             with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column():
-                    ui.label('Do you want to add Assets?') 
+                with ui.column().classes('items-start'):
+                    ui.label('Do you want to add Assets?').classes('font-bold') 
                     has_assets = ui.switch()
                     has_assets.on('click', has_assets.set_value(has_assets.value))
                     has_assets.bind_value(new_game_dict, 'has_assets')
@@ -208,8 +214,8 @@ def create_game():
 
             # Creating Effects
             with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column():
-                    ui.label('Do you want to add Effects?')
+                with ui.column().classes('items-start'):
+                    ui.label('Do you want to add Effects?').classes('font-bold')
                     has_effects = ui.switch()
                     has_effects.on('click', has_effects.set_value(has_effects.value))
                     has_effects.bind_value(new_game_dict, 'has_effects')
@@ -234,7 +240,7 @@ def create_game():
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column():
-                    ui.label("Does your game have turns or rounds?")
+                    ui.label("Does your game have turns or rounds?").classes('font-bold')
                     has_turns = ui.switch()
                     has_turns.on('click',has_turns.set_value(has_turns.value))
                     has_turns.bind_value(new_game_dict, 'has_turns')

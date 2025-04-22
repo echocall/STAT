@@ -49,7 +49,7 @@ def menu() -> None:
                     ui.button('Close', on_click=no_game.close())
             return ''
 
-    with ui.button(icon='menu').classes('scale-75').props('color="secondary"') :
+    with ui.button(icon='menu').classes('scale-75').props('color="secondary"'):
         with ui.menu() as general_menu:
             with ui.link(target='/'):
                 ui.menu_item('Home')

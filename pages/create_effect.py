@@ -12,27 +12,29 @@ enable = Enable()
 async def create_effect():
     selected_game = app.storage.user.get("selected_game", {})
 
-    new_effect = {'name':'', 'targets':'',
-                   'sources':'', 'turn_duration':0,
-                   'counters_affected':{}, 'source_game':''}
-    
+    new_effect = { 'name':'', 'description': '', 'source':'',
+                   'source_game':'', 'type':'', 'has_duration': False,
+                   'targetting': '', 'counters_affected': {'':0},
+                   'cost_type':'', 'cost':{}
+                   }
+
     affects_counters_bln = False
 
     # get the new Counter from New Counter Dialog
     async def add_counter():
-        result = await target_counter_dialog() 
+        result = await target_counter_dialog("Select a counter targeted by the effect.") 
         if 'counters_affected' not in new_effect:
             new_effect['counters_affected'] = {}
         new_effect['counters_affected'][result[0]] = result[1]
 
     with theme.frame('Create Effect'):
-        ui.label("Create a new Effect").classes('h3')
+        # checking that there is a selected game.
         if not selected_game or 'name' not in selected_game:
             with ui.row():
                 ui.icon('warning').classes('text-3xl')
                 ui.label('Warning: No selected game detected.').classes('text-2xl')
             ui.label('Cannot create asset with no game selected.')
-            ui.label('Please select a game from \'Select Games\'.')
+            ui.label('Please select a game.')
             with ui.link(target = '/selectgames'):
                 ui.button('Find Game File')
         else:
@@ -61,6 +63,14 @@ async def create_effect():
                 source_game_name.props('clearable')
                 source_game_name.validation={"Must have a value": enable.not_null} 
 
+            # Get Effect Type
+            with ui.card_section().classes('w-80 items-stretch'):
+                effect_type = ui.input("Effect type?")
+                effect_type.bind_value(new_effect, 'type')
+                # allows user to clear the field
+                effect_type.props('clearable')
+                effect_type.validation={"Must have a value": enable.not_null} 
+
             # Get Targets of the Effect
             with ui.card_section().classes('w-80 items-stretch'):
                 ui.label("Acceptable target types for the effect?")
@@ -69,28 +79,26 @@ async def create_effect():
 
             # Get Turn Duration Count
             with ui.card_section().classes('w-80 items-stretch'):
-                turn_duration = ui.number(label="Turn duration? Leave 0 if none, -1 if infinity.", value=0, min=-1, precision=-1)
+                turn_duration = ui.number(label="Turn duration? Leave 0 if fire and done, -1 for no duration.", value=0, min=-1)
                 turn_duration.bind_value(new_effect,'turn_duration')
 
             # Get Counters Affected
             with ui.card_section().classes('w-80 items-stretch'):
-                affects_counters = ui.switch()
-                affects_counters.bind_value(affects_counters_bln)
+                ui.label("Add effected counters?").classes('font-bold')
+                effects_counters = ui.switch()
 
                 new_counter = ui.button(
                     "Add Counter",
                     icon="create",
                     on_click=add_counter
                 )
-                new_counter.bind_visibility_from(affects_counters, 'value')
-
-            btn_show_counters = ui.button()
+                new_counter.bind_visibility_from(effects_counters, 'value')
 
             # Submitting the form.
             with ui.card_actions():
                 submit = ui.button(
                     "Create Effect",
-                    on_click=lambda: create_effect.submit(new_effect)
+                    on_click=lambda: print(new_effect)
                 )
                 
                 # This enables or disables the button depending on if the input field has errors or not

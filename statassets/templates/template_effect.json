@@ -2,18 +2,13 @@
     "name":"",
     "description":"",
     "source":"",
+    "source_game":"",
     "type":"",
-    "timing":"",
     "has_duration": false,
     "duration":0,
-    "has_time_trigger": false,
-    "time_trigger":0,
-    "targe_object_type":"",
+    "target_object_type":"",
     "targeting":"",
-    "target_range":"",
-    "object_effected":[],
-    "effect_source":"",
-    "type_of_effect":"",
-    "effect_amount":0,
-    "effect_rounding":""
+    "counters_affected":{},
+    "cost_type": "",
+    "cost":{}
 }

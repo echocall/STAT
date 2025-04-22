@@ -45,7 +45,8 @@ def load_save(existing_saves, selected_save_name):
         finally:
             # pass back empty dict even if nothing is available.
             app.storage.user["selected_save"] = selected_save
-            ui.navigate.to(f"/loadeddash")
+            ui.notify(f"Success! You selected save {name}.", type='positive', position='top')
+            ui.navigate.reload()
 
 async def render_save_cards(existing_saves, save):
     with ui.card().tight().style('max-height: 175px; max-width:250px'):

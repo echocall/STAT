@@ -7,7 +7,7 @@ from classes.Enable import *
 enable = Enable()
 
 @ui.page('/viewgame/{game_name}')
-async def game_detail():
+async def content() -> None:
     with theme.frame(f'Game Details'):
         edited_game = {}
         selected_game = app.storage.user.get("selected_game", {})
@@ -38,11 +38,10 @@ async def game_detail():
             else:
                 # Toggle for editing or not
                 with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column():
-                        toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
                 
                     # IMAGE
                     with ui.column():
+                        toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
                         # DISPLAY
                         game_image = ui.image(f'{selected_game['image_file_path']}')
                         with ui.button("Reload Image", on_click=game_image.force_reload):
@@ -104,6 +103,7 @@ async def game_detail():
                             
                         # EDIT section
                         descript_edit=ui.textarea(placeholder=f"{selected_game['description']}")
+                        descript_edit.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
                         descript_edit.props('clearable')
                         descript_edit.bind_value(edited_game, 'description')
                         descript_edit.bind_visibility_from(toggle_edit, 'value')
