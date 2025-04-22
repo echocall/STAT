@@ -4,17 +4,15 @@ from nicegui import app,ui
 
 @contextmanager
 def frame(navigation_title: str):
-    loaded_game = app.storage.user.get("loaded_game", {})
-    loaded_save = app.storage.user.get("loaded_save", {})
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
     """Custom page frame to share the same styling and behavior across all pages.
     Base of this is from the NiceGUI github repo example for modularization"""
     # 'Frightful Freight' color palette from SeesawSiya
-    ui.colors(primary='#262f50', 
+    ui.colors(primary='#7c2591', 
               secondary='#ce944e', 
               accent='#994f50', 
-              positive='#cdbb8b',
+              positive='#65d84e',
               light='#C15F7C',
               dark='#9C4A52')
     with ui.header().classes('items-center justify-center w-full'):

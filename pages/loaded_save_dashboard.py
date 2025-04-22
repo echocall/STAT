@@ -99,17 +99,17 @@ async def dashboard():
             # The tabs
             with ui.tabs().classes('w-full') as tabs:
                 main_tab = ui.tab('Main')
-                assets_tab = ui.tab('Assets - Owned')
-                store_tab = ui.tab('Assets - Store')            
+                assets_tab = ui.tab('Used Assets')
+                all_assets_tab = ui.tab('All Assets')            
             
             # The Tab Panels
             with ui.tab_panels(tabs, value=main_tab).classes('full flex'):
                 ui.separator()
                 with ui.tab_panel(main_tab):
                     ui.label("Here's a summary of whats going on!")
-                # The Owned Assets Tab
+                # The Used Assets Tab
                 with ui.tab_panel(assets_tab):
-                        ui.label('Owned Assets tab')
+                        ui.label('Assets in Use')
                         for category in sorted_owned_assets:
                             ui.separator()
                             asset_container = ui.row().classes("full flex")
@@ -120,8 +120,8 @@ async def dashboard():
                                 with ui.row():
                                     for asset in sorted_owned_assets[category]:
                                         await render_asset_cards(asset)
-                # The Store Tab
-                with ui.tab_panel(store_tab):
+                # All Assets Tab
+                with ui.tab_panel(all_assets_tab):
                     # Creates each asset_container
                     for category in sorted_assets:
                         asset_container = ui.row().classes("full flex")
@@ -215,22 +215,28 @@ def load_from_storage(target:str):
 
 # used to create the individual cards.
 async def render_asset_cards(asset) -> ui.element:
-    with ui.card().style('width: 100%; max-width: 300px; aspect-ratio: 4 / 3;'):
-        with ui.card_section():
-            ui.label().bind_text_from(asset, 'name', backward=lambda name: f'Name: {name}')
-            ui.label().bind_text_from(asset, 'source', backward=lambda source: f'Source: {source}')
+    with ui.card().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between;'):
+        with ui.card_section().classes('flex-grow'):
+            with ui.row():
+                ui.label('Name: ').classes('font-bold')
+                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'{name}')
+            with ui.row():
+                ui.label('Source: ').classes('font-bold')
+                ui.label().bind_text_from(asset, 'source', backward=lambda source: f'{source}')
             buy_cost_label = ui.label("Buy Costs").classes('font-bold')
             with buy_cost_label:
                 for name, value in asset['buy_costs'].items():
-                    ui.label(f'{name}: ').classes('font-normal')
-                    ui.label(f'{value}').classes('font-normal')
+                    with ui.row():
+                        ui.label(f'{name}: ').classes('font-normal')
+                        ui.label(f'{value}').classes('font-normal')
             sell_price_label = ui.label("Sell Costs").classes('font-bold')
             with sell_price_label:
-                for name, value in asset['sell_prices'].items():
-                    ui.label(f'{name}: ').classes('font-normal')
-                    ui.label(f'{value}').classes('font-normal')
+                with ui.row():
+                    for name, value in asset['sell_prices'].items():
+                        ui.label(f'{name}: ').classes('font-normal')
+                        ui.label(f'{value}').classes('font-normal')
         with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Purchase Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
+            ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
 
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
