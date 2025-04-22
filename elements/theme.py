@@ -39,13 +39,13 @@ def frame(navigation_title: str):
               negative='#b73333',
               light='#998adb',
               dark='#3D365C',
-              dark_page='#2e2e2e ')
+              dark_page='#23242f ')
     with ui.header().classes('items-center justify-center w-full'):
         with ui.row().classes('w-full justify-between'):
             with ui.link(target='/').classes('text-amber-300'):
                 ui.label('STAT').classes('font-bold text-2xl').props('color="#F8B55F" text-decoration: none')
-            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"')
-            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"')
+            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"').classes('scale-75')
+            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"').classes('scale-75')
             ui.label(navigation_title).classes('font-bold text-2xl text-center flex-grow')
 
             def handle_switch():

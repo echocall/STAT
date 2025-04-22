@@ -255,11 +255,11 @@ async def new_asset():
                                   )
 
                 # Add Buy Costs
-                with ui.row().classes('items-center justify-start space-x-4'): 
+                with ui.row().classes('items-left justify-start space-x-4'): 
                     with ui.column().classes('items-start'):
                         ui.label("Do you want to add a Buy Cost to your asset?").classes('font-bold')
                         has_buy_costs = ui.switch("Yes")
-                        has_buy_costs.props('color="orange"')
+                        has_buy_costs.props('color="positive"')
                         with ui.column().bind_visibility_from(has_buy_costs, 'value'):
                             # Add Buy Costs
                             ui.label('You can add more than one buy cost to the asset.')
@@ -279,7 +279,7 @@ async def new_asset():
                     with ui.column().classes('items-start'):
                         ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
                         has_sell_prices = ui.switch("Yes")
-                        has_sell_prices.props('color="orange"')
+                        has_sell_prices.props('color="positive"')
                         # display based on above
                         with ui.column().bind_visibility_from(has_sell_prices, 'value'):
                             ui.label("You can add more than one sell price to the asset.")

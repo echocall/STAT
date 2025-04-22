@@ -35,7 +35,8 @@ def menu() -> None:
     def get_view_save_target():
         if selected_save:
             return f"/viewgame/{selected_save['name']}"
-        return "/selectsaves"
+        else:
+            return "/selectsaves"
     
     def get_load_save_target():
         if selected_game:
@@ -59,13 +60,13 @@ def menu() -> None:
             with ui.menu_item('Game Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
+                    with ui.link(target='/selectgames'):
+                        ui.menu_item('View Games')
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):
                     with ui.link(target='/creategame'):
                         ui.menu_item('Create New Game')
                     with ui.link(target='/editgame'):
                         ui.menu_item('Edit Current Game')
-                    with ui.link(target='/selectgames'):
-                        ui.menu_item('View Games')
                     with ui.link(target=get_view_game_target()):
                         ui.menu_item('View Game File')
 
@@ -73,13 +74,13 @@ def menu() -> None:
             with ui.menu_item('Save Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
+                with ui.link(target=get_view_save_target()):
+                    ui.menu_item('View Saves')
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):
                     with ui.link(target='/createsave'):
                         ui.menu_item('New Save Start')
                     with ui.link(target=get_load_save_target()):
                         ui.menu_item('Load Save')
-                    with ui.link(target=get_view_save_target()):
-                        ui.menu_item('View Save')
                     ui.menu_item('Edit Save')
 
             # Dashboard

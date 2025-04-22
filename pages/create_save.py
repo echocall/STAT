@@ -119,7 +119,7 @@ def create_save():
     with theme.frame('Create New Save'):
         with ui.column().classes("flex content-center w-100"):
         # Name of the Save
-            with ui.column().classes('items-center justify-start space-x-4'):
+            with ui.column().classes('justify-center items-center w-full mt-4'):
                 ui.label("All we need from you is the name of the save and a description. ").classes('h-5')
                 ui.label("We'll handle the rest!")
                 with ui.column().classes('items-start'):
@@ -134,7 +134,7 @@ def create_save():
                     name_chars_left = ui.label()
             
                 # Description of Save    
-                with ui.row().classes('items-center justify-start space-x-4'):
+                with ui.row().classes('justify-center items-center w-full mt-4'):
                     with ui.column():
                         description = ui.input(label='Save Description', placeholder='500 character limit',
                                         on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))

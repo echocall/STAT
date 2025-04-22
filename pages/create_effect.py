@@ -4,7 +4,6 @@ from nicegui import app, ui
 from elements.target_counter_dialog import target_counter_dialog
 from elements.select_game_dialog import prompt_select_game
 
-
 # creating our buddy.
 enable = Enable()
 

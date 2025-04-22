@@ -64,7 +64,6 @@ async def content() -> None:
                         btn_reload_new.bind_visibility_from(toggle_edit, 'value')
 
                     # ICON
-                    with ui.column():
                         game_icon = ui.image(f'{selected_game['icon']}')
                         ui.button("Reload Icon", on_click=game_icon.force_reload)
                             
