@@ -49,7 +49,7 @@ def load_save(existing_saves, selected_save_name):
             ui.navigate.reload()
 
 async def render_save_cards(existing_saves, save):
-    with ui.card().tight().style('max-height: 175px; max-width:250px'):
+    with ui.card().tight().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; max-height: 175px;'):
         with ui.card_section():
             ui.label().bind_text_from(save, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(save, 'base_game',
@@ -60,5 +60,4 @@ async def render_save_cards(existing_saves, save):
                                                     backward=lambda last_save: f'Last Save: {last_save}')
             with ui.card_actions().classes("w-full justify-end"):
                 ui.button('Select Save', on_click=lambda: load_save(existing_saves, {save['name']}))
-
 

@@ -13,6 +13,11 @@ async def content() -> None:
         selected_game = app.storage.user.get("selected_game", {})
         edited_game = selected_game
 
+        async def choose_file() -> str:
+            files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+            for file in files:
+                edited_game['image'] = file
+
         with ui.column().classes("flex content-center w-100"):
             with ui.row():
                 with ui.link(target='/selectgames'):
@@ -69,47 +74,47 @@ async def content() -> None:
                             
 
                 # Section for rest of the data
-                with ui.row().classes('items-center justify-start space-x-4'):
+                # with ui.row().classes('items-center justify-start space-x-4'):
                     # NAME
-                    with ui.column():
-                        # DISPLAY section
-                        lbl_game_name = ui.label("Current Name :").classes('font-bold')
-                        game_name = ui.label(f"{selected_game['name']}")
-                        lbl_game_name.bind_visibility_from(toggle_edit, 
-                                                            'value', 
-                                                            backward=lambda toggle_edit: not toggle_edit)
-                        game_name.bind_visibility_from(toggle_edit, 
+                    # with ui.column():
+                    # DISPLAY section
+                    lbl_game_name = ui.label("Current Name :").classes('font-bold')
+                    game_name = ui.label(f"{selected_game['name']}")
+                    lbl_game_name.bind_visibility_from(toggle_edit, 
                                                         'value', 
                                                         backward=lambda toggle_edit: not toggle_edit)
-                        # EDIT section
-                        lbl_name_edit = ui.label('New Name: ').classes('font-bold')
-                        lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
-                        name_edit = ui.input(placeholder=f'{selected_game['name']}',
-                                                    on_change=lambda e: game_name.set_text(e.value))
-                        name_edit.props('clearable')
-                        name_edit.bind_value(edited_game, 'name')
-                        name_edit.validation={"Too short!": enable.is_too_short} 
-                        name_edit.bind_visibility_from(toggle_edit, 'value')
+                    game_name.bind_visibility_from(toggle_edit, 
+                                                    'value', 
+                                                    backward=lambda toggle_edit: not toggle_edit)
+                    # EDIT section
+                    lbl_name_edit = ui.label('New Name: ').classes('font-bold')
+                    lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
+                    name_edit = ui.input(placeholder=f'{selected_game['name']}',
+                                                on_change=lambda e: game_name.set_text(e.value))
+                    name_edit.props('clearable')
+                    name_edit.bind_value(edited_game, 'name')
+                    name_edit.validation={"Too short!": enable.is_too_short} 
+                    name_edit.bind_visibility_from(toggle_edit, 'value')
 
-                    # DESCRIPTION
-                    with ui.column():
-                        # DISPLAY section
-                        lbl_descript = ui.label("Description: ").classes('font-bold')
-                        lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
-                        lbl_description.bind_visibility_from(toggle_edit, 
-                                                                'value', 
-                                                                backward=lambda toggle_edit: not toggle_edit)
-                            
-                        # EDIT section
-                        descript_edit=ui.textarea(placeholder=f"{selected_game['description']}")
-                        descript_edit.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
-                        descript_edit.props('clearable')
-                        descript_edit.bind_value(edited_game, 'description')
-                        descript_edit.bind_visibility_from(toggle_edit, 'value')
-                
-                    # Counters in editable format
-                    with ui.column():
-                        lbl_counters = ui.label("Default Counters:").classes('font-bold')
+                # DESCRIPTION
+                with ui.column():
+                    # DISPLAY section
+                    lbl_descript = ui.label("Description: ").classes('font-bold')
+                    lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
+                    lbl_description.bind_visibility_from(toggle_edit, 
+                                                            'value', 
+                                                            backward=lambda toggle_edit: not toggle_edit)
+                        
+                    # EDIT section
+                    descript_edit=ui.textarea(placeholder=f"{selected_game['description']}")
+                    descript_edit.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
+                    descript_edit.props('clearable')
+                    descript_edit.bind_value(edited_game, 'description')
+                    descript_edit.bind_visibility_from(toggle_edit, 'value')
+            
+                # Counters in editable format
+                with ui.column():
+                    lbl_counters = ui.label("Default Counters:").classes('font-bold')
                 # View lists of actors of the selected game
                     # Show the filepath
 
@@ -134,7 +139,3 @@ async def content() -> None:
 
                 # Submit button
                 
-    async def choose_file() -> str:
-        files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-        for file in files:
-            edited_game['image'] = file

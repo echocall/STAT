@@ -74,7 +74,7 @@ def select_target_game(existing_games: dict, selected_game_name: str):
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
-    with ui.card().tight().style('aspect-ratio: 4 / 3;'):
+    with ui.card().tight().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; max-height: 175px;'):
         with ui.card_section():
             ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
             ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')

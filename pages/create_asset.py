@@ -166,7 +166,7 @@ async def new_asset():
         buy_costs = new_asset_dict['buy_costs']
         sell_prices = new_asset_dict['sell_prices']
 
-        with ui.column().classes("flex content-center w-100"):
+        with ui.column().classes("full-flex content-center w-100"):
             # If no selected_game, open up prompt to select one
             if not selected_game or 'name' not in selected_game:
                 with ui.row():

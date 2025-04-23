@@ -43,7 +43,7 @@ def frame(navigation_title: str):
     with ui.header().classes('items-center justify-center w-full'):
         with ui.row().classes('w-full justify-between'):
             with ui.link(target='/').classes('text-amber-300'):
-                ui.label('STAT').classes('font-bold text-2xl').props('color="#F8B55F" text-decoration: none')
+                ui.label('STAT').classes('font-bold text-xl').props('color="accent"')
             ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"').classes('scale-75')
             ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"').classes('scale-75')
             ui.label(navigation_title).classes('font-bold text-2xl text-center flex-grow')

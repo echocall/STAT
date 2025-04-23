@@ -60,9 +60,10 @@ def menu() -> None:
             with ui.menu_item('Game Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
+                # Menu Items go under here
+                with ui.menu().props('anchor="top end" self="top start" auto-close'):
                     with ui.link(target='/selectgames'):
                         ui.menu_item('View Games')
-                with ui.menu().props('anchor="top end" self="top start" auto-close'):
                     with ui.link(target='/creategame'):
                         ui.menu_item('Create New Game')
                     with ui.link(target='/editgame'):
@@ -74,9 +75,10 @@ def menu() -> None:
             with ui.menu_item('Save Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
-                with ui.link(target=get_view_save_target()):
-                    ui.menu_item('View Saves')
+                # Menu Items go under here
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):
+                    with ui.link(target=get_view_save_target()):
+                        ui.menu_item('View Saves')
                     with ui.link(target='/createsave'):
                         ui.menu_item('New Save Start')
                     with ui.link(target=get_load_save_target()):
@@ -87,8 +89,7 @@ def menu() -> None:
             with ui.link(target=get_view_dashboard_target()):
                 ui.menu_item('Current Session Dashboard')
             ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
-            ui.separator()
-
+            
             # Assets
             with ui.menu_item('Assets Menu', auto_close=False):
                 with ui.item_section().props('side'):
@@ -99,7 +100,7 @@ def menu() -> None:
                     ui.menu_item('View Asset')
                     ui.menu_item('Edit Asset')
                         
-            ui.separator()
+            
             with ui.menu_item('Effects Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
@@ -107,13 +108,14 @@ def menu() -> None:
                     with ui.link(target='/createeffect'):
                         ui.menu_item('Create Effect')
                     ui.menu_item('View Effect')
+            ui.separator()
             ui.menu_item('Close', general_menu.close)
 
     # SETTINGS MENU AREA
     # Are you sure you want to close?
     with ui.dialog() as confirm_close, ui.card():
         ui.label(f'Are you sure you want to close STAT?')
-        ui.label(f'Your changes will not be automatically saved.')
+        ui.label(f'Your changes to the current save file will not be automatically saved.')
         with ui.row():
             ui.button('Yes', on_click=app.shutdown)
             ui.button('No', on_click=confirm_close.close)

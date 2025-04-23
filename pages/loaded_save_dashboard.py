@@ -70,7 +70,6 @@ async def dashboard():
 
             # ON EVERY TAB
             with ui.row().classes('full flex'):
-                ui.separator()
                 with ui.column():
                     with ui.label('Save Name: ' + save_data['name']):
                         ui.tooltip(f'The currently loaded save is {save_data['name']}.')
