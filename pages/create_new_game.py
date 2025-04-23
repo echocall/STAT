@@ -144,7 +144,7 @@ def create_game():
 
 
     with theme.frame('Create a Game'):
-        with ui.column().classes("full-flex content-center w-full md:w-auto"):
+        with ui.column().classes("full-flex content-center w-full md:w-1/2"):
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
