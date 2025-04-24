@@ -89,8 +89,9 @@ def menu() -> None:
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):
                     with ui.link(target=view_saves()):
                         ui.menu_item('View Saves')
-                    with ui.link(target=get_view_save_target()):
-                        ui.menu_item('View Selected')
+                    # TODO: implement individual view save 
+                    # with ui.link(target=get_view_save_target()):
+                    ui.menu_item('View Selected')
                     with ui.link(target='/createsave'):
                         ui.menu_item('New Save Start')
                     # with ui.link(target=get_load_save_target()):

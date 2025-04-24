@@ -58,7 +58,6 @@ async def dashboard():
             # Sorting the owned assets.
             try:
                 sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
-                print(sorted_owned_assets)
             except:
                 ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
 
@@ -90,7 +89,7 @@ async def dashboard():
             ui.separator()
             
             # The tabs
-            with ui.tabs().classes('w-full') as tabs:
+            with ui.tabs().classes('w-100') as tabs:
                 main_tab = ui.tab('Main')
                 assets_tab = ui.tab('Used Assets') 
                 all_assets_tab = ui.tab('All Assets')           
@@ -99,35 +98,37 @@ async def dashboard():
             with ui.tab_panels(tabs, value=main_tab).classes('full flex rounded-md'):
                 ui.separator()
                 with ui.tab_panel(main_tab):
-                    ui.label("Here's a summary of whats going on!")
+                    with ui.row().classes('basis-full justify-start space-x-4 full-flex'):
+                        ui.label("Here's a summary of whats going on!")
 
 
                 # The Used Assets Tab
                 with ui.tab_panel(assets_tab):
                     for owned_category in sorted_owned_assets:
-                        asset_container_owned = ui.row().classes('items-center justify-start space-x-4 full-flex')
+                        asset_container_owned = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container_owned:
-                            with ui.row().classes("w-100 items-start"):
-                                CategoryLabel(owned_category)
-                            # Creates cards for each asset
-                            with ui.row().classes("w-100 items-start"):
-                                with ui.scroll_area():
+                            with ui.column().classes('items-center'):
+                                with ui.row().classes("w-100 items-start items-center"):
+                                    CategoryLabel(owned_category)
+                                # Creates cards for each asset
+                                with ui.row().classes("w-100 items-start"):
                                     for owned_asset in sorted_owned_assets[owned_category]:
                                         await render_owned_asset_cards(owned_asset, selected_save['assets'])
+                        ui.separator()
 
                 # All Assets Tab
                 with ui.tab_panel(all_assets_tab):
                     # Creates each asset_container
                     for category in sorted_assets:
-                        asset_container = ui.row().classes('items-center justify-start space-x-4 full-flex')
+                        asset_container = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container:
-                            with ui.row().classes("w-100 items-start"):
-                                CategoryLabel(category)
-                            # Creates cards for each asset
-                            with ui.row().classes("w-100 items-start"):
-                                for asset in sorted_assets[category]:
-                                    await render_asset_cards(asset)
-                        
+                            with ui.column().classes('items-center'):
+                                with ui.row().classes("w-100 items-start"):
+                                    CategoryLabel(category)
+                                # Creates cards for each asset
+                                with ui.row().classes("w-100 items-start"):
+                                    for asset in sorted_assets[category]:
+                                        await render_asset_cards(asset)
                         ui.separator()
 
         else:
@@ -232,15 +233,13 @@ async def render_owned_asset_cards(asset, assets_owned) -> ui.element:
     asset_name = asset['name']
     if assets_owned:
         amount_owned = assets_owned[asset_name]
-    print(asset_name)
-    print(amount_owned)
     with ui.card().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between;'):
         with ui.card_section().classes('flex-grow'):
             with ui.row():
                 ui.label('Name: ').classes('font-bold')
                 ui.label().bind_text_from(asset, 'name', backward=lambda name: f'{name}')
             with ui.row():
-                ui.label('# Owned: ').classes('font-bold')
+                ui.label('Number Owned: ').classes('font-bold')
                 ui.label().bind_text_from(amount_owned, backward=lambda source: f'{amount_owned}')
             buy_cost_label = ui.label("Buy Costs").classes('font-bold')
             with buy_cost_label:
