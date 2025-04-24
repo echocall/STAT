@@ -65,7 +65,7 @@ async def content() -> None:
                 } 
 
         try:
-            selected_name = selected_asset['name']
+            selected_name = lower(selected_asset['name'])
             print(selected_name)
             name_result = format_str_for_filename_super(selected_name)
             asset_default_names = multi_json_names_getter(selected_game['asset_default_path'], 'assets')
