@@ -71,7 +71,6 @@ def frame(navigation_title: str):
                               position='top',
                               type='Positive')
 
-                    
             light_switch = ui.switch("Dark Mode", on_change=handle_switch)
             light_switch.bind_value_from(config['Preferences'].getboolean('darkMode'))
 

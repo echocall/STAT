@@ -6,4 +6,4 @@ from elements.CategoryLabel import CategoryLabel
 class AssetContainer(ui.row):
     def __init__(self) -> None:
         super().__init__(self)
-        self.classes("full flex items-left")
+        self.classes("full flex items-center")

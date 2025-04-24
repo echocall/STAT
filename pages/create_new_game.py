@@ -142,7 +142,6 @@ def create_game():
             general_error.open
 
 
-
     with theme.frame('Create a Game'):
         with ui.column().classes("full-flex content-center w-full md:w-1/2"):
             # Name of the Game

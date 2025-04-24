@@ -3,7 +3,6 @@ from elements.message import message
 from handlers.assethandler import *
 from handlers.gamehandler import *
 from elements.CategoryLabel import CategoryLabel
-from elements.AssetContainer import AssetContainer
 from elements.asset_detail_dialog import asset_detail_dialog
 import elements.theme as theme
 
@@ -35,7 +34,7 @@ async def dashboard():
                                        selected_game['default_assets'],
                                        save_data['asset_customs'],
                                        save_data['asset_customs_path'])
-               
+
             # loading in the assets.
             assets_as_dict = {}
             # getting all assets available
@@ -52,17 +51,16 @@ async def dashboard():
            
             # getting all owned assets
             try:
-                owned_assets_unsorted = fetch_owned_assets(assets, save_data['assets'])
+                owned_assets_unsorted = fetch_owned_assets(assets_as_dict, save_data['assets'])
             except:
                 ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
             
             # Sorting the owned assets.
             try:
                 sorted_owned_assets = sort_assets_by_category(owned_assets_unsorted)
+                print(sorted_owned_assets)
             except:
                 ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
-
-            ui.tooltip().default_classes('bg-blue')
 
             if selected_game['name'] == "":
                 message("Warning: No game loaded. Please select a game to load: ")
@@ -72,22 +70,17 @@ async def dashboard():
             # ON EVERY TAB
             with ui.row().classes('full flex'):
                 with ui.column():
-                    with ui.label('Save Name: ' + save_data['name']):
-                        ui.tooltip(f'The currently loaded save is {save_data['name']}.')
+                    ui.label('Save Name: ' + save_data['name'])
                 with ui.column():
-                    with ui.label('Base Game: ' + save_data['base_game']):
-                        ui.tooltip(f'The base game is {save_data['base_game']}')
+                    ui.label('Base Game: ' + save_data['base_game'])
                 with ui.column():
                     with ui.row():
                         ui.label('Turns: ').classes('h-4')
                         current_turn = save_data['current_turn']
                         ui.label(current_turn)
                 with ui.column():
-                    with ui.button(icon='update', on_click=ui.notify('TODO: implement advancing turns')).props("round dense size=sm"): 
-                        ui.tooltip(f'Advances the current turn according to turn type (increase or decrease).')
+                    ui.button(icon='update', on_click=lambda: ui.notify('TODO: implement advancing turns')).props("round")
                 ui.space()
-                with ui.column():
-                    ui.button('Save', icon='save', on_click=ui.notify('This will save the current game.')).props("dense size=sm")
 
             ui.separator()
             # The Counters
@@ -103,33 +96,34 @@ async def dashboard():
                 all_assets_tab = ui.tab('All Assets')            
             
             # The Tab Panels
-            with ui.tab_panels(tabs, value=main_tab).classes('full flex'):
+            with ui.tab_panels(tabs, value=main_tab).classes('full flex rounded-md'):
                 ui.separator()
                 with ui.tab_panel(main_tab):
                     ui.label("Here's a summary of whats going on!")
+
                 # The Used Assets Tab
                 with ui.tab_panel(assets_tab):
-                        ui.label('Assets in Use')
-                        for category in sorted_owned_assets:
-                            ui.separator()
-                            asset_container = ui.row().classes("full flex")
-                            with asset_container:
-                                with ui.row():
-                                    CategoryLabel(category)
-                                # Creates cards for each asset
-                                with ui.row():
+                    for category in sorted_owned_assets:
+                        asset_container = ui.row().classes('items-center justify-start space-x-4 full-flex')
+                        with asset_container:
+                            with ui.row().classes("w-100 items-start"):
+                                CategoryLabel(category)
+                            # Creates cards for each asset
+                            with ui.row().classes("w-100 items-start"):
+                                with ui.scroll_area():
                                     for asset in sorted_owned_assets[category]:
                                         await render_asset_cards(asset)
+
                 # All Assets Tab
                 with ui.tab_panel(all_assets_tab):
                     # Creates each asset_container
                     for category in sorted_assets:
-                        asset_container = ui.row().classes("full flex")
+                        asset_container = ui.row().classes('items-center justify-start space-x-4 full-flex')
                         with asset_container:
-                            with ui.row().classes("w-100"):
+                            with ui.row().classes("w-100 items-start"):
                                 CategoryLabel(category)
                             # Creates cards for each asset
-                            with ui.row().classes("w-100"):
+                            with ui.row().classes("w-100 items-start"):
                                 for asset in sorted_assets[category]:
                                     await render_asset_cards(asset)
                         
@@ -147,30 +141,20 @@ async def dashboard():
 @ui.refreshable
 async def render_counter_bar(counters: dict, counter: str) -> ui.element:
     current_counter = ui.label(f'{counter}:').classes('text-sm')
-    with current_counter:
-        ui.tooltip(f'Name of counter. Currently {counter}.')
 
     # Work around for showing Current Counter amount without being able to fiddle with it.
     temp_current_amount = counters[counter]
     current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
-    with current_amount:
-        ui.tooltip(f'Amount of {counter}. Currently {counters[counter]}.')
 
     # Amount to change
     amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
-    with amount_to_change:
-        ui.tooltip(f'Amount of change to the counter.')
     # Buttons! :)
     with ui.row().classes('items-center justify-items-center align-middle'):
         btn_add = ui.button(icon='add', on_click=lambda: counter_add(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='green')
         btn_add.props('round dense size=sm')
-        with btn_add:
-           ui.tooltip(f'Add the amount in the number input to {counter}.')
         btn_sub = ui.button(icon='remove',
                              on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange')
         btn_sub.props('round dense size=sm')
-        with btn_sub:
-            ui.tooltip(f'Subtract the amount in the number input from {counter}.')
 
 # Function to increase the amount of a counter.
 def counter_add(counters: dict, current_counter: str, current_amount: str, amount: int):
@@ -250,7 +234,7 @@ async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
 # Calling the view_asset dialog box
 async def view_asset_details(asset: dict):
     app.storage.user['selected_asset'] = asset
-    await asset_detail_dialog() 
+    viewed_asset = asset_detail_dialog()
 
 
 def select_game(games_path: str, selected_game_name: str):

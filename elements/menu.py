@@ -9,7 +9,9 @@ def menu() -> None:
     def get_view_game_target():
         if selected_game:
             return f"/viewgame/{selected_game['name']}" 
-        return "/selectgames"
+        # ui.notify("Error: No game currently selected!",
+        #          position='top',
+        #          type='warning')
     
     # Determine the target for "View Game File"
     def get_view_dashboard_target():
@@ -31,12 +33,20 @@ def menu() -> None:
                     ui.button('Close', on_click=no_game.close())
             return f"selectgames" 
 
+    def view_saves():
+        if selected_game:
+            return f"/viewsaves/{selected_game['name']}"
+        # ui.notify("Error: No game currently selected!",
+        #          position='top',
+        #          type='warning')
+
     # TODO: deal with no selected_game
     def get_view_save_target():
         if selected_save:
-            return f"/viewgame/{selected_save['name']}"
-        else:
-            return "/selectsaves"
+            return f"/viewsave/{selected_save['name']}"
+        # ui.notify("Error: No save currently selected!",
+        #          position='top',
+        #          type='warning')
     
     def get_load_save_target():
         if selected_game:
@@ -77,18 +87,24 @@ def menu() -> None:
                     ui.icon('keyboard_arrow_right')
                 # Menu Items go under here
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):
-                    with ui.link(target=get_view_save_target()):
+                    with ui.link(target=view_saves()):
                         ui.menu_item('View Saves')
+                    with ui.link(target=get_view_save_target()):
+                        ui.menu_item('View Selected')
                     with ui.link(target='/createsave'):
                         ui.menu_item('New Save Start')
-                    with ui.link(target=get_load_save_target()):
-                        ui.menu_item('Load Save')
+                    # with ui.link(target=get_load_save_target()):
+                    #    ui.menu_item('Load Save')
                     ui.menu_item('Edit Save')
 
             # Dashboard
-            with ui.link(target=get_view_dashboard_target()):
-                ui.menu_item('Current Session Dashboard')
-            ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
+            with ui.menu_item('Dashboard', auto_close=False):
+                with ui.item_section().props('side'):
+                    ui.icon('keyboard_arrow_right')
+                with ui.menu().props('anchor="top end" self="top start" auto-close'): 
+                    with ui.link(target=get_view_dashboard_target()):
+                        ui.menu_item('View Dashboard')
+                    ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
             
             # Assets
             with ui.menu_item('Assets Menu', auto_close=False):
@@ -98,9 +114,10 @@ def menu() -> None:
                     with ui.link(target='/createasset'):
                         ui.menu_item('Create Asset')
                     ui.menu_item('View Asset')
-                    ui.menu_item('Edit Asset')
+                    with ui.link(target='/editasset'):
+                        ui.menu_item('Edit Asset')
                         
-            
+            # Effects
             with ui.menu_item('Effects Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')

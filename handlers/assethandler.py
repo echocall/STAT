@@ -728,14 +728,15 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
         # TODO: return an unsorted dictionary of owned assets.
         owned_assets = {}
         error_message = ''
-        for asset_name in assets_owned:
+        
+        for name in assets_owned:
             # checking if the owned asset is in the asset list.
-                if asset_name in assets:
-                    owned_assets[asset_name] = assets.get(asset_name)
+                if name in assets:
+                    owned_assets[name] = assets.get(name)
                 else:
                 # TODO: error handling
                     error_message = 'Owned asset not in list of assets.'
-
+                    print(error_message)
         return owned_assets
 
 def fetch_assets() -> dict:

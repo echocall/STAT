@@ -13,7 +13,7 @@
     "effect_customs": false,
     "effect_customs_path": "",
     "counters":{"Gold": 25, "Silver": 34, "Copper": 23, "Health": 84, "1st Level Spell Slots": 6},
-    "assets":{"Barracks":1},
+    "assets":{"Barracks":1, "Soldier":2},
     "actors":[],
     "current_events":{},
     "current_effects":{},

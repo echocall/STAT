@@ -10,6 +10,7 @@ import pages.create_effect as create_effect
 import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.edit_game as edit_game
 import pages.game_detail as game_detail
+import pages.edit_asset as edit_asset
 import pages.welcome as welcome
 
 
