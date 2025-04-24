@@ -268,7 +268,7 @@ async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
 # Calling the view_asset dialog box
 async def view_asset_details(asset: dict):
     app.storage.user['selected_asset'] = asset
-    # TODO REMOVE THIS WHEN ACTUALLY MANIPULATING DATA
+    # TODO: Solve this reloading the page and messing with tabs, etc
     ui.navigate.reload()
     # viewed_asset = asset_detail_dialog()
 

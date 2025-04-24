@@ -15,8 +15,12 @@ async def content() -> None:
         assets = {}
         assets_as_dict = {}
         asset_names = []
+        asset_default_names = []
+        asset_custom_names = []
         asset_json = {}
         name_result = {}
+        updated_json = {}
+        file_path = ''
 
         asset_schema = {
                     "name":{
@@ -60,32 +64,36 @@ async def content() -> None:
                     },
                 } 
 
-        print(selected_asset)
-
-        ui.label(selected_game['name'])
-        ui.label(selected_save['name'])
-        ui.label(selected_asset['name'])
-
-        # if the dictionaries are not empty
-        if bool(selected_save) and bool(selected_game):
-            assets = asset_handler(selected_game['asset_default_path'],
-                                       selected_game['default_assets'],
-                                       selected_save['asset_customs'],
-                                       selected_save['asset_customs_path'])
-        if bool(selected_game):
-            assets  = asset_handler(selected_game['asset_default_path'],
-                                       selected_game['default_assets'],
-                                       selected_save['asset_customs'],
-                                       '')
-               
         try:
-            await assets_to_dictionary(assets, assets_as_dict)
+            selected_name = selected_asset['name']
+            print(selected_name)
+            name_result = format_str_for_filename_super(selected_name)
+            asset_default_names = multi_json_names_getter(selected_game['asset_default_path'], 'assets')
+            print(asset_default_names)
+            asset_custom_names = multi_json_names_getter(selected_save['asset_customs_path'], 'assets')
+            print(asset_custom_names)
+
+            if selected_name in asset_default_names:
+                file_path = selected_game['default_assets']
+            elif selected_name in asset_custom_names:
+                file_path = selected_save['asset_customs_path']
+
         except:
-            ui.notify("Error: creating assets_as_dict", type='negative', position="top",)    
-
-        
-
-    
+            ui.notify("Error: Issue with formatting the name result!",
+                        position='top',
+                        type='warning')
+            
+        if name_result['result']:
+            asset_json = single_asset_fetch(file_path,name_result['string'])
+            print(asset_json)
+            print(type(asset_json))
+            try:
+                ui.json_editor({'content': {'json': asset_json}})
+            except:
+                ui.notify("Error: Problem loading the json into the json editor.")
+        else:
+            ui.label("Error: Problem converting the asset's name to a file name.")
+           
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
     for asset in assets:

@@ -76,7 +76,6 @@ def custom_asset_fetch(customFilePath: str) -> dict:
 # retrieve a single asset
 def single_asset_fetch(asset_file_path: str, file_name: str) -> dict:
     result = {'result': False, 'message': '', 'asset': {}}
-
     try:
         fetch_result = single_json_getter(file_name, asset_file_path, 'asset')
         result['result'] = True
