@@ -12,6 +12,7 @@ async def content() -> None:
         selected_save = app.storage.user.get("selected_save", {})
         selected_asset = app.storage.user.get("selected_asset", {})
 
+        assets = {}
         assets_as_dict = {}
         asset_names = []
         asset_json = {}
@@ -57,9 +58,15 @@ async def content() -> None:
                     "image":{
                         'type': 'string', 
                     },
-                }
+                } 
 
-     # if the dictionaries are not empty
+        print(selected_asset)
+
+        ui.label(selected_game['name'])
+        ui.label(selected_save['name'])
+        ui.label(selected_asset['name'])
+
+        # if the dictionaries are not empty
         if bool(selected_save) and bool(selected_game):
             assets = asset_handler(selected_game['asset_default_path'],
                                        selected_game['default_assets'],
@@ -76,8 +83,8 @@ async def content() -> None:
         except:
             ui.notify("Error: creating assets_as_dict", type='negative', position="top",)    
 
-        ui.label(selected_game['name'])
-        ui.label(selected_asset['name'])
+        
+
     
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:

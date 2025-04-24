@@ -224,7 +224,7 @@ async def render_asset_cards(asset) -> ui.element:
         with ui.card_actions().classes("w-full justify-end"):
             # TODO: fix this view details button
             with ui.row():
-                ui.button('View Details', on_click=lambda: view_asset_details(asset))
+                ui.button('Select Details', on_click=lambda: view_asset_details(asset))
                 ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
 
 # used to create the individual cards.
@@ -256,7 +256,7 @@ async def render_owned_asset_cards(asset, assets_owned) -> ui.element:
         with ui.card_actions().classes("w-full justify-end"):
             # TODO: fix this view details button
             with ui.row():
-                ui.button('View Details', on_click=lambda: view_asset_details(asset))
+                ui.button('Select Asset', on_click=lambda: view_asset_details(asset))
 
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
@@ -268,7 +268,9 @@ async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
 # Calling the view_asset dialog box
 async def view_asset_details(asset: dict):
     app.storage.user['selected_asset'] = asset
-    viewed_asset = asset_detail_dialog()
+    # TODO REMOVE THIS WHEN ACTUALLY MANIPULATING DATA
+    ui.navigate.reload()
+    # viewed_asset = asset_detail_dialog()
 
 
 def select_game(games_path: str, selected_game_name: str):

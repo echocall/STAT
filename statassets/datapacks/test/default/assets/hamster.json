@@ -1,0 +1,17 @@
+{
+    "name": "Hamster",
+    "category": "Unit",
+    "description": "A small furry friend that raises the moral of your minions by 5.",
+    "source": "",
+    "asset_type": "Beneficial",
+    "attributes": [],
+    "buy_costs": {
+        "Silver": 3
+    },
+    "sell_prices": {},
+    "special": "",
+    "effects": [],
+    "icon": "",
+    "image": "str",
+    "source_game": "Test"
+}

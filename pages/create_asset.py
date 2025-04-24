@@ -179,7 +179,8 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Source Game: ').classes('font-bold')
-                        ui.label(f'{selected_game['name']}')
+                        source_game = ui.label(f'{selected_game['name']}')
+                        source_game.bind_text(new_asset_dict, 'source_game')
                     
                 # Is this a Default or Custom Asset?
                 # If Custom, pick associated Save
@@ -187,6 +188,7 @@ async def new_asset():
                     with ui.column().classes('items-start'):
                         ui.label("Is this for a default asset?").classes('font-semibold')
                         is_default = ui.toggle({True:'Default', False:'Custom'})
+                        is_default.classes('bg-blue-600')
                         if not is_default.value:
                             # If no selected_save, open up prompt to select one
                             if not selected_save or 'name' not in selected_save:

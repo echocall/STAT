@@ -12,6 +12,7 @@ dark = ui.dark_mode()
 def frame(navigation_title: str):
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
+    selected_asset = app.storage.user.get("selected_asset", {})
 
     ui.add_head_html('''
     <style type="text/tailwindcss">
@@ -88,4 +89,8 @@ def frame(navigation_title: str):
             ui.label("Selected Save: None")
         else:
             ui.label(f"Selected Save: {selected_save['name']}")
-
+        # Selected Asset
+        if not selected_asset:
+            ui.label("Selected Asset: None")
+        else:
+            ui.label(f"Selected Asset: {selected_asset['name']}")
