@@ -1,0 +1,15 @@
+{
+    "name": "Mage",
+    "category": "Unit",
+    "description": "Magic user",
+    "source": "",
+    "asset_type": "",
+    "attributes": [],
+    "buy_costs": {},
+    "sell_prices": {},
+    "special": "",
+    "effects": [],
+    "icon": "",
+    "image": "str",
+    "source_game": "Test"
+}

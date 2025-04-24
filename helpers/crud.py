@@ -60,23 +60,21 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
     target_object = ""
     fetch_success = False
 
+
     if objectType == 'template':
         str_target_directory_path = passedDirectoryPath
         str_target_file_name = passedFileName + '.json'
         str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    elif objectType == 'override':
+    elif objectType == 'asset':
         str_target_directory_path = passedDirectoryPath
         str_target_file_name = passedFileName + '.json'
         str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-        print(str_target_file_path)
     else:
-        # TODO, see if this needs trouble shooting
-        # see if we can removet his first line.
         str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
         str_target_file_name = passedFileName + '.json'
         str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
 
-    print()
+
     # casting to Path 
     target_directory_path = Path(str_target_directory_path)
     target_file_path = Path(str_target_file_path)

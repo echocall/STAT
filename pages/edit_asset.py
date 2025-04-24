@@ -65,16 +65,13 @@ async def content() -> None:
                 } 
 
         try:
-            selected_name = lower(selected_asset['name'])
-            print(selected_name)
+            selected_name = selected_asset['name'].lower()
             name_result = format_str_for_filename_super(selected_name)
             asset_default_names = multi_json_names_getter(selected_game['asset_default_path'], 'assets')
-            print(asset_default_names)
             asset_custom_names = multi_json_names_getter(selected_save['asset_customs_path'], 'assets')
-            print(asset_custom_names)
 
             if selected_name in asset_default_names:
-                file_path = selected_game['default_assets']
+                file_path = selected_game['asset_default_path']
             elif selected_name in asset_custom_names:
                 file_path = selected_save['asset_customs_path']
 
@@ -85,10 +82,9 @@ async def content() -> None:
             
         if name_result['result']:
             asset_json = single_asset_fetch(file_path,name_result['string'])
-            print(asset_json)
-            print(type(asset_json))
             try:
-                ui.json_editor({'content': {'json': asset_json}})
+                ui.json_editor({'content': {'json': asset_json['asset']}},
+                               on_change=lambda e: ui.notify(f'Change: {e}'))
             except:
                 ui.notify("Error: Problem loading the json into the json editor.")
         else:
