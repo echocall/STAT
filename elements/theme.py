@@ -14,7 +14,7 @@ def frame(navigation_title: str):
     selected_save = app.storage.user.get("selected_save", {})
 
     ui.add_head_html('''
-    <style>
+    <style type="text/tailwindcss">
         link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
         * {
             font-family: 'Barlow', sans-serif;
@@ -24,7 +24,8 @@ def frame(navigation_title: str):
             color: inherit;
             text-decoration: none;
         }
-    </style>
+    </style>                
+
     ''')
 
     # Custom page frame to share the same styling and behavior across all pages.

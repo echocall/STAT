@@ -1,0 +1,48 @@
+from nicegui import app,ui
+ # display asset detials
+
+async def asset_detail_dialog():
+
+    with ui.dialog() as dialog, ui.card().classes("w-full"):
+        selected_asset = app.storage.user.get("selected_asset", {})
+
+        with ui.card_section().classes('items-stretch'):
+            with ui.column:
+                ui.label(f'{selected_asset['name']}').classes('h3')
+
+                ui.image(selected_asset['icon'])
+
+                ui.label().bind_text_from(selected_asset['category'])
+
+                ui.label().bind_text_from(selected_asset['description'])
+
+                ui.label().bind_text_from(selected_asset['source'])
+
+                ui.label("Asset Type").classes('font-bold')
+                ui.label().bind_text_from(selected_asset['asset_type'])
+
+                ui.label("Attributes").classes('font-bold')
+                for attribute in selected_asset['attributes']:
+                    ui.label().bind_text_from(attribute)
+
+                ui.label("Buy Costs").classes('font-bold')
+                for key, value in selected_asset['buy_costs']:
+                    ui.label(f'{key}: {value}')
+
+                ui.label("Sell Prices").classes('font-bold')
+                for key, value in selected_asset['sell_prices']:
+                    ui.label(f'{key}: {value}')
+
+                ui.label().bind_text_from(selected_asset['special'])
+
+                ui.label("Effects").classes('font-bold')
+                for attribute in selected_asset['attributes']:
+                    ui.label().bind_text_from(attribute)
+
+                ui.image(selected_asset['image']).classes('object-scale-down')
+
+
+        with ui.card_actions():
+            # Cancel out of dialog.
+            ui.button("Close", on_click=dialog.close)
+ 

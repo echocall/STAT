@@ -461,16 +461,47 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 
 # TODO: test
 # updates the game's json
-def update_game(game_dict: dict, game_path: str):
-    result = {}
+def update_game(game_dict: dict, game_path: str, template_path: str):
+    template_result = {}
     format_result = {}
+    write_result = {}
+    # check the template is okay
+    try:
+        template_result['result'] = check_template_bool(game_dict, template_path)
+    except:
+        template_result['result'] = False
+        template_result['message'] = 'Given object did not match game template.'
+  
+    # it matches the template!
+    if template_result['result']:
+        # try formatting the game name for a string
+        try:
+            format_result = format_str_for_filename_super(game_dict['name'])
+        except:
+            format_result['result'] = False
+            format_result['message'] = 'Formatting name for game update failed.'
 
-    format_result = format_str_for_filename_super(game_dict['name'])
+        # it formatted the name!
+        if format_result['result']:
+            # try writing to the json_file
+            try:
+                write_result = overwrite_json_file(game_dict, game_path, format_result['string'])
+            except:
+                write_result['success'] = False
+                write_result['message'] = 'Overwriting to game json failed.'
+            # successfully wrote!
+            if write_result['success']:
+                return write_result
+            # did not successfully write
+            else:
+                return write_result
+        # did not formate name
+        else:
+            return format_result
+    # did not get a match on the template
+    else:
+        return template_result
 
-    if format_result['result']:
-        result = overwrite_json_file(game_dict, game_path, format_result['string'])
-
-    return result
 
 # TODO: implement
 # delete a game and its files

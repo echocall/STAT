@@ -1,7 +1,6 @@
 import elements.theme as theme
 from nicegui import app, ui
 from handlers.gamehandler import *
-from elements.select_game_dialog import prompt_select_game
 from classes.Enable import *
 
 enable = Enable()
@@ -42,30 +41,10 @@ async def content() -> None:
                     ui.button('Find Game File')
             else:
                 # Toggle for editing or not
-                # image
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
-                        # DISPLAY
-                        game_image = ui.image(f'{selected_game['image_file_path']}')
-                        with ui.button("Reload Image", on_click=game_image.force_reload):
-                            ui.tooltip("This attempts to reload the associated image.")
-                        ui.label("Image file path").classes('font-bold')
-                        lbl_image_path = ui.label(f'{selected_game['image_file_path']}')
-
-                        # EDIT
-                        # Call the dialog to get new file path
-                        btn_find_image = ui.button("Find New Image").on_click(lambda: choose_file)
-                        btn_find_image.bind_visibility_from(toggle_edit, 'value')
-                        # display new file path
-                        lbl_new_image_path = ui.label(f'{edited_game['image_file_path']}').classes('font-bold')
-                        lbl_new_image_path.bind_visibility_from(toggle_edit, 'value')
-                        # display the new image
-                        new_image = ui.image(f'{edited_game['image_file_path']}')
-                        new_image.bind_visibility_from(toggle_edit, 'value')
-                        # reload the new image
-                        btn_reload_new = ui.button("Reload New",on_click=new_image.force_reload)
-                        btn_reload_new.bind_visibility_from(toggle_edit, 'value')
+                        
                 
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
@@ -140,7 +119,28 @@ async def content() -> None:
                     # Default turn
                     # Turn Type
                 
-                # Image File Path
+                # DISPLAY
+                with ui.row().classes('items-center justify-start space-x-4'):
+                    with ui.column().classes('items-start'):
+                        game_image = ui.image(f'{selected_game['image_file_path']}')
+                        with ui.button("Reload Image", on_click=game_image.force_reload):
+                            ui.tooltip("This attempts to reload the associated image.")
+                        ui.label("Image file path").classes('font-bold')
+                        lbl_image_path = ui.label(f'{selected_game['image_file_path']}')
+
+                        # EDIT
+                        # Call the dialog to get new file path
+                        btn_find_image = ui.button("Find New Image").on_click(lambda: choose_file)
+                        btn_find_image.bind_visibility_from(toggle_edit, 'value')
+                        # display new file path
+                        lbl_new_image_path = ui.label(f'{edited_game['image_file_path']}').classes('font-bold')
+                        lbl_new_image_path.bind_visibility_from(toggle_edit, 'value')
+                        # display the new image
+                        new_image = ui.image(f'{edited_game['image_file_path']}')
+                        new_image.bind_visibility_from(toggle_edit, 'value')
+                        # reload the new image
+                        btn_reload_new = ui.button("Reload New",on_click=new_image.force_reload)
+                        btn_reload_new.bind_visibility_from(toggle_edit, 'value')
 
                 # Submit button
                 

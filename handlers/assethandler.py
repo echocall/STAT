@@ -2,8 +2,7 @@ from helpers.crud import *
 from helpers.utilities import *
 from classes.MyAsset import *
 
-# Need to adjust asset_handler depending on game state.
-# Example: New game -> Only call default assets, Load Game -> check for customs
+# Retrieves all assets associated with a game/save
 def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
                    customFilePath: str) -> dict:
     default_result = {}
@@ -73,6 +72,22 @@ def custom_asset_fetch(customFilePath: str) -> dict:
     if len(custom_assets["custom_list"]) > 0:
         custom_assets["custom_names"] = filter_list_value_with_set(custom_assets["custom_list"], 'name')
     return custom_assets
+
+# retrieve a single asset
+def single_asset_fetch(asset_file_path: str, file_name: str) -> dict:
+    result = {'result': False, 'message': '', 'asset': {}}
+
+    try:
+        fetch_result = single_json_getter(file_name, asset_file_path, 'asset')
+        result['result'] = True
+        result['message'] = "Asset successfully retrieved!"
+        result['asset'] = fetch_result
+    except:
+        result['message'] = f"Failed to get {file_name} from json file."
+        return result
+
+    return result
+
 
 # Handle merging custom assets & default assets
 # returns list of asset objects
@@ -574,6 +589,48 @@ def set_image() -> str:
     # TODO: make this fetch the file path/move the image file to the images folder.
     f = 6+6
 
+def update_asset(asset_dict: dict, asset_path: str, template_path: str) -> dict:
+    template_result = {}
+    format_result = {}
+    write_result = {}
+    # check the template is okay
+    try:
+        template_result['result'] = check_template_bool(asset_path, template_path)
+    except:
+        template_result['result'] = False
+        template_result['message'] = 'Given object did not match save template.'
+  
+    # it matches the template!
+    if template_result['result']:
+        # try formatting the game name for a string
+        try:
+            format_result = format_str_for_filename_super(asset_path['name'])
+        except:
+            format_result['result'] = False
+            format_result['message'] = 'Formatting name for asset update failed.'
+
+        # it formatted the name!
+        if format_result['result']:
+            # try writing to the json_file
+            try:
+                write_result = overwrite_json_file(asset_dict, asset_path, format_result['string'])
+            except:
+                write_result['success'] = False
+                write_result['message'] = 'Overwriting to asset json failed.'
+            # successfully wrote!
+            if write_result['success']:
+                return write_result
+            # did not successfully write
+            else:
+                return write_result
+        # did not formate name
+        else:
+            return format_result
+    # did not get a match on the template
+    else:
+        return template_result
+
+
 
 # ###################################
 # Takes singular asset dictionary and returns
@@ -697,16 +754,28 @@ def check_template_bool(asset: dict, template_path: str) -> bool:
 
 # TODO: implement
 # delete an asset
-# Call BEFORE deleting save or a game if deleting all.
-def delete_asset(game_dict: dict, save_dict: dict, asset_dict: dict) -> bool:
-    bln_result = False
+# Call BEFORE deleting save or a game if not deleting all.
+def delete_asset(asset_dict: dict, asset_path: str) -> dict:
+    result = {}
+    format_result
     # Remove targeted asset from its parents (save and game)
         # What if asset is used in multiple saves?
         # What if asset is a default asset?
 
     # delete the asset's file
         # Get file path to asset
-        # call: shutil.rmtree('/path/to/folder')
-        # set bln_result to True
+    try: 
+        # try formatting the name for a file
+        try:
+            format_result = format_str_for_filename_super(asset_path['name'])
+        except:
+            format_result['result'] = False
+            format_result['message'] = 'Formatting name for save update failed.'
 
-    return bln_result
+
+    except:
+        result['message'] = "Deleting the file failed."
+    # call: shutil.rmtree('/path/to/folder')
+    # set bln_result to True
+
+    return result

@@ -4,6 +4,7 @@ from handlers.assethandler import *
 from handlers.gamehandler import *
 from elements.CategoryLabel import CategoryLabel
 from elements.AssetContainer import AssetContainer
+from elements.asset_detail_dialog import asset_detail_dialog
 import elements.theme as theme
 
 # Dashboard for after a game has been selected, and a save has been loaded.
@@ -235,6 +236,8 @@ async def render_asset_cards(asset) -> ui.element:
                         ui.label(f'{name}: ').classes('font-normal')
                         ui.label(f'{value}').classes('font-normal')
         with ui.card_actions().classes("w-full justify-end"):
+            # TODO: fix this view details button
+            ui.button('View Details', on_click=lambda: view_asset_details(asset))
             ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
 
 # gets the assets as a dictionary
@@ -243,6 +246,12 @@ async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
         assets_as_dict[asset['name']] = asset
  
     return assets_as_dict
+
+# Calling the view_asset dialog box
+async def view_asset_details(asset: dict):
+    app.storage.user['selected_asset'] = asset
+    await asset_detail_dialog() 
+
 
 def select_game(games_path: str, selected_game_name: str):
     for name in selected_game_name:
