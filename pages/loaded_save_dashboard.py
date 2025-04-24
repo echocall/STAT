@@ -17,23 +17,23 @@ async def dashboard():
 
         # Getting assets sorted.
         selected_game = {}
-        save_data = {}
+        selected_save = {}
         sorted_assets = {}
         counters = {}
-        save_data = load_from_storage("selected_save")
+        selected_save = load_from_storage("selected_save")
         selected_game = load_from_storage("selected_game")
         saves_paths = selected_game.get("save_files_path", "Not Set")
         turn_type = ""
 
         # if the dictionaries are not empty
-        if bool(save_data) and bool(selected_game):
+        if bool(selected_save) and bool(selected_game):
             # Everything has loaded properly, go for it!
-            counters = save_data['counters']
+            counters = selected_save['counters']
 
             assets = asset_handler(selected_game['asset_default_path'],
                                        selected_game['default_assets'],
-                                       save_data['asset_customs'],
-                                       save_data['asset_customs_path'])
+                                       selected_save['asset_customs'],
+                                       selected_save['asset_customs_path'])
 
             # loading in the assets.
             assets_as_dict = {}
@@ -51,7 +51,7 @@ async def dashboard():
            
             # getting all owned assets
             try:
-                owned_assets_unsorted = fetch_owned_assets(assets_as_dict, save_data['assets'])
+                owned_assets_unsorted = fetch_owned_assets(assets_as_dict, selected_save['assets'])
             except:
                 ui.notify("Error Sorting Owned Assets", type='negative', position="top",)
             
@@ -70,13 +70,13 @@ async def dashboard():
             # ON EVERY TAB
             with ui.row().classes('full flex'):
                 with ui.column():
-                    ui.label('Save Name: ' + save_data['name'])
+                    ui.label('Save Name: ' + selected_save['name'])
                 with ui.column():
-                    ui.label('Base Game: ' + save_data['base_game'])
+                    ui.label('Base Game: ' + selected_save['base_game'])
                 with ui.column():
                     with ui.row():
                         ui.label('Turns: ').classes('h-4')
-                        current_turn = save_data['current_turn']
+                        current_turn = selected_save['current_turn']
                         ui.label(current_turn)
                 with ui.column():
                     ui.button(icon='update', on_click=lambda: ui.notify('TODO: implement advancing turns')).props("round")
@@ -92,8 +92,8 @@ async def dashboard():
             # The tabs
             with ui.tabs().classes('w-full') as tabs:
                 main_tab = ui.tab('Main')
-                assets_tab = ui.tab('Used Assets')
-                all_assets_tab = ui.tab('All Assets')            
+                assets_tab = ui.tab('Used Assets') 
+                all_assets_tab = ui.tab('All Assets')           
             
             # The Tab Panels
             with ui.tab_panels(tabs, value=main_tab).classes('full flex rounded-md'):
@@ -101,18 +101,19 @@ async def dashboard():
                 with ui.tab_panel(main_tab):
                     ui.label("Here's a summary of whats going on!")
 
+
                 # The Used Assets Tab
                 with ui.tab_panel(assets_tab):
-                    for category in sorted_owned_assets:
-                        asset_container = ui.row().classes('items-center justify-start space-x-4 full-flex')
-                        with asset_container:
+                    for owned_category in sorted_owned_assets:
+                        asset_container_owned = ui.row().classes('items-center justify-start space-x-4 full-flex')
+                        with asset_container_owned:
                             with ui.row().classes("w-100 items-start"):
-                                CategoryLabel(category)
+                                CategoryLabel(owned_category)
                             # Creates cards for each asset
                             with ui.row().classes("w-100 items-start"):
                                 with ui.scroll_area():
-                                    for asset in sorted_owned_assets[category]:
-                                        await render_asset_cards(asset)
+                                    for owned_asset in sorted_owned_assets[owned_category]:
+                                        await render_owned_asset_cards(owned_asset, selected_save['assets'])
 
                 # All Assets Tab
                 with ui.tab_panel(all_assets_tab):
@@ -221,8 +222,42 @@ async def render_asset_cards(asset) -> ui.element:
                         ui.label(f'{value}').classes('font-normal')
         with ui.card_actions().classes("w-full justify-end"):
             # TODO: fix this view details button
-            ui.button('View Details', on_click=lambda: view_asset_details(asset))
-            ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
+            with ui.row():
+                ui.button('View Details', on_click=lambda: view_asset_details(asset))
+                ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
+
+# used to create the individual cards.
+async def render_owned_asset_cards(asset, assets_owned) -> ui.element:
+    amount_owned = 0
+    asset_name = asset['name']
+    if assets_owned:
+        amount_owned = assets_owned[asset_name]
+    print(asset_name)
+    print(amount_owned)
+    with ui.card().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between;'):
+        with ui.card_section().classes('flex-grow'):
+            with ui.row():
+                ui.label('Name: ').classes('font-bold')
+                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'{name}')
+            with ui.row():
+                ui.label('# Owned: ').classes('font-bold')
+                ui.label().bind_text_from(amount_owned, backward=lambda source: f'{amount_owned}')
+            buy_cost_label = ui.label("Buy Costs").classes('font-bold')
+            with buy_cost_label:
+                for name, value in asset['buy_costs'].items():
+                    with ui.row():
+                        ui.label(f'{name}: ').classes('font-normal')
+                        ui.label(f'{value}').classes('font-normal')
+            sell_price_label = ui.label("Sell Costs").classes('font-bold')
+            with sell_price_label:
+                with ui.row():
+                    for name, value in asset['sell_prices'].items():
+                        ui.label(f'{name}: ').classes('font-normal')
+                        ui.label(f'{value}').classes('font-normal')
+        with ui.card_actions().classes("w-full justify-end"):
+            # TODO: fix this view details button
+            with ui.row():
+                ui.button('View Details', on_click=lambda: view_asset_details(asset))
 
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:

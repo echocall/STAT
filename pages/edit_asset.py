@@ -76,51 +76,8 @@ async def content() -> None:
         except:
             ui.notify("Error: creating assets_as_dict", type='negative', position="top",)    
 
-        # Select a game if none selected
-        if not bool(selected_game):
-            ui.label("Cannot continue without a game selected.")
-            ui.label("Please select a game.")
-            
-        # Game selected, do things.
-        else:
-            # no asset selected, select one from list
-            if not selected_asset:
-                asset_names = assets_as_dict.keyes()
-                # Create select of names of assets
-                selected_name = ui.select(options=asset_names, with_input=True, on_change=lambda e: e.value)
-                
-                try:
-                    name_result = format_str_for_filename_super(selected_name.value)
-                except:
-                    ui.notify("Error formatting the name result!",
-                               position='top',
-                              type='warning')
-                if name_result['result']:
-                    asset_json = single_asset_fetch(name_result['string'])
-                    ui.json_editor({'content': {'json': asset_json}})
-                else:
-                    ui.label("Error: Problem converting the asset's name to a file name.")
-
-        # use name from selected_asset to get JSON file
-            else:
-                selected_name = selected_asset['name']
-                try:
-                    name_result = format_str_for_filename_super(selected_name.value)
-                except:
-                    ui.notify("Error formatting the name result!",
-                               position='top',
-                              type='warning')
-                if name_result['result']:
-                    # Load into json object
-                    asset_json = single_asset_fetch(name_result['string'])
-
-                    ui.json_editor({'content': {'json': asset_json}})
-
-                    ui.button('Submit')
-
-                else:
-                    ui.label("Error: Problem converting the asset's name to a file name.")
-
+        ui.label(selected_game['name'])
+        ui.label(selected_asset['name'])
     
 # gets the assets as a dictionary
 async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
