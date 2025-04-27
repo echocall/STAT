@@ -3,6 +3,7 @@ darkmode = True
 
 [Paths]
 defaultwindowspath = C:\Program Files
+defaultstatassetspath = \STAT\statassets\
 custompaths = True
 gamespath = C:\Users\strip\Documents\github\STAT\statassets\games
 datapackspath = C:\Users\strip\Documents\github\STAT\statassets\datapacks
@@ -10,6 +11,6 @@ savespath = C:\Users\strip\Documents\github\STAT\statassets\saves
 templatefilepath = C:\Users\strip\\Documents\github\STAT\statassets\templates
 
 [Toggles]
-showwelcome = False
-showexplanations = False
+showwelcome = True
+showexplanations = True
 

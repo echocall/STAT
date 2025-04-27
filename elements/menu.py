@@ -76,10 +76,10 @@ def menu() -> None:
                         ui.menu_item('View Games')
                     with ui.link(target='/creategame'):
                         ui.menu_item('Create New Game')
-                    with ui.link(target='/editgame'):
-                        ui.menu_item('Edit Current Game')
                     with ui.link(target=get_view_game_target()):
                         ui.menu_item('View Game File')
+                    with ui.link(target='/editgame'):
+                        ui.menu_item('Edit Current Game')
 
             # Saves
             with ui.menu_item('Save Menu', auto_close=False):

@@ -29,8 +29,8 @@ config.read('config.txt')
 @ui.page('/')
 async def index_page() -> None:
     # Show Welcome or Home Page
-    if config['Toggles'].getboolean('showWelcome'):
-        config['Toggles']['showWelcome'] = 'False'
+    if config['Toggles'].getboolean('showwelcome'):
+        config['Toggles']['showwelcome'] = 'False'
         # save updated config
         with open('config.txt', 'w') as configfile:
             config.write(configfile)

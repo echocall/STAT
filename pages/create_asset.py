@@ -4,7 +4,8 @@ from elements.target_counter_dialog import target_counter_dialog
 from elements.new_string_dialog import new_string_dialog
 from helpers.crud import single_json_getter_fullpath
 from helpers.utilities import format_str_for_filename_super
-from handlers.assethandler import new_asset_gui, check_template_bool, get_new_asset_name
+from handlers.assethandler import *
+from elements.explanation import explanation
 import traceback
 from nicegui import app, ui
 
@@ -179,6 +180,7 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label('Source Game: ').classes('font-bold')
+                        ui.icon('info')
                         source_game = ui.label(f'{selected_game['name']}')
                         source_game.bind_text(new_asset_dict, 'source_game')
                     

@@ -420,12 +420,12 @@ def set_new_asset_name(file_path: str, for_new_game: bool) -> dict:
 
     return  asset_name
 
-def category_explanation():
+def category_explanation() -> str:
     category_info = """A category is the largest organization chunk for an asset.
     In the GUI, objects will be separated by category. 
     An asset MUST have a category.
     Examples: Unit, Room, Trap, 1st Level."""
-    print(category_info)
+    return category_info
 
 def set_category() -> str:
     # TODO: Error Handling, maybe allow user to see/pick from already in use
@@ -433,46 +433,46 @@ def set_category() -> str:
     category = get_user_input_string_variable("Please enter a category for the asset: ", 100)
     return category
 
-def description_explanation():
+def description_explanation()-> str:
     description_info = """This is a text field for entering information about 
     the asset you are creating. You can put extra stats that aren't covered by STAT,
     or as a space for flavor text, or notes about the unit itself.
 
     You don't have to add a description to an asset."""
-    print(description_info)
+    return description_info
 
 def set_description() -> str:
     # TODO: Error Handling
     description = get_user_input_string_variable("Please enter a description for the asset: ", 1500)
     return description
 
-def source_explanation():
+def source_explanation() -> str:
     source_info = """The source is simply the name of the game you plan to use this asset with."""
-    print(source_info)
+    return source_info
 
-def asset_type_explanation():
+def asset_type_explanation() -> str:
     type_info = """ Asset Type is another way to categorize and asset.
     Its another way to further break assets into small parts withing categories.
-    For example if we had animal based assets and we wanted to make a lion:
+    For example if we had animal based assets and we wanted to make a lion we could model it like so:
     Name: Lion ||| Category: Mammal ||| Asset Type: Predator"""
-    print(type_info)
+    return type_info
 
 # TODO: Error Handling
 def set_asset_type() -> str:
     asset_type = get_user_input_string_variable("Please enter a type for the asset: ", 100)
     return asset_type
 
-def attributes_explanation():
+def attributes_explanation() -> str:
     attributes_info = """Attributes are different from Categories and Type.
-    They can be used to describe a unit, and in the future to search
-      for particular units more easily.
+    They can be used to describe a asset, and in the future to search
+      for particular assets more easily.
       
     For example if we had animal based assets and we wanted to make a lion:
     Name: Lion ||| Category: Mammal ||| Asset Type: Predator 
       Attributes: [Carnivore, Predator, Fur, Claws, Fangs, Feline]
     
-    You don't need to add attributes to your unit."""
-    print(attributes_info)
+    You don't need to add attributes to your asset."""
+    return attributes_info
 # TODO: Error Handling
 def set_attributes() -> list:
     # TODO: Error Handling
@@ -484,7 +484,7 @@ def set_attributes() -> list:
 
     return game_attributes
 
-def costs_explanation():
+def costs_explanation() -> str:
     costs_info = """Buy costs are subtracted from the associated counters when
     you add another asset of that kind. This can represent different types of
     currencies used to purchase the unit, resources used to construct the unit, 
@@ -501,7 +501,7 @@ def costs_explanation():
     You can add more than one buy cost to an asset.
     **You don't have to add a buy cost to an asset.**
     Tip: If you set the value of a cost to a negative, you will GAIN that much instead."""
-    print(costs_info)
+    return cost_info
 
 # TODO: Error Handling
 def set_buy_costs(counter_names: list) -> dict:
@@ -525,7 +525,7 @@ def set_buy_costs(counter_names: list) -> dict:
 
     return buy_costs
 
-def prices_explanation():
+def prices_explanation() -> str:
     # TODO
     prices_info = """A sell price is made up of the name of one of the counters in the game (ideally) and a number.
     The number is added to the count of the counter of the same name when 'sell' is clicked.
@@ -540,7 +540,7 @@ def prices_explanation():
     **You don't have to add a sell price to an asset.**
     Tip: If you set the value of a cost to a negative, you will LOSE that much instead.
     """
-    print(prices_info)
+    return prices_info
 
 # TODO: error handling
 def set_sell_prices(counter_names: list) -> dict:
@@ -561,11 +561,11 @@ def set_sell_prices(counter_names: list) -> dict:
         "type you get for selling or destroying this asset: ", "dict", "str", counter_names)
     return sell_prices
 
-def special_explanation():
+def special_explanation() -> str:
     special_info = """Special is an extra text field that
     isn't required. Its only purpose is to exist in case you want
     to separate some text out of the description."""
-    print(special_info)
+    return special_explanation
 
 def set_special() -> str:
     # TODO: Error Handling
