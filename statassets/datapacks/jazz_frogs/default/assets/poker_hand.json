@@ -1,0 +1,15 @@
+{
+    "name": "Poker Hand",
+    "category": "Buff",
+    "description": "its a hand for a poker game. still has the fingers attached.",
+    "source": "",
+    "asset_type": "",
+    "attributes": [],
+    "buy_costs": {},
+    "sell_prices": {},
+    "special": "",
+    "effects": [],
+    "icon": "",
+    "image": "str",
+    "source_game": "Jazz Frogs"
+}

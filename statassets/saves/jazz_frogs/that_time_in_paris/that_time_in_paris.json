@@ -1,0 +1,26 @@
+{
+    "name": "That Time In Paris",
+    "base_game": "Jazz Frogs",
+    "create_date": "May-03-2025 08:53:32",
+    "date_last_save": "May-03-2025 08:53:32",
+    "description": "smokey atmosphere galore",
+    "asset_customs": false,
+    "asset_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacksjazz_frogs\\customs\\that_time_in_paris\\assets\\",
+    "actor_customs": false,
+    "actor_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacksjazz_frogs\\customs\\that_time_in_paris\\actors\\",
+    "event_customs": false,
+    "event_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacksjazz_frogs\\customs\\that_time_in_paris\\events\\",
+    "effect_customs": false,
+    "effect_customs_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacksjazz_frogs\\customs\\that_time_in_paris\\effects\\",
+    "counters": {
+        "Hats": 10.0
+    },
+    "assets": {},
+    "actors": [
+        "Player"
+    ],
+    "current_events": {},
+    "current_effects": {},
+    "current_turn": 0,
+    "log_file_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\saves\\jazz_frogs\\"
+}
