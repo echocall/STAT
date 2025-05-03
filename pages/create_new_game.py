@@ -13,10 +13,13 @@ def create_game():
     # File path for game data
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
-    game_paths = paths.get("gamespath", "Not Set")
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "Not Set")
     template_paths = paths.get("templatefilepath", "Not Set")
     save_paths = paths.get("savespath", "Not Set")
     datapack_paths = paths.get("datapackspath", "Not Set")
+
+    str_games_path = root_path + games_path
 
     new_game_dict = {'name': '','description':'', 'has_counters': False,
                 'counters': {}, 'has_actors': False,
@@ -44,9 +47,9 @@ def create_game():
         new_game_dict['actors'].append(result['name'])
 
     async def create_game_json():
-        matches_template = False;
+        matches_template = False
         game_name = {}
-        create_game_result = False;
+        create_game_result = False
     
         try:
             # Ensure the game matches the template
@@ -55,7 +58,7 @@ def create_game():
                 # Check if a game with that name already exists
                 new_game_name = new_game_dict['name']
 
-                game_name = get_new_game_name(new_game_name, game_paths)
+                game_name = get_new_game_name(new_game_name, str_games_path)
                 if "_Placeholder" in game_name['name']:
                     with ui.dialog() as name_existed, ui.card():
                         ui.label("Notice!").classes('h3')
@@ -64,12 +67,12 @@ def create_game():
                         ui.button('Close', on_click=name_existed.close)
                     name_existed.open
                 
-                folder_creation= create_folders(game_name, game_paths, datapack_paths, save_paths)
+                folder_creation= create_folders(game_name, games_path, datapack_paths, save_paths)
 
                 if folder_creation:
                     # Attempt to save the game
                     try:
-                        create_game_result = new_game_gui(game_paths, datapack_paths, save_paths, new_game_dict, game_name['file'])
+                        create_game_result = new_game_gui(games_path, datapack_paths, save_paths, new_game_dict, game_name['file'])
                         if create_game_result['result']:
                             app.storage.user['selected_game'] = create_game_result['dict']
                             ui.notify(f"""Success! You've created the game {new_game_dict['name']}!

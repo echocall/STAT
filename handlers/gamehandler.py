@@ -144,6 +144,7 @@ def dict_to_game_object(targetDict: dict) -> object:
 def get_new_game_name(name: str, file_path: str) -> dict:
     file_name = ""
     games = []
+    games_names_result = {}
     game_name = {"name": "", "file":""}
     valid = False
 
@@ -151,8 +152,11 @@ def get_new_game_name(name: str, file_path: str) -> dict:
         file_name = format_str_for_filename(name)
 
         # check that a game by that name doesn't already exists
-        games = multi_json_names_getter(file_path, "games")
+        games_names_result = multi_file_names_getter(file_path, "games")
         
+        if games_names_result['result']:
+            games = games_names_result['list']
+
         if name in games:
     # if file_name already exists, append placeholder and alert user
             valid = True

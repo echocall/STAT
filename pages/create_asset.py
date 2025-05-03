@@ -17,9 +17,22 @@ async def new_asset():
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
 
+    # TODO: set up handling for no selected_game here
+
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
-    template_paths = paths.get("templatefilepath", "Not Set")
+    templates_paths = paths.get("templatefilepath", "Not Set")
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "Not Set")
+    assets_path = paths.get("assetspath", "Not Set")
+    default_assets_path = paths.get("defaultassetspath", "Not Set")
+    custom_assets_path = paths.get("customassetspath", "Not Set")
+
+    str_templates_path = root_path + templates_paths
+    str_games_path = root_path + games_path
+    str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
+    str_default_assets_path = str_games_path + '\\' +  selected_game['name'] + default_assets_path
+    str_custom_assets_path = str_games_path + '\\' +  selected_game['name'] + custom_assets_path
 
     new_asset_dict = {
         'name': '', 'category':'',
@@ -56,24 +69,17 @@ async def new_asset():
         create_result = {}
 
         try:
-            # Ensure the game matches the template
-            matches_template = check_template_bool(new_asset_dict, template_paths)
+            # Ensure the asset matches the template
+            matches_template = check_template_bool(new_asset_dict, str_templates_path)
             if matches_template:
                 # Try to format the name.
-                new_asset_name = new_asset_dict['name']
-
                 format_result = {}
-                name_result = {}
-
                 format_result = format_str_for_filename_super(new_asset_dict['name'])
 
                 if format_result['result']:
                     file_name = format_result['string']
                     # check for duplicates
-                    if is_default:
-                        asset_name = get_new_asset_name(new_asset_dict['name'], selected_game['asset_default_path'])
-                    else:
-                        asset_name = get_new_asset_name(new_asset_dict['name'], selected_save['asset_customs_path'])
+                    asset_name = get_new_asset_name(new_asset_dict['name'], str_assets_path)
                 
                     if "_Placeholder" in asset_name['name']:
                         with ui.dialog() as name_existed, ui.card():
@@ -108,41 +114,29 @@ async def new_asset():
                         fail_create.open
             # Template Mismatch
             else:
-                with ui.dialog() as template_error, ui.card():
-                    ui.label("Error!").classes('h3')
-                    ui.label("The new asset dictionary does not match the expected asset template.")
-                    ui.label("Unable to save the asset.")
-                    ui.button('Close', on_click=template_error.close())
-                template_error.open
+                ui.notify("Error: Coule not save. The new asset dictionary does not match expected asset template. Unable to save.", 
+                          position='top', 
+                          type='negative',
+                            multi_line=True)
 
         except FileNotFoundError as e:
-            print(traceback.format_exc())
-            with ui.dialog() as file_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("File not found.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the specified file paths are correct.")
-                ui.button('Close', on_click=file_error.close)
-            file_error.open
+            ui.notify("Error: Could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except PermissionError as e:
             print(traceback.format_exc())
-            with ui.dialog() as permission_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("Permission denied.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the application has the necessary permissions.")
-                ui.button('Close', on_click=permission_error.close)
-            permission_error.open
+            ui.notify("Error: Could not save. STAT does not have permission to write to the folder in those locations. Please check the file paths in config.txt are correct.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except Exception as e:
-            with ui.dialog() as general_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("An unexpected error occurred.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please check the application logs for more information.")
-                ui.button('Close', on_click=general_error.close)
-            general_error.open
+            ui.notify("Error: Could not save. An unexpected error has occured. Please check application logs for more information.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
     with theme.frame('Create an Asset'):
         buy_costs = new_asset_dict['buy_costs']

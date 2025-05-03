@@ -11,11 +11,15 @@ def create_save():
     # File path for game data
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
-    game_paths = paths.get("gamespath", "Not Set")
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "Not Set")
     template_paths = paths.get("templatefilepath", "Not Set")
-    save_paths = paths.get("savespath", "Not Set")
+    saves_path = paths.get("savespath", "Not Set")
     datapack_paths = paths.get("datapackspath", "Not Set")
     selected_game = app.storage.user.get('selected_game', {})
+
+    str_games_path = root_path + games_path
+    str_saves_path = str_games_path + '\\' +  selected_game['name'] + '\\' +  saves_path
 
     new_save_dict = {'name': '','base_game': '', 'create_date':'', 
                      'date_last_save': '','description': '', 
@@ -29,24 +33,23 @@ def create_save():
                      }
 
     async def create_save_json():
-        matches_template = False;
+        matches_template = False
         save_name = {}
-        create_save_result = False;
+        create_save_result = False
     
         try:
             # Ensure the game matches the template
             matches_template = check_template_bool(new_save_dict, template_paths)
             if matches_template:
-                # Check if a game with that name already exists
+                # Check if a save with that name already exists
                 new_save_name = new_save_dict['name']
 
-                save_name = get_new_save_name(new_save_name, save_paths)
+                save_name = get_new_save_name(str_saves_path, new_save_name)
                 if "_Placeholder" in save_name['name']:
-                    with ui.dialog() as name_existed, ui.card():
-                        ui.label("Notice!").classes('h3')
-                        ui.label("A game by the same name already exists.")
-                        ui.label(f"Your game will be saved as: {save_name['name']}")
-                        ui.button('Close', on_click=name_existed.close)
+                    ui.notify(f"A save by that same name already exists. Your save will be saved as: {save_name['name']}",
+                              position='top',
+                              type='warning',
+                              multi_line=True)
             
                 # Get the starting information from the game
                 new_save_dict['base_game'] = selected_game['name']
@@ -55,62 +58,51 @@ def create_save():
                 new_save_dict['current_turn'] = selected_game['start_turn']
 
                 try:
-                    create_save_result = new_save_gui(datapack_paths, save_paths, new_save_dict, save_name['file'])
+                    create_save_result = new_save_gui(datapack_paths, saves_path, new_save_dict, save_name['file'])
                     if create_save_result['result']:
-                        with ui.dialog() as game_created, ui.card():
-                            ui.label("Success!").classes('h3')
-                            ui.label("Game file created successfully.")
-                            ui.label("You will now be taken to the screen for your game's details.")
-                            ui.button('Close', on_click=game_created.close)
+                        ui.notify("Save created! You can now use to the dashboard.",
+                                  position='top',
+                                  type='positive')
                         # Navigate to the game view
                         # Make sure to get the dictionary back from create_game_result as it handles multiple fields
                         app.storage.user['selected_save'] = create_save_result['dict']
                         
                     else:
-                        ui.notify("Game file could not be created. Please check file permissions.",
+                        ui.notify("Save file could not be created. Please check file permissions.",
                                   type='negative',
                                   position="top",)
-                        raise Exception("Game file could not be created. Please check file permissions.")
+                        raise Exception("Save file could not be created. Please check file permissions.")
                 except Exception as e:
                         print(traceback.format_exc())
-                        with ui.dialog() as save_error, ui.card():
-                            ui.label("Error!").classes('h3')
-                            ui.label("Failed to save the game file.")
-                            ui.label(f"Details: {str(e)}")
-                            ui.label("Please ensure the application has write permissions to the target directory.")
-                            ui.button('Close', on_click=save_error.close)
+                        ui.notify("Error: Failed to save save file. Please ensure file paths in config.txt are correct and STAT has write permission to the folders.",
+                                  position='top',
+                                  type='negative',
+                                  multi_line=True)
             else:
                 # Template mismatch
-                with ui.dialog() as template_error, ui.card():
-                    ui.label("Error!").classes('h3')
-                    ui.label("The new game dictionary does not match the expected game template.")
-                    ui.label("Unable to save the game.")
-                    ui.button('Close', on_click=template_error.close)
+                ui.notify("Error: The new save dictionary does not match the expected save template! Please check that template files are correct.",
+                          position="top",
+                          type='negative',
+                          multi_line=True)
 
         except FileNotFoundError as e:
             print(traceback.format_exc())
-            with ui.dialog() as file_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("File not found.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the specified file paths are correct.")
-                ui.button('Close', on_click=file_error.close)
+            ui.notify("Error: Could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
         except PermissionError as e:
             print(traceback.format_exc())
-            with ui.dialog() as permission_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("Permission denied.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the application has the necessary permissions.")
-                ui.button('Close', on_click=permission_error.close)
+            ui.notify("Error: Could not save. STAT does not have permission to write to the folder in those locations. Please check the file paths in config.txt are correct.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
         except Exception as e:
             print(traceback.format_exc())
-            with ui.dialog() as general_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("An unexpected error occurred.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please check the application logs for more information.")
-                ui.button('Close', on_click=general_error.close)
+            ui.notify("Error: Could not save. An unexpected error has occured. Please check application logs for more information.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
     async def handle_create_save():
         await create_save_json()

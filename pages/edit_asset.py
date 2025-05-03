@@ -2,6 +2,8 @@ import elements.theme as theme
 from nicegui import app, ui
 from handlers.assethandler import *
 from classes.Enable import *
+from helpers.utilities import *
+from helpers.crud import *
 
 enable = Enable()
 
@@ -9,9 +11,23 @@ enable = Enable()
 async def content() -> None:
     with theme.frame(f'Asset Details'):
         selected_game = app.storage.user.get("selected_game", {})
-        selected_save = app.storage.user.get("selected_save", {})
         selected_asset = app.storage.user.get("selected_asset", {})
-
+        
+        # PATHS PATHS PATHS
+        # Store as nested dictionary
+        config = get_config_as_dict('config.txt')
+        # Get the paths
+        paths = config.get("Paths",{})
+        root_path = paths.get("osrootpath", "Not Set")
+        games_path = paths.get("gamespath", "Not Set")
+        assets_path = paths.get("assetspath", "Not Set")
+        default_assets_path = paths.get("defaultassetspath", "Not Set")
+        custom_assets_path = paths.get("customassetspath", "Not Set")
+        str_games_path = root_path + games_path
+        str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
+        str_default_assets_path = str_games_path + '\\' +  selected_game['name'] + default_assets_path
+        str_custom_assets_path = str_games_path + '\\' +  selected_game['name'] + custom_assets_path
+        
         assets = {}
         assets_as_dict = {}
         asset_names = []
@@ -21,6 +37,8 @@ async def content() -> None:
         name_result = {}
         updated_json = {}
         file_path = ''
+        asset_exists = False
+        is_default = False
 
         asset_schema = {
             "name":{
@@ -85,18 +103,46 @@ async def content() -> None:
                 ui.button('Find Asset File')
         else:
             try:
+                # find the filepath for the asset
                 selected_name = selected_asset['name'].lower()
                 name_result = format_str_for_filename_super(selected_name)
-                asset_default_names = multi_json_names_getter(selected_game['asset_default_path'], 'assets')
-                asset_custom_names = multi_json_names_getter(selected_save['asset_customs_path'], 'assets')
+                asset_default_names_result = multi_file_names_getter(str_default_assets_path, 'assets')
+                asset_custom_names_result = multi_file_names_getter(str_custom_assets_path, 'assets')
 
-                if selected_name in asset_default_names:
-                    file_path = selected_game['asset_default_path']
-                elif selected_name in asset_custom_names:
-                    file_path = selected_save['asset_customs_path']
-
+                if asset_default_names_result['result']:
+                    if selected_name in asset_default_names_result['list']:
+                        is_default = True
+                        asset_exists = True
+                else:
+                    ui.notify(f"Error! Problem getting the names of the default assets for the game! Please verify files are in folder:  {str_default_assets_path}  then try again.",
+                              position='top',
+                              type='negative',
+                              multi_line=True )
+                    
+                if asset_custom_names_result['result']:
+                        if selected_name in asset_default_names_result['list']:
+                            is_default = False
+                            asset_exists = True
+                else:
+                    ui.notify(f"Error! Problem getting the names of the custom assets for the game! Please verify files are in folder: {str_custom_assets_path} then try again.",
+                              position='top',
+                              type='negative',
+                              multi_line=True)
+                
+                if asset_exists:
+                    if is_default:
+                        # build path for default path here
+                        str_default_asset_path = str_default_assets_path + '\\' + selected_name + '.json'
+                    else:
+                        # build path for custom path here
+                        str_custom_asset_path = str_custom_assets_path + '\\' + selected_name + '.json'
+                else:
+                    ui.notify(f"Warning! Could not verify existance of asset. Please check the asset exists in either the default folder at: {str_default_assets_path} or in the customs folder at: {str_custom_assets_path} then try again.",
+                              position='top',
+                              type='negative',
+                              multi_line=True)
             except:
-                ui.notify("Error: Issue with formatting the name result!",
+                ui.notify("Error: Issue with formatting the name result! Please use standard utf8 characters and try again.",
                             position='top',
                             type='warning')
                 

@@ -7,16 +7,16 @@ def save_handler():
     print("TODO: Handle the saves of various games.")
 
 # return a dictionary of all the saves associated with a game
-def get_saves(saves_path: str) -> dict:
+def get_saves(saves_directory_path: str) -> dict:
     save_names = []
-    save_names = get_save_names(saves_path)
+    save_names = get_save_names(saves_directory_path)
     full_save_path = ''
     
     save_files = {}
     for save in save_names:
         save_name = save.lower()
-        full_save_path = saves_path + '\\' + save_name + '\\' + save_name + ".json"
-        save_files[save_name] = load_save(save, full_save_path,)
+        full_save_path = saves_directory_path + '\\' + save_name + '\\' + save_name + ".json"
+        save_files[save_name] = single_json_getter_fullpath(full_save_path, 'save')
     
     return save_files
 
@@ -78,10 +78,13 @@ def new_save_gui(datapack_path: str, save_path: str,
         write_result['string'] = "Warning, could not write new save to JSON file."
         return write_result
 
-def get_save_names(filePath: str) -> list:
+def get_save_names(directory_path: str) -> list:
     save_names = []
-    save_names = multi_json_names_getter(filePath, "saves")
-
+    save_names_result = multi_file_names_getter(directory_path, "saves")
+    if save_names_result['result']:
+        save_names = save_names_result['list']
+    else:
+        print("Error! Problem with fetching save names.")
     return save_names
 
 def convert_save_name(saveName: str) -> str:
@@ -95,6 +98,7 @@ def convert_save_name(saveName: str) -> str:
             print(tb)
     return formatted_name
 
+# return a result dictionary from getting a single json file
 def load_save(full_save_path: str) -> dict:
     load_save_result = {}
     load_save_result = single_json_getter_fullpath(full_save_path, 'save')
@@ -116,7 +120,7 @@ def check_template_bool(save: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
 
-def get_new_save_name(name: str, file_path: str) -> dict:
+def get_new_save_name(directory_path: str, name: str, ) -> dict:
     file_name = ""
     saves = []
     save_name = {"name": "", "file":""}
@@ -126,7 +130,12 @@ def get_new_save_name(name: str, file_path: str) -> dict:
         file_name = format_str_for_filename(name)
 
         # check that a game by that name doesn't already exists
-        saves = multi_json_names_getter(file_path, "saves")
+        saves_result = multi_file_names_getter(directory_path, "saves")
+        
+        if saves_result['result']:
+            saves = saves_result['list']
+        else:
+            print("Error! Could not get the file saves name.")
         
         if name in saves:
     # if file_name already exists, append placeholder and alert user

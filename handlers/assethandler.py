@@ -280,7 +280,7 @@ def dict_to_objects(targetDict: dict) -> dict:
     # Sort the assets by category
 
 # gets an asset_name, converts it to file format, checks if already exists.
-def get_new_asset_name(name: str, file_path: str) -> dict:
+def get_new_asset_name(name: str, directory_path: str) -> dict:
     file_name = ""
     assets = []
     asset_name = {"name": "", "file":""}
@@ -291,7 +291,12 @@ def get_new_asset_name(name: str, file_path: str) -> dict:
         if format_result['result']:
             # check that a game by that name doesn't already exists
             # Send the Directory Path
-            assets = multi_json_names_getter(file_path, "assets")
+            assets_result = multi_file_names_getter(directory_path, "assets")
+            
+            if assets_result['results']:
+                assets = assets_result['list']
+            else:
+                print("Warning! Could not retrieve the names of assets.")
             
             if format_result['string'] in assets:
         # if file_name already exists, append placeholder and alert user

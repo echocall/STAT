@@ -161,42 +161,6 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
 
     return target_json_objects
 
-
-# Multi-file names getter: all the names with .json of the files at known filepath
-# TODO: better error handling
-def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
-    error_message = ""
-    unsplit_objects = []
-    object_names = []
-    str_directory_path = passedDirectoryPath
-    fetch_success = False
-
-    # casting to Path 
-    directory_path = Path(str_directory_path)
-
-    if directory_path.exists():
-        # check each directory in the directory for **/*.json file
-        jsonslist = sorted(Path(directory_path).glob('**/*.json'))
-        
-        # for each json file in the list, get the name.
-        for x in (jsonslist):
-            y = PurePath(x)
-            unsplit_objects.append(y.name)
-        fetch_success = True
-        # Split the names
-        for object in unsplit_objects:
-            name = object.split(".")
-            object_names.append(name[0])
-    else:
-         # TODO: change to pass error_message back
-        print("Incorrect Path: " + objectType + " directory for names not found!")
-
-    if(fetch_success == True):
-        return object_names
-    else:
-        print(error_message)
-
-
 # Get the names of the targetted object types
 # objectType = 'games' or 'assets'
 # targetpathkey = 'osrootpath' or 'gamespath' or 'assetspath'
