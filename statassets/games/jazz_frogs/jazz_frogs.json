@@ -1,0 +1,28 @@
+{
+    "name": "Jazz Frogs",
+    "description": "Hello my baby hello my darling",
+    "has_counters": true,
+    "counters": {
+        "Hats": 10.0
+    },
+    "has_actors": false,
+    "actor_default_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacks\\jazz_frogs\\default\\actors\\",
+    "default_actors": [
+        "Player"
+    ],
+    "has_assets": false,
+    "asset_default_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacks\\jazz_frogs\\default\\assets\\",
+    "default_assets": [],
+    "has_events": false,
+    "event_default_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacks\\jazz_frogs\\default\\events\\",
+    "default_events": [],
+    "has_effects": false,
+    "effect_default_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\datapacks\\jazz_frogs\\default\\effects\\",
+    "default_effects": [],
+    "icon": "",
+    "save_files_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\saves\\jazz_frogs\\",
+    "has_turns": false,
+    "turn_type": null,
+    "start_turn": 0,
+    "image_file_path": "C:\\Users\\strip\\Documents\\github\\STAT\\statassets\\games\\jazz_frogs\\images\\"
+}
