@@ -16,7 +16,7 @@ def get_saves(saves_path: str) -> dict:
     for save in save_names:
         save_name = save.lower()
         full_save_path = saves_path + '\\' + save_name + '\\' + save_name + ".json"
-        save_files[save_name] = load_save_from_storage(save, full_save_path,)
+        save_files[save_name] = load_save(save, full_save_path,)
     
     return save_files
 
@@ -95,7 +95,7 @@ def convert_save_name(saveName: str) -> str:
             print(tb)
     return formatted_name
 
-def load_save_from_storage(full_save_path: str) -> dict:
+def load_save(full_save_path: str) -> dict:
     load_save_result = {}
     load_save_result = single_json_getter_fullpath(full_save_path, 'save')
     if load_save_result['result']:
