@@ -23,14 +23,14 @@ async def select_games():
             app.storage.user["existing_games"] = existing_games
 
         ui.label("Select a game to use it as the basis for creating an asset, save, or effect.").classes('text-xl')
-        ui.label("Please note that selecting a game will your currently selected save and you will lose your changes.")
-        ui.label("Make sure you save your data before doing this!")
+        ui.label("Please note that selecting a game will unload your currently selected save and you will lose your changes.")
+        ui.label("Make sure to save your data before doing this!")
 
         # Buttons!!!
         with ui.row():
-            btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game['name']))
+            btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game))
             btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
-            btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves({game['name']}))
+            btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves(selected_game))
             btn_saves.bind_enabled_from(bool(app.storage.user["existing_games"]))
         # Displaying the games.
         game_card_container = ui.row().classes("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4")
@@ -39,19 +39,21 @@ async def select_games():
                 await render_game_cards(existing_games, game)
 
 # Select a game to load into app.storage.user
-def view_game_saves(selected_game_name: str):
-    for name in selected_game_name:
-        # getting the name to be correct.
-        file_name = format_str_for_filename_super(name)['string']
+def view_game_saves(selected_game):
+    if not selected_game or 'name' not in selected_game:
+        ui.notify("Please select a game before trying to view it's saves.",
+                  position='top',
+                  type='warning')
+    else:
+        ui.navigate.to(f"/selectsaves/")
 
-        ui.navigate.to(f"/selectsaves/{file_name}")
-
-def game_view_details(selected_game_name: str):
-    for name in selected_game_name:
-        # getting the name to be correct.
-        file_name = format_str_for_filename_super(name)['string']
-
-        ui.navigate.to(f"/viewgame/{name}")
+def game_view_details(selected_game):
+    if not selected_game or 'name' not in selected_game:
+        ui.notify("Please select a game before trying to view it's details.",
+                  position='top',
+                  type='warning')
+    else:
+        ui.navigate.to(f"/viewgame/")
 
 def select_target_game(existing_games: dict, selected_game_name: str):
     for name in selected_game_name:
