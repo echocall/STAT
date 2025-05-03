@@ -96,11 +96,12 @@ def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType
         print(error_message)
 
 # single JSON getter with known, full file path
-def single_json_getter_fullpath(passed_file_path: str) -> dict:
+def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
 # This handles loading a JSON File
     error_message = ""
     target_object = ""
     fetch_success = False
+    get_json_result = {'result': False, 'message': '', 'json': target_object}
 
     target_file_path = Path(passed_file_path)
 
@@ -110,12 +111,19 @@ def single_json_getter_fullpath(passed_file_path: str) -> dict:
         f.close()
         fetch_success = True
     else:
-        error_message = "Error: " + passed_file_path + " unable to be returned."
+        error_message = "Error: The filepath: " + passed_file_path + " for "+ objectType +" does not exist. Please check against values in config.txt"
 
     if fetch_success == True:
-        return target_object
+        get_json_result['result']=fetch_success
+        get_json_result['message']= "Success!"
+        get_json_result['json'] = target_object
     else:
-        print(error_message)
+        get_json_result['result']=fetch_success
+        get_json_result['message']= error_message
+        get_json_result['json'] = target_object
+
+    return get_json_result
+    
 
 # Multi-file getter: all .jsons at known filepath.
 def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
@@ -143,6 +151,7 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
         print(error_message)
 
 # Multi-file names getter: all the names with .json of the files at known filepath
+# TODO: better error handling
 def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
     error_message = ""
     unsplit_objects = []
@@ -175,27 +184,118 @@ def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
     else:
         print(error_message)
 
+# gets the config files as a nested dictionary
+def get_config_as_dict(configfilename: str) -> dict:
+    # getting config information
+    config_data = load_config('config.txt')
+    structured_data = {}
+    # Create organized nested structure for config.
+    for key in config_data:
+        structured_data[key] = config_data[key]
+
+    # Store as nested dictionary
+    config = structured_data
+    return config
+
+# Get the names of the targetted object types
+# objectType = 'games' or 'assets'
+# targetpathkey = 'osrootpath' or 'gamespath' or 'assetspath'
+def get_file_names(objectType: str, rootpathkey: str, targetpathkey: str, gamename: str ) -> dict:
+    configfilename = 'config.txt'
+    # Store as nested dictionary
+    config = get_config_as_dict(configfilename)
+    # Get the paths
+    paths = config.get("Paths",{})
+    rootpath = paths.get(rootpathkey, "Not Set")
+    targetted_path = paths.get(targetpathkey, "Not Set")
+
+    if gamename:
+        gamespath = paths.get(gamespath, "Not Set")
+        str_directory_path = rootpathkey + gamespath + gamename + targetpathkey
+    else:
+        str_directory_path = rootpath + targetted_path
+        
+    unsplit_objects = []
+    object_names = []
+    get_name_result = {'result': False, 'message': '', 'list': []}
+
+    # If there is not a path to the Games folder, alert user.
+    if targetted_path == 'Not Set':
+        get_name_result['message'] = f"Failed to find the targetted path of {objectType} for {targetpathkey}. \n Check {targetpathkey} is not blank in config file."
+        return get_name_result
+    
+    # casting to Path 
+    directory_path = Path(str_directory_path)
+
+    if directory_path.exists():
+        try:
+            # check each directory in the directory for **/*.json file
+            jsonslist = sorted(directory_path.glob('*/*.json'))
+            
+            # for each json file in the list, get the name.
+            for x in (jsonslist):
+                y = PurePath(x)
+                unsplit_objects.append(y.name)
+            fetch_success = True
+            # Split the names
+            for object in unsplit_objects:
+                name = object.split(".")
+                object_names.append(name[0])
+            
+            get_name_result['result'] = True
+            get_name_result["message"] = 'Success!'
+            get_name_result['list'] = object_names
+        except FileNotFoundError as e:
+            get_name_result['message'] = f"FileNotFoundError while getting {objectType} names: {e}"
+        except PermissionError as e:
+            get_name_result['message'] = f"PermissionError while getting {objectType} names: {e}"
+        except Exception as e:
+            get_name_result['message'] = f"An unexpected error occurred while getting {objectType} names. See terminal for more."
+            print(f"{e}\n{traceback.format_exc()}")
+        finally:
+            return get_name_result
+            
+    else:
+        get_name_result["message"] = "Incorrect Path: " + objectType + " directory for names not found!"
+        return get_name_result
+
 # get json template as dict
 def get_template_json(template_type: str, directory_path: str) -> dict:
-    template_file = ""
+    configfilename = 'config.txt'
+    # Store as nested dictionary
+    config = get_config_as_dict(configfilename)
+    # Get the paths
+    paths = config.get("Paths",{})
+    rootpath = paths.get('osrootpath', "Not Set")
+    targetted_path = paths.get('templatespath', "Not Set")
+    str_directory_path = rootpath + targetted_path
+    str_full_path = ''
     template = {}
     error_message = ""
     
-    template_file = 'template_' + template_type
     if template_type == 'game':
-       template = single_json_getter(template_file, directory_path, "template")
+       str_full_path = str_directory_path + 'template_game.json'
     elif template_type =='save':
-       template = single_json_getter(template_file, directory_path, "template")
+       str_full_path = str_directory_path + 'template_save.json'
     elif template_type == 'asset':
-       template = single_json_getter(template_file, directory_path, "template")
+       str_full_path = str_directory_path + 'template_asset.json'
     elif template_type == 'effect':
-       template = single_json_getter(template_file, directory_path, "template")
+       str_full_path = str_directory_path + 'template_effect.json'
     elif template_type == 'event':
-       template = single_json_getter(template_file, directory_path, "template")
+       str_full_path = str_directory_path + 'template_event.json'
     else:
         error_message = "Template type not recognized."
         return error_message
-    return template
+    
+    full_path = Path(str_full_path)
+    try:
+        template = single_json_getter_fullpath(full_path)
+        return template
+    except Exception as e:
+        # TODO: Handle this error better as a progroam
+        print(f"An unexpected error occurred while getting game names. See terminal for more.")
+        print(f"{e}\n{traceback.format_exc()}")
+        return template
 
 # UPDATE
 # TODO: test

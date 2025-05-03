@@ -2,7 +2,6 @@ import elements.theme as theme
 from classes.Enable import Enable
 from elements.target_counter_dialog import target_counter_dialog
 from elements.new_string_dialog import new_string_dialog
-from helpers.crud import single_json_getter_fullpath
 from helpers.utilities import format_str_for_filename_super
 from handlers.assethandler import *
 from elements.explanation import explanation
@@ -50,22 +49,6 @@ async def new_asset():
             new_asset_dict['sell_prices'] = {}
         new_asset_dict['sell_prices'][result['name']] = int(result['value'])
         render_counter_bar.refresh()
-
-    async def choose_game():
-        game_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-        for file in game_files:
-            game = single_json_getter_fullpath(file)
-            # Get the game from the path
-        selected_game = game
-        app.storage.user['selected_game'] = game
-
-    async def choose_save():
-        save_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-        for file in save_files:
-            save = single_json_getter_fullpath(file)
-            # Get the game from the path
-        selected_save = save
-        app.storage.user['selected_save'] = save
 
     # Calls the methods to write the asset to .json
     async def create_asset_json(is_default: bool):

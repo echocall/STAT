@@ -8,7 +8,7 @@ import os, shutil
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
      
-def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
+def new_game_gui(game_path: str,datapack_path: str, save_path: str, configfilename: str, root_path: str, new_game_dict: dict, file_name: str) -> bool:
     write_result = {'result':False,'string':'', 'dict':{}}
     error_message = ""
     save_location = ""
@@ -45,14 +45,23 @@ def get_game(game_name: str, file_path: str, type: str) -> dict:
     game = single_json_getter(game_name, file_path, type)
     return game
 
-def get_games(file_path: str) -> dict:
-    game_names = get_games_names(file_path)
+# TODO: check get_game part of this for using new filepaths
+def get_games(file_path: str, root_path: str) -> dict:
+    game_names_result = get_games_names(root_path)
+    game_names = []
+    get_games_result = {'result': False, 'message': 'Something went wrong...', 'games': {}}
     
-    all_games = {}
-    for name in game_names:
-        all_games[name] = get_game(name, file_path, "game")
+    if game_names_result:
+        game_names = get_games_names['list']
+        all_games = {}
+        for name in game_names:
+            all_games[name] = get_game(name, file_path, "game")
+        get_games_result['result'] = True
+        get_games_result['games'] = all_games
+    else:
+        get_games_result['message'] = "Unable to get the names of the games. Please cheek the gamepath and rootpath in config.txt"
     
-    return all_games
+    return get_games_result
 
 def get_game_as_obj(game_name: str, file_path: str, type: str) -> object:
     game = single_json_getter(game_name, file_path, type)
@@ -60,11 +69,19 @@ def get_game_as_obj(game_name: str, file_path: str, type: str) -> object:
     game_object = dict_to_game_object(game)
     return game_object
 
-def get_games_names(filePath: str) -> list:
+# TODO: Handle errors better as program
+def get_games_names(rootpathkey: str) -> dict:
     game_names = []
-    game_names = multi_json_names_getter(filePath, "games")
+    game_name_result = {}
 
-    return game_names
+    try:
+        game_name_result = get_file_names("games", rootpathkey, "gamespath" )
+    except Exception as e:
+            # TODO: Handle this error better as a progroam
+            print(f"An unexpected error occurred while getting game names. See terminal for more.")
+            print(f"{e}\n{traceback.format_exc()}")
+    finally:
+        return game_name_result
 
 # TODO: finish
 def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> bool:

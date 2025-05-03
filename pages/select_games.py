@@ -12,13 +12,14 @@ async def select_games():
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
         game_paths = paths.get("gamespath", "Not Set")
+        root_path = paths.get("osrootpath", "Not Set")
 
         selected_game = app.storage.user.get("selected_game", {})
         existing_games = app.storage.user.get("existing_games", {})
 
         if not existing_games:
             # getting the existing games from the file path.
-            existing_games = get_games(game_paths)
+            existing_games = get_games(game_paths, root_path)
             # setting the game objects into the user storage.
             app.storage.user["existing_games"] = existing_games
 

@@ -1,5 +1,5 @@
 import elements.theme as theme
-from helpers.utilities import *
+from helpers.utilities import load_config
 
 from nicegui import app, ui
 
