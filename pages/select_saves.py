@@ -5,33 +5,44 @@ from nicegui import app, ui
 from handlers.savehandler import *
 
 # call the function to pull in that info of the saves.
-@ui.page('/selectsaves/{game_name}')
+@ui.page('/selectsaves/')
 async def view_saves():
     with theme.frame('View Saves'):
         # File path for save data
         selected_game = app.storage.user.get("selected_game", {})
         saves_paths = selected_game.get("save_files_path", "Not Set")
-        
         existing_saves = {}
-        # getting the existing saves for the loaded game
-        try:
-            existing_saves = get_saves(saves_paths)
-        except Exception as e:
-            ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
-            return
-        
-        with ui.link(target='/createsave'):
-            ui.button("Create New Save")
 
-        ui.label("Select a save to load:").classes('h-4')
-    
-        save_card_container = ui.row().classes("full flex items-center")
-        with save_card_container:
-            if existing_saves:
-                for save in existing_saves.values():
-                    await render_save_cards(existing_saves, save)
-            else:
-                ui.label("No saves to display!")
+        # No game selected
+        if not selected_game or 'name' not in selected_game:
+            with ui.row():
+                ui.icon('warning').classes('text-3xl')
+                ui.label('Warning: No selected game detected.').classes('text-2xl')
+            ui.label('Cannot view the saves for a game with no game selected.')
+            ui.label('Please select a game from \'View Games\'.')
+            ui.label('Then return here to view the save files.')
+            with ui.link(target = '/selectgames'):
+                ui.button('Find Game File')
+        else:
+            # getting the existing saves for the loaded game
+            try:
+                existing_saves = get_saves(saves_paths)
+            except Exception as e:
+                ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
+                return
+            
+            with ui.link(target='/createsave'):
+                ui.button("Create New Save")
+
+            ui.label("Select a save to load:").classes('h-4')
+        
+            save_card_container = ui.row().classes("full flex items-center")
+            with save_card_container:
+                if existing_saves:
+                    for save in existing_saves.values():
+                        await render_save_cards(existing_saves, save)
+                else:
+                    ui.label("No saves to display!")
 
 def load_save(existing_saves, selected_save_name):
     for name in selected_save_name:
