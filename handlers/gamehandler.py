@@ -46,16 +46,17 @@ def get_game(file_path: str) -> dict:
     return get_game_result
 
 # TODO: check get_game part of this for using new filepaths
-def get_games(file_path: str, root_path: str) -> dict:
-    game_names_result = get_games_names(root_path)
+def get_games(directory_path: str) -> dict:
+    game_names_result = get_games_names(directory_path)
     game_names = []
     get_games_result = {'result': False, 'message': 'Something went wrong...', 'games': {}}
     
     if game_names_result:
-        game_names = get_games_names['list']
+        game_names = game_names_result['list']
         all_games = {}
         for name in game_names:
-            all_games[name] = get_game(name, file_path, "game")
+            str_game_path = directory_path  + '\\' + name + '\\' + name +  '.json'
+            all_games[name] = get_game(str_game_path)['json']
         get_games_result['result'] = True
         get_games_result['games'] = all_games
     else:
@@ -76,12 +77,10 @@ def get_game_as_obj(full_game_path: str) -> object:
         return {}
 
 # TODO: Handle errors better as program
-def get_games_names(rootpathkey: str) -> dict:
-    game_names = []
+def get_games_names(directory_path: str) -> dict:
     game_name_result = {}
-
     try:
-        game_name_result = get_file_names("games", rootpathkey, "gamespath" )
+        game_name_result = multi_file_names_getter(directory_path, "games" )
     except Exception as e:
             # TODO: Handle this error better as a progroam
             print(f"An unexpected error occurred while getting game names. See terminal for more.")

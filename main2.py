@@ -7,7 +7,7 @@ from helpers.crud import *
 config = get_config_as_dict('config.txt')
 # Get the paths
 paths = config.get("Paths",{})
-rootpath = paths.get("osrootpath", "Not Set")
+root_path = paths.get("osrootpath", "Not Set")
 games_path = paths.get("gamespath", "Not Set")
 saves_path = paths.get("savespath", "Not Set")
 templates_path = paths.get("templatespath", "Not Set")
@@ -29,8 +29,8 @@ game_file_name = 'test'
 default_asset_file_name = 'inn'
 custom_asset_file_name = 'soldier'
 
-str_templates_path = rootpath + templates_path
-str_games_path = rootpath + games_path
+str_templates_path = root_path + templates_path
+str_games_path = root_path + games_path
 
 
 str_images_path = str_games_path + '\\' + game_file_name + images_path
@@ -61,7 +61,7 @@ str_custom_events_path = str_games_path + '\\' +  game_file_name + custom_events
 
 # Individual files
 
-str_game_path = str_games_path + '\\' + game_file_name + '\\' +  'test.json'
+str_game_path = str_games_path + '\\' + game_file_name + '\\' + game_file_name +  '.json'
 str_save_path = str_saves_path + '\\' + "save_a" + '\\' + "save_a.json"
 str_default_asset_path = str_default_assets_path + '\\' + 'forge.json'
 str_custom_asset_path = str_custom_assets_path + '\\' + 'soldier.json'

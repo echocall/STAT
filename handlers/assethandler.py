@@ -3,8 +3,8 @@ from helpers.utilities import *
 from classes.MyAsset import *
 
 # Retrieves all assets associated with a game/save
-def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
-                   customFilePath: str) -> dict:
+def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom: bool,
+                   full_custom_assets_path: str) -> dict:
     default_result = {}
     missing_default= bool
     missing_assets = {}
@@ -15,7 +15,7 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
     handler_result = {"missing_default": bool, "missing_assets": [], "merged_assets": []}
 
     # Check that we have all the default assets.
-    default_result = default_assets_fetch(defaultFilePath, defaultAssets)
+    default_result = default_assets_fetch(full_default_assets_path, defaultAssets)
 
     # process that result
     if default_result["match"] == True:
@@ -27,7 +27,7 @@ def asset_handler(defaultFilePath: str, defaultAssets: list, hasCustom: bool,
 
     # customs exist! Handle them. >:V
     if (hasCustom == True):
-        custom_assets = custom_asset_fetch(customFilePath)
+        custom_assets = custom_asset_fetch(full_custom_assets_path)
         # Customs exist, we need to check for overrides and merge the results.
         conflict_check = list_compare(default_result["retrieved_names"], custom_assets["custom_names"])
         merged_assets = merge_assets(default_result["retrieved_list"], custom_assets["custom_list"], conflict_check)
@@ -49,7 +49,7 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
     result = {}
 
     # call multi_json_getter with the filePath to reurn the default assets in the folder.
-    retrieved_assets = multi_json_getter(defaultFilePath, "assets")
+    retrieved_assets = multi_file_getter(defaultFilePath, "assets")
     # get the names of the retrieved assets
     retrieved_names = filter_list_value_with_set(retrieved_assets, "name")
     # compare the names of the returned files with the list from the game.json
@@ -66,9 +66,10 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
         return result
 
 # Retrieve any custom assets
-def custom_asset_fetch(customFilePath: str) -> dict:
+def custom_asset_fetch(full_custom_assets_path: str) -> dict:
     custom_assets = {"custom_list": {}, "custom_names": []}
-    custom_assets["custom_list"] = multi_json_getter(customFilePath, "assets")
+    custom_assets["customs_list"] = multi_file_getter(full_custom_assets_path, "assets")
+    # custom_assets["custom_list"] = multi_json_getter(customFilePath, "assets")
     if len(custom_assets["custom_list"]) > 0:
         custom_assets["custom_names"] = filter_list_value_with_set(custom_assets["custom_list"], 'name')
     return custom_assets

@@ -53,48 +53,6 @@ def create_new_directory(passed_directory_path: str) -> dict:
     return result
 
 # READ
-# Single JSON getter with known file name & file path.
-def single_json_getter(passedFileName: str, passedDirectoryPath: str, objectType: str) -> dict:
-# This handles loading a JSON File
-    error_message = ""
-    target_object = ""
-    fetch_success = False
-
-
-    if objectType == 'template':
-        str_target_directory_path = passedDirectoryPath
-        str_target_file_name = passedFileName + '.json'
-        str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    elif objectType == 'asset':
-        str_target_directory_path = passedDirectoryPath
-        str_target_file_name = passedFileName + '.json'
-        str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    else:
-        str_target_directory_path = passedDirectoryPath + '\\' + passedFileName
-        str_target_file_name = passedFileName + '.json'
-        str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-
-
-    # casting to Path 
-    target_directory_path = Path(str_target_directory_path)
-    target_file_path = Path(str_target_file_path)
-
-    if target_directory_path.exists():
-        if(target_file_path.exists()):
-            with open(str_target_file_path) as f:
-                target_object = json.load(f)
-            f.close()
-            fetch_success = True
-        else:
-            error_message = "Error: " + str_target_file_name + " not found within Directory."
-    else:
-        error_message = "Error getting JSON File: \n Incorrect Path. " + objectType + " directory not found!"
-
-    if fetch_success == True:
-        return target_object
-    else:
-        print(error_message)
-
 # single JSON getter with known, full file path
 def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
 # This handles loading a JSON File
@@ -129,8 +87,8 @@ def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
             get_json_result['json'] = target_object
 
         return get_json_result
-    
 
+# DEFUNCT    
 # Multi-file getter: all .jsons at known filepath.
 def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
     error_message = ""
@@ -155,6 +113,54 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
         return target_json_objects
     else:
         print(error_message)
+
+# takes in a full file path and object type as plural, returns list of jsons.
+def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
+    directory_path = Path(passedDirectoryPath)
+    # Path does not exist
+    if not directory_path.exists():
+        print(f"Incorrect Path: {objectType} directory for names not found!")
+        return []
+
+    target_json_objects = []
+
+    # if the looked for objectType is game, only go down to the GAMES folder
+    if objectType.lower() == "games":
+        # Look for *.json in each game folder directly under 'games'
+        for subdir in directory_path.iterdir():
+            if subdir.is_dir():
+                json_files = list(subdir.glob("*.json"))
+                for json_file in json_files:
+                    target_json_objects.append(json_file)
+    # If we are looking for assets, effect, or events
+    elif objectType.lower() in {"assets", "effects", "events"}:
+        # Look in 'Defaults' and 'Customs' inside passed-in directory
+        for category in ["Defaults", "Customs"]:
+            category_path = directory_path / category
+            if category_path.exists():
+                for json_file in category_path.glob("*.json"):
+                    target_json_objects.append(json_file)
+    # If we are looking for saves
+    elif objectType.lower() in {"saves"}:
+        for subdir in directory_path.iterdir():
+            if subdir.is_dir():
+                for json_file in directory_path.glob("*.json"):
+                    target_json_objects.append(json_file)
+    # Getting images.
+    elif objectType.lower() == "images":
+        allowed_extensions = {".png", ".bmp", ".gif", ".jpeg"}
+        for subdir in directory_path.iterdir():
+            if subdir.is_dir():
+                for file in subdir.iterdir():
+                    if file.suffix.lower() in allowed_extensions:
+                        target_json_objects.append(file)
+    else:
+        # Default: scan all .json files recursively
+        for json_file in directory_path.rglob("*.json"):
+            target_json_objects.append(json_file)
+
+    return target_json_objects
+
 
 # Multi-file names getter: all the names with .json of the files at known filepath
 # TODO: better error handling
@@ -190,18 +196,6 @@ def multi_json_names_getter(passedDirectoryPath: str, objectType: str) -> list:
     else:
         print(error_message)
 
-# gets the config files as a nested dictionary
-def get_config_as_dict(configfilename: str) -> dict:
-    # getting config information
-    config_data = load_config('config.txt')
-    structured_data = {}
-    # Create organized nested structure for config.
-    for key in config_data:
-        structured_data[key] = config_data[key]
-
-    # Store as nested dictionary
-    config = structured_data
-    return config
 
 # Get the names of the targetted object types
 # objectType = 'games' or 'assets'
@@ -276,7 +270,7 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
 
     return result
 
-# get json template as dict
+# get json template as dict, returns template dict
 def get_template_json(template_type: str, directory_path: str) -> dict:
     configfilename = 'config.txt'
     # Store as nested dictionary
@@ -318,6 +312,21 @@ def get_template_json(template_type: str, directory_path: str) -> dict:
         print(f"An unexpected error occurred while getting game names. See terminal for more.")
         print(f"{e}\n{traceback.format_exc()}")
         return template
+
+
+# gets the config files as a nested dictionary
+def get_config_as_dict(configfilename: str) -> dict:
+    # getting config information
+    config_data = load_config('config.txt')
+    structured_data = {}
+    # Create organized nested structure for config.
+    for key in config_data:
+        structured_data[key] = config_data[key]
+
+    # Store as nested dictionary
+    config = structured_data
+    return config
+
 
 # UPDATE
 # TODO: test

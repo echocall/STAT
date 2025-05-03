@@ -101,7 +101,9 @@ async def content() -> None:
                             type='warning')
                 
             if name_result['result']:
-                asset_json = single_asset_fetch(file_path,name_result['string'])
+                asset_json_result = single_asset_fetch(file_path,name_result['string'])
+                if asset_json_result['result']:
+                    asset_json['asset'] = [asset_json_result['asset']]
                 try:
                     ui.json_editor({'content': {'json': asset_json['asset']}},
                                 on_change=lambda e: ui.notify(f'Change: {e}'))
