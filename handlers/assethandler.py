@@ -74,13 +74,13 @@ def custom_asset_fetch(customFilePath: str) -> dict:
     return custom_assets
 
 # retrieve a single asset
-def single_asset_fetch(asset_file_path: str, file_name: str) -> dict:
+def single_asset_fetch(full_asset_path: str, file_name: str) -> dict:
     result = {'result': False, 'message': '', 'asset': {}}
     try:
-        fetch_result = single_json_getter(file_name, asset_file_path, 'asset')
+        fetch_result = single_json_getter_fullpath(full_asset_path, 'asset')
         result['result'] = True
         result['message'] = "Asset successfully retrieved!"
-        result['asset'] = fetch_result
+        result['asset'] = fetch_result['json']
     except:
         result['message'] = f"Failed to get {file_name} from json file."
         return result

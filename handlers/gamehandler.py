@@ -41,9 +41,9 @@ def new_game_gui(game_path: str,datapack_path: str, save_path: str, configfilena
         write_result['string'] = "Warning, could not save new game to JSON file."
         return write_result
      
-def get_game(game_name: str, file_path: str, type: str) -> dict:
-    game = single_json_getter(game_name, file_path, type)
-    return game
+def get_game(file_path: str) -> dict:
+    get_game_result = single_json_getter_fullpath(file_path, 'game')
+    return get_game_result
 
 # TODO: check get_game part of this for using new filepaths
 def get_games(file_path: str, root_path: str) -> dict:
@@ -63,11 +63,17 @@ def get_games(file_path: str, root_path: str) -> dict:
     
     return get_games_result
 
-def get_game_as_obj(game_name: str, file_path: str, type: str) -> object:
-    game = single_json_getter(game_name, file_path, type)
-    game_object = {}
-    game_object = dict_to_game_object(game)
-    return game_object
+# Not currently used.
+def get_game_as_obj(full_game_path: str) -> object:
+    get_game_result = single_json_getter_fullpath(full_game_path, 'game')
+    if get_game_result['result']:
+        game = get_game_result['json']
+        game_object = {}
+        game_object = dict_to_game_object(game)
+        return game_object
+    else:
+        print("Error! Could not get game!")
+        return {}
 
 # TODO: Handle errors better as program
 def get_games_names(rootpathkey: str) -> dict:
@@ -124,25 +130,6 @@ def check_template_bool(game: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
     
-# select game
-def select_game(file_path: str) -> object:
-    games = []
-    target_game = ''
-    target_dict = {}
-    game_object = {}
-    # load list of game names from games folder.
-    games = multi_json_names_getter(file_path, 'games')
-
-    # call List_to_Menu
-    target_game = list_to_menu('Select a game: ', games)
-
-    # load in the game_dict
-    target_dict = get_game(target_game, file_path, 'game')
-
-    # turn the game dict into a game_object
-    game_object = dict_to_game_object(target_dict)
-
-    return game_object
 
 # dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> object:

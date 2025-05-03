@@ -7,14 +7,16 @@ def save_handler():
     print("TODO: Handle the saves of various games.")
 
 # return a dictionary of all the saves associated with a game
-def get_saves(file_path: str) -> dict:
+def get_saves(saves_path: str) -> dict:
     save_names = []
-    save_names = get_save_names(file_path)
+    save_names = get_save_names(saves_path)
+    full_save_path = ''
     
     save_files = {}
     for save in save_names:
         save_name = save.lower()
-        save_files[save_name] = load_save(save, file_path, "saves")
+        full_save_path = saves_path + '\\' + save_name + '\\' + save_name + ".json"
+        save_files[save_name] = load_save_from_storage(save, full_save_path,)
     
     return save_files
 
@@ -93,9 +95,15 @@ def convert_save_name(saveName: str) -> str:
             print(tb)
     return formatted_name
 
-def load_save(save_name: str, file_path: str, type: str) -> dict:
-    save = single_json_getter(save_name, file_path, type)
-    return save
+def load_save_from_storage(full_save_path: str) -> dict:
+    load_save_result = {}
+    load_save_result = single_json_getter_fullpath(full_save_path, 'save')
+    if load_save_result['result']:
+        save = load_save_result
+        return save
+    else:
+        print("Error with returning save!")
+        return {}
 
 def check_template_bool(save: dict, template_path: str) -> bool:
     error_message = ''
