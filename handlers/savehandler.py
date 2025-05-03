@@ -6,16 +6,6 @@ import traceback
 def save_handler():
     print("TODO: Handle the saves of various games.")
 
-def get_game_saves(filePath: str) -> list:
-    unsplitSaves = []
-    splitSaveNames = []
-    unsplitSaves = multi_json_names_getter(filePath, "saves")
-    for save in unsplitSaves:
-        name = save.split(".")
-        splitSaveNames.append(name[0].capitalize())
-
-    return splitSaveNames
-
 # return a dictionary of all the saves associated with a game
 def get_saves(file_path: str) -> dict:
     save_names = []
@@ -106,23 +96,6 @@ def convert_save_name(saveName: str) -> str:
 def load_save(save_name: str, file_path: str, type: str) -> dict:
     save = single_json_getter(save_name, file_path, type)
     return save
-
-def select_save(file_path: str) -> dict:
-    saves = []
-    target_save = ''
-    target_dict = {}
-    save_object = {}
-
-    # load list of game names from games folder.
-    saves = multi_json_names_getter(file_path, 'saves')
-
-    # call List_to_Menu
-    target_save = list_to_menu('Select a save: ', saves)
-
-    # load in the game_dict
-    target_dict = single_json_getter(target_save, file_path, 'saves')
-
-    return target_dict
 
 def check_template_bool(save: dict, template_path: str) -> bool:
     error_message = ''

@@ -7,12 +7,6 @@ import os, shutil
 
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
-    load_options = ["Create new Game JSON", "Select Game JSON"]
-    # Check STAT instance for "is_game_loaded"
-    if not is_game_loaded:
-        print("Does user want to create a JSON for a new game,",
-            " or load a preexisting game JSON?", sep="\n"
-        )
      
 def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
     write_result = {'result':False,'string':'', 'dict':{}}
@@ -47,40 +41,6 @@ def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_di
         write_result['string'] = "Warning, could not save new game to JSON file."
         return write_result
      
-def new_game_console(game_path: str, saves_path: str, datapack_path: str) -> dict:
-    new_game_dict = {}
-    new_file_name = ""
-    write_successful = False
-    error_message = ""
-    
-    want_explanations = user_confirm("Do you want explanations of what each field in a game is or does?")
-    if want_explanations:
-        # call new_game_assembly_loud
-        a = 1+1
-    else:
-        # call new_game_assembly_quiet
-        b = 2+2
-
-    try:
-        new_game_dict = new_game_assembly_console(game_path, saves_path, datapack_path)
-    except Exception:
-        print(traceback.format_exc())
-    try:
-        new_file_name = format_str_for_filename(new_game_dict["name"])
-    except Exception:
-        print(traceback.format_exc())
-    # Save data in a json file.
-    try:
-        write_successful = create_new_json_file(new_file_name, game_path, new_game_dict)
-    except Exception:
-        print(traceback.format_exc())
-
-    if write_successful == True:
-        return new_game_dict
-    else:
-        error_message = "Warning, could not save new game to JSON file."
-        return error_message
-
 def get_game(game_name: str, file_path: str, type: str) -> dict:
     game = single_json_getter(game_name, file_path, type)
     return game
@@ -120,13 +80,6 @@ def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> 
     result = overwrite_json_file(game, filePath, gameName)
 
     return result
-
-def get_game_saves(filePath: str, gameName: str) -> list:
-    # get game name
-    game_saves_path = filePath + gameName
-    save_names = multi_json_names_getter(game_saves_path)
-
-    return save_names
 
 def check_template(game: dict) -> object:
     error_message = ''
@@ -185,152 +138,6 @@ def dict_to_game_object(targetDict: dict) -> object:
     except Exception:
         print(traceback.format_exc())
 
-# TODO: Finish Assets, Events, Effects, and Actors
-# TODO: Make 'quiet' and 'loud' variants
-def new_game_assembly_console(game_path: str, datapack_path: str, saves_path: str) -> dict:
-    name_dict = {}
-    icon = ""
-    turns = {}
-
-    create_actors = False
-    created_actors = {}
-    create_assets = False
-    created_assets = {}
-    create_events = False
-    created_events = {}
-    create_effects = False
-    created_effects = {}
-    new_game = {}
-
-    # get the name, description, and counters of the game
-    name_dict = get_new_game_name(game_path)
-    new_game["name"] = name_dict["name"]
-    new_game["description"] = str(input("Enter a description for the new game: ")).strip()
-
-    # TODO: separate explantion of counters for loud/quiet split
-    new_game["counters"] = create_counters()
-
-    # TODO: Actors
-    print()
-    print("You can create actors later.")
-    create_actors = user_confirm("Do you want to add actors to the game now? ")
-    if create_actors == True:
-        # call actorsHandler's create Actors.
-        # created_actors = createActors()
-        new_game["has_actors"] = True
-        new_game["actor_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\actors"
-        new_game["default_actors"] = multi_json_names_getter(new_game["actor_default_path"], "actors")
-    else:
-        # not creating actors now.
-        new_game["has_actors"] = False
-        new_game["actor_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\actors"
-        new_game["default_actors"] = []
-
-    # TODO: Assets
-    print()
-    print("You can create assets later.")
-    create_assets = user_confirm("Do you want to add default assets to the game now?")
-    if create_assets == True:
-        # created_assets = createAssets()
-        new_game["has_assets"] = True
-        new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
-        asset_explanations = user_confirm("Do you want explanations of the asset fields?")
-
-        # call assetsHandler's create Assets.
-        assets_to_create = okay_user_int(0,"How many default assets do you want to create?")
-        for index in range(assets_to_create):
-            created_asset = new_asset_console(True, True, new_game["asset_default_path"], "", new_game["name"], asset_explanations,
-                                      new_game['counters'])
-            created_assets[created_asset.get_name()] = created_asset
-        
-        print(created_assets)
-        print(type(created_assets))
-        # TODO: Need to get the names of the assets.
-        new_asset_names = []
-        for key in created_assets:
-            new_asset_names.append(key)
-
-        new_game["default_assets"] = new_asset_names
-
-    else:
-        # not creating assets now.
-        new_game["has_assets"] = False
-        new_game["asset_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\assets"
-        new_game["default_assets"] = []
-    
-    # TODO: Effect
-    print()
-    print("You can create effects later. ")
-    create_effects = user_confirm("Do you want to add effects to the game now?")
-    if create_effects == True:
-        # call effectsHandler's create Effects.
-        # created_effects = createEffects()
-        new_game["has_effects"] = True
-        new_game["effect_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\effects"
-        new_game["default_effects"] = multi_json_names_getter(new_game["effect_default_path"], "effects")
-    else:
-        # not creating effects now.
-        new_game["has_effects"] = False
-        new_game["effect_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\effects"
-        new_game["default_effects"] = []
-    
-    # TODO: Events
-    print()
-    print("You can create events later. ")
-    create_events = user_confirm("Do you want to add events to the game now?")
-    if create_events == True:
-        # call eventsHandler's create Events.
-        # created_events = createEvents()
-        new_game["has_events"] = True
-        new_game["event_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\events"
-        new_game["default_events"] = multi_json_names_getter(new_game["event_default_path"], "events")
-    else:
-        # not creating events now.
-        new_game["has_events"] = False
-        new_game["event_default_path"] = datapack_path + "\\" + name_dict["file"] + "\\events"
-        new_game["default_events"] = []
-
-    # TODO: Icon
-    new_game["icon"] = ""
-    
-    # Save file Path
-    new_game["save_files_path"] = saves_path + "\\" + name_dict["file"]
-
-    print()
-    # Turns
-    turns_prompt = str("Does your game have turns or rounds or a time element? Only whole numbers accepted." + "\n")
-    new_game["has_turns"] = user_confirm(turns_prompt)
-    if new_game["has_turns"] == True:
-        turns = define_turns(name_dict["name"])
-        new_game["turn_type"] = turns["turn_type"]
-        new_game["start_turn"] = turns["start_turn"]
-    else:
-        new_game["turn_type"] = ""
-        new_game["start_turn"] = 0
-    
-    # Create the folders.
-    # TODO: create more error handling within this chain.
-    create_result = create_folders(name_dict, game_path, datapack_path, saves_path)
-    if not create_result:
-        error_message = "Creating folders failed for new game."
-
-    print()
-    try:
-        template_game = get_template_json("game",".\\statassets\\templates")
-        compare_result = dict_key_compare(template_game, new_game)
-    except:
-        error_message = "Problem with comparing game_template and the new_game dict."
-
-    if(compare_result["match"] == True):
-        return new_game
-    else:
-        error_message = "Warning: missing fields from new game dictionary."
-        print("Missing Fields: ", sep="\n")
-        for field in compare_result["missing_values"]:
-            print("Missing from new dictionary: " + field)
-        # call something to fix the game or fix those specific fields.
-        return error_message
-    
 def get_new_game_name(name: str, file_path: str) -> dict:
     file_name = ""
     games = []
@@ -355,37 +162,6 @@ def get_new_game_name(name: str, file_path: str) -> dict:
 
     return  game_name
 
-def get_new_game_name_console(file_path: str) -> dict:
-    file_name = ""
-    name = ""
-    games = []
-    game_name = {"name": "", "file":""}
-    valid = False
-    
-    while valid != True:
-        # ask the user for the name of the new game
-        name = str(input("Enter the name of the new game: ")).strip()
-        file_name = format_str_for_filename(name)
-
-        # check that a game by that name doesn't already exists
-        games = multi_json_names_getter(file_path, "games")
-        if name in games:
-        # if file_name already exists, ask for another game name and show what games exist.
-            "A game of that name already exists. You may experience difficulties creating folders for this game."
-            if user_confirm("Do you want to enter a new name now?"):
-                get_new_game_name_console(file_path)
-            else:
-                print("\n" + "Appending _placeholder to game name. If further folder creation errors persist, please create a new name. " + "\n")
-                valid = True
-                game_name["name"] = name + "_Placeholder"
-                game_name["file"] = file_name + "_placeholder"
-        else:
-            valid = True
-            game_name["name"] = name
-            game_name["file"] = file_name
-
-    return  game_name
-
 def counter_explanation():
     counter_info = """Counters are a way to keep track of numerical values.", 
             "They can be used to represent money, health, points,",
@@ -397,17 +173,6 @@ def counter_explanation():
             The value of a counter defined in a game file is the amount a 
             player starts with."""
     print(counter_info)
-
-def create_counters() -> dict:
-    # TODO add error handling
-    num_counters = -1
-    counters = {}
-    # ask for counters
-    num_counters = okay_user_int(0, "Enter the number of counters you want to create: ")
-
-    counters = get_user_input_loop(num_counters, "Enter the name then the starting value of the counter: ", "dict", "int")
-
-    return counters
 
 # TODO: more try catches
 def define_turns(game_name: str) -> dict:
