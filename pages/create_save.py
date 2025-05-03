@@ -120,50 +120,59 @@ def create_save():
         with ui.column().classes("flex content-center w-100"):
         # Name of the Save
             with ui.column().classes('justify-center items-center w-full mt-4'):
-                ui.label("All we need from you is the name of the save and a description. ").classes('h-5')
-                ui.label("We'll handle the rest!")
-                with ui.column().classes('items-start'):
-                    name_input = ui.input(label='Save Name: ', placeholder='50 character limit',
-                                    on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-                    # allows user to clear the field
-                    name_input.props('clearable')
-                    name_input.bind_value(new_save_dict, 'name')
-                    # This handles the validation of the field.
-                    name_input.validation={"Too short!": enable.is_too_short} 
-                    # Displays the characters.        
-                    name_chars_left = ui.label()
-            
-                # Description of Save    
-                with ui.row().classes('justify-center items-center w-full mt-4'):
-                    with ui.column():
-                        description = ui.input(label='Save Description', placeholder='500 character limit',
-                                        on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
-                        description.props('clearable')
-                        
-                        description.bind_value(new_save_dict, 'description')
-                        # this handles the validation of the field.
-                        description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
-                        with ui.row():
-                            desc_chars_left = ui.label()
-
-                # Handle the rest behind the scenes
-
-            # Submit button.
-            with ui.row().classes('justify-center items-center w-full mt-4'):
-                # The button submits the dialog providing the text entered
-                submit = ui.button(
-                    "Create Save",
-                    icon='create',
-                    on_click=handle_create_save,
-                )
-                # This enables or disables the button depending on if the input field has errors or not
-                submit.bind_enabled_from(
-                    name_input, "error", backward=lambda x: not x and name_input.value
-                )
-
-                # Disable the button by default until validation is done.
-                submit.disable()
+                if not selected_game or 'name' not in selected_game:
+                    with ui.row():
+                        ui.icon('warning').classes('text-3xl')
+                        ui.label('Warning: No selected game detected.').classes('text-2xl')
+                    ui.label('Cannot create a save file with no game selected.')
+                    ui.label('Please select a game from \'Select Games\' first.')
+                    with ui.link(target = '/selectgames'):
+                        ui.button('Find Game File')
+                else:
+                    ui.label("All we need from you is the name of the save and a description. ").classes('h-5')
+                    ui.label("We'll handle the rest!")
+                    with ui.column().classes('items-start'):
+                        name_input = ui.input(label='Save Name: ', placeholder='50 character limit',
+                                        on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+                        # allows user to clear the field
+                        name_input.props('clearable')
+                        name_input.bind_value(new_save_dict, 'name')
+                        # This handles the validation of the field.
+                        name_input.validation={"Too short!": enable.is_too_short} 
+                        # Displays the characters.        
+                        name_chars_left = ui.label()
                 
+                    # Description of Save    
+                    with ui.row().classes('justify-center items-center w-full mt-4'):
+                        with ui.column():
+                            description = ui.input(label='Save Description', placeholder='500 character limit',
+                                            on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' of 500 characters used.'))
+                            description.props('clearable')
+                            
+                            description.bind_value(new_save_dict, 'description')
+                            # this handles the validation of the field.
+                            description.validation={"Too long!": lambda b: enable.is_too_long_variable(b, 500)}
+                            with ui.row():
+                                desc_chars_left = ui.label()
+
+                    # Handle the rest behind the scenes
+
+                    # Submit button.
+                    with ui.row().classes('justify-center items-center w-full mt-4'):
+                        # The button submits the dialog providing the text entered
+                        submit = ui.button(
+                            "Create Save",
+                            icon='create',
+                            on_click=handle_create_save,
+                        )
+                        # This enables or disables the button depending on if the input field has errors or not
+                        submit.bind_enabled_from(
+                            name_input, "error", backward=lambda x: not x and name_input.value
+                        )
+
+                        # Disable the button by default until validation is done.
+                        submit.disable()
+                        
 
 
-        
+            

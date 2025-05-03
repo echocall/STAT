@@ -25,8 +25,27 @@ async def dashboard():
         saves_paths = selected_game.get("save_files_path", "Not Set")
         turn_type = ""
 
-        # if the dictionaries are not empty
-        if bool(selected_save) and bool(selected_game):
+        # No game or save selected
+        if not selected_game or 'name' not in selected_game:
+            with ui.row():
+                ui.icon('warning').classes('text-3xl')
+                ui.label('Warning: No selected game detected.').classes('text-2xl')
+            ui.label('Cannot view a save file for a game with no game or save selected.')
+            ui.label('Please select a game from \'View Games\'.')
+            ui.label('Then select a save from \'View Saves\'.')
+            with ui.link(target = '/selectgames'):
+                ui.button('Find Game File')
+        elif not selected_save or 'name' not in selected_save:
+            with ui.row():
+                ui.icon('warning').classes('text-3xl')
+                ui.label('Warning: No selected save detected.').classes('text-2xl')
+            ui.label('Cannot view a save file for a game with no  save selected.')
+            ui.label('Please select a game from \'View Saves\'.')
+            with ui.link(target = '/selectsaves'):
+                ui.button('Find Save File')
+            
+
+        else:
             # Everything has loaded properly, go for it!
             counters = selected_save['counters']
 
@@ -130,14 +149,7 @@ async def dashboard():
                                     for asset in sorted_assets[category]:
                                         await render_asset_cards(asset)
                         ui.separator()
-
-        else:
-            games = []
-            games = get_games_names(game_paths)
-            # Didn't load properly from app.storage.user
-            # Ask user to pick files to load.
-            ui.label("Error loading from selected game! Please pick games from below.").classes('w-40')
-            ui.select(options=games, with_input=True, on_change=lambda e: select_game(game_paths, e.value))
+        
             
 # Render the counters.
 @ui.refreshable

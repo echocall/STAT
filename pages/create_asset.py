@@ -172,7 +172,7 @@ async def new_asset():
                     ui.icon('warning').classes('text-3xl')
                     ui.label('Warning: No selected game detected.').classes('text-2xl')
                 ui.label('Cannot create asset with no game selected.')
-                ui.label('Please select a game from \'Select Games\'.')
+                ui.label('Please select a game from \'View Games\'.')
                 with ui.link(target = '/selectgames'):
                     ui.button('Find Game File')
             else:

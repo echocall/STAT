@@ -9,15 +9,14 @@ enable = Enable()
 async def edit_game():
     with theme.frame('Edit Game'):
         selected_game = app.storage.user.get("selected_game", {})
-        print(selected_game['name'])
 
-        with ui.column().classes("flex content-center w-100"):
+        with ui.column().classes("flex content-center"):
             # If no selected_game, open up prompt to select one
             if not selected_game or 'name' not in selected_game:
                 with ui.row():
                     ui.icon('warning').classes('text-3xl')
                     ui.label('Warning: No selected game detected.').classes('text-2xl')
-                ui.label('Cannot create asset with no game selected.')
+                ui.label('Cannot edit a game with no game selected.')
                 ui.label('Please select a game from \'Select Games\'.')
                 with ui.link(target = '/selectgames'):
                     ui.button('Find Game File')
@@ -84,4 +83,4 @@ async def edit_game():
                             edit_actors.bind_visibility(has_actors_switch, 'value')
 
 
-        ui.button('Print Game', on_click=lambda: ui.notify(selected_game, type='positive', position='top'))
+                ui.button('Print Game', on_click=lambda: ui.notify(selected_game, type='positive', position='top'))

@@ -7,38 +7,14 @@ def menu() -> None:
 
     # Determine the target for "View Game File"
     def get_view_game_target():
-        if selected_game:
-            return f"/viewgame/{selected_game['name']}" 
-        # ui.notify("Error: No game currently selected!",
-        #          position='top',
-        #          type='warning')
+        return f"/viewgame/"
     
     # Determine the target for "View Game File"
     def get_view_dashboard_target():
-        if selected_game:
-            if selected_save:
-                return f"/loadeddash"
-            # if no selected save
-            else:
-                with ui.dialog() as no_save:
-                    ui.label("You must have a game and a save selected in order to view the dashboard!").classes('break-all')
-                    ui.label("Redirecting to the page to select a save.").classes
-                    ui.button('Close', on_click=no_save.close())
-                return f"viewsaves/{selected_game['name']}"
-        # if no selected_game
-        else:
-            with ui.dialog() as no_game:
-                    ui.label("You've got no game! You must have a game AND a save selected to view the dashboard.").classes('break-all')
-                    ui.label("Redirecting to the page to select a game.")
-                    ui.button('Close', on_click=no_game.close())
-            return f"selectgames" 
-
+        return f"/loadeddash"
+        
     def view_saves():
-        if selected_game:
-            return f"/viewsaves/{selected_game['name']}"
-        # ui.notify("Error: No game currently selected!",
-        #          position='top',
-        #          type='warning')
+        return f"/selectsaves/"
 
     # TODO: deal with no selected_game
     def get_view_save_target():
@@ -60,13 +36,14 @@ def menu() -> None:
                     ui.button('Close', on_click=no_game.close())
             return ''
 
+    # MAIN MENU
     with ui.button(icon='menu').classes('scale-75').props('color="secondary"'):
         with ui.menu() as general_menu:
             with ui.link(target='/'):
                 ui.menu_item('Home')
             ui.separator()
 
-            # Games
+            # GAMES
             with ui.menu_item('Game Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
@@ -81,7 +58,7 @@ def menu() -> None:
                     with ui.link(target='/editgame'):
                         ui.menu_item('Edit Current Game')
 
-            # Saves
+            # SAVES
             with ui.menu_item('Save Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
@@ -98,7 +75,7 @@ def menu() -> None:
                     #    ui.menu_item('Load Save')
                     ui.menu_item('Edit Save')
 
-            # Dashboard
+            # DASHBOARD
             with ui.menu_item('Dashboard', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
@@ -107,7 +84,7 @@ def menu() -> None:
                         ui.menu_item('View Dashboard')
                     ui.menu_item('Save Session', lambda: ui.notify('This will call the Save_Session function in the future.'))
             
-            # Assets
+            # ASSETS
             with ui.menu_item('Assets Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')
@@ -118,7 +95,7 @@ def menu() -> None:
                     with ui.link(target='/editasset'):
                         ui.menu_item('Edit Asset')
                         
-            # Effects
+            # EFFECTS
             with ui.menu_item('Effects Menu', auto_close=False):
                 with ui.item_section().props('side'):
                     ui.icon('keyboard_arrow_right')

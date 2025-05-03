@@ -5,7 +5,7 @@ from classes.Enable import *
 
 enable = Enable()
 
-@ui.page('/viewgame/{game_name}')
+@ui.page('/viewgame/')
 async def content() -> None:
     with theme.frame(f'Game Details'):
         edited_game = {}
@@ -29,14 +29,15 @@ async def content() -> None:
                 with ui.link(target='/createeffect'):
                     btn_create_event = ui.button('Create Effect')
                     btn_create_event.bind_enabled_from(bool(selected_game))
-
-            # If no game is selected, prompt the user to select one
+                
+            # No game selected
             if not selected_game or 'name' not in selected_game:
                 with ui.row():
                     ui.icon('warning').classes('text-3xl')
                     ui.label('Warning: No selected game detected.').classes('text-2xl')
-                ui.label('Cannot create asset with no game selected.')
-                ui.label('Please select a game from \'Select Games\'.')
+                ui.label('Cannot view the details for a game with no game selected.')
+                ui.label('Please select a game from \'View Games\'.')
+                ui.label('Then return here to view the save files.')
                 with ui.link(target = '/selectgames'):
                     ui.button('Find Game File')
             else:
