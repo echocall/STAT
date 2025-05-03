@@ -11,6 +11,6 @@ savespath = C:\Users\strip\Documents\github\STAT\statassets\saves
 templatefilepath = C:\Users\strip\\Documents\github\STAT\statassets\templates
 
 [Toggles]
-showwelcome = True
+showwelcome = False
 showexplanations = True
 
