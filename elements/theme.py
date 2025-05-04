@@ -21,6 +21,33 @@ def frame(navigation_title: str):
             font-family: 'Barlow', sans-serif;
             color: #F8B55F;
         }
+
+        /* Base font size */
+        html {
+            font-size: 18px;
+        }
+
+        /* Medium screens */
+        @media (min-width: 768px) {
+            html {
+                font-size: 20px;
+            }
+        }
+
+        /* Large screens (desktop monitors) */
+        @media (min-width: 1280px) {
+            html {
+                font-size: 22px;
+            }
+        }
+
+        /* Extra-large (4K displays etc.) */
+        @media (min-width: 1920px) {
+            html {
+                font-size: 24px;
+            }
+        }
+
         a {
             color: inherit;
             text-decoration: none;

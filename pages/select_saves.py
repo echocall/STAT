@@ -18,7 +18,6 @@ async def view_saves():
         games_path = paths.get("gamespath", "Not Set")
         saves_path = paths.get("savespath", "Not Set")
 
-
         # No game selected
         if not selected_game or 'name' not in selected_game:
             with ui.row():
