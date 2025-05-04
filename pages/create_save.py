@@ -35,7 +35,6 @@ def create_save():
         save_name_result = {}
         create_save_result = False
         game_file_name = ''
-        print("Inside create_save_json in create_save.py")
         try:
             # Ensure the game matches the template
             matches_template = check_template_bool(new_save_dict, template_paths)

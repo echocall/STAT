@@ -45,7 +45,7 @@ def create_game():
         matches_template = False
         game_name = {}
         create_game_result = False
-    
+        # Creating the game
         try:
             # Ensure the game matches the template
             matches_template = check_template_bool(new_game_dict, template_paths)
@@ -54,40 +54,37 @@ def create_game():
                 new_game_name = new_game_dict['name']
 
                 game_name = get_new_game_name(new_game_name, str_games_path)
-                if "_Placeholder" in game_name['name']:
-                    with ui.dialog() as name_existed, ui.card():
-                        ui.label("Notice!").classes('h3')
-                        ui.label("A game by the same name already exists.")
-                        ui.label(f"Your game will be saved as: {game_name['name']}")
-                        ui.button('Close', on_click=name_existed.close)
-                    name_existed.open
-                
-                try:
-                    create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
-                    if create_game_result['result']:
-                        app.storage.user['selected_game'] = create_game_result['dict']
-                        ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
-                                You can view it on the select games screen.""",
-                                    multi_line = True,
-                                    type='positive',
-                                    position="top")
-                        
-                        # ui.navigate.reload()
-                        
-                    else:
-                        ui.notify(f"""Game file could not be created. Please check file permissions.
-                                    More information can be found in:
-                                    C:\\Users\\strip\\AppData\\Local\\STAT\\statassets\\games\\{game_name['file']}\\{game_name['file']}_debug.log""",
-                                    type='negative',
-                                    position="top",
-                                    multi_line = True,)
-                except Exception as e:
-                        ui.notify(f"""Game file could not be created.
-                                    Please check file permissions.
-                                    More information can be found in: C:\\Users\\strip\\AppData\\Local\\STAT\\statassets\\games\\{game_name['file']}\\{game_name['file']}_debug.log""",
-                                    type='negative',
-                                    position="top",
-                                    multi_line = True,)
+                if not "_Placeholder" in game_name['name']:
+                    try:
+                        create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
+                        if create_game_result['result']:
+                            app.storage.user['selected_game'] = create_game_result['dict']
+                            ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
+                                    You can view it on the select games screen.""",
+                                        multi_line = True,
+                                        type='positive',
+                                        position='top')
+                            
+                            ui.navigate.reload()
+                            
+                        else:
+                            ui.notify(f"""Game file could not be created. Please check file permissions.
+                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                                        type='negative',
+                                        position='top',
+                                        multi_line = True,)
+                    except Exception as e:
+                            ui.notify(f"""Game file could not be created.
+                                        Please check file permissions.
+                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                                        type='negative',
+                                        position='top',
+                                        multi_line = True)
+                else:
+                    ui.notify(f"""Notice! A game of that name already exists. Please pick a new name.""",
+                              type='warning',
+                              position='top',
+                              multi_line = True)
                 
             # Template Mismatch
             else:
@@ -130,6 +127,9 @@ def create_game():
 
     with theme.frame('Create a Game'):
         with ui.column().classes("full-flex content-center w-full md:w-1/2"):
+            ui.label("Welcome to creating a game!")
+            ui.label("""Upon successful completion the forms should empty themselves 
+                    and you should see 'selected game' in the bottom left update with name of the new game.""")
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):

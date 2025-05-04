@@ -11,7 +11,7 @@ def game_handler(is_game_loaded: bool) -> object:
      
 def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
-
+    file_name = ""
     try:
         # Load configuration
         config = get_config_as_dict(configfilename)
@@ -27,8 +27,12 @@ def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> di
         custom_events_path = paths.get("customeventspath", "")
         images_path = paths.get("imagespath", "")
 
+        game_name_result = format_str_for_filename_super(new_game_dict['name'])
+        write_result['debug'].append({'game_name_result': game_name_result})
+        file_name = game_name_result['string']
+
         # Assemble full directory paths
-        game_base_path = Path(root_path + games_path) / new_game_dict['name']
+        game_base_path = Path(root_path + games_path) / file_name
         game_file_path = game_base_path / f"{file_name}.json"
         debug_log_path = game_base_path / f"{file_name}_debug.log"
 
