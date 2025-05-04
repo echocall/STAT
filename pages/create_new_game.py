@@ -145,33 +145,27 @@ async def create_game():
                           )
 
         except FileNotFoundError as e:
-            with ui.dialog() as file_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("File not found.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the specified file paths are correct.")
-                ui.button('Close', on_click=file_error.close)
-            file_error.open
+            print(traceback.format_exc())
+            ui.notify("Error: File not found. Unable to find location.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except PermissionError as e:
             print(traceback.format_exc())
-            with ui.dialog() as permission_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("Permission denied.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the application has the necessary permissions.")
-                ui.button('Close', on_click=permission_error.close)
-            permission_error.open
+            ui.notify(f"""Error: STAT does not have permission to write there. 
+                      Please verify the filepaths in config.tx and that STAT has permission to write there.""",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except Exception as e:
             print(traceback.format_exc())
-            with ui.dialog() as general_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("An unexpected error occurred.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please check the application logs for more information.")
-                ui.button('Close', on_click=general_error.close)
-            general_error.open
+            ui.notify(f"""Error: An unexpected error has occured. 
+                      Please check the traceback for more information.""",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
     with theme.frame('Create a Game'):
         with ui.column().classes("full-flex content-center w-full md:w-1/2"):
@@ -243,19 +237,11 @@ async def create_game():
                     actors_display = render_all_actors(confirm, new_game_dict)
                     actors_display.bind_visibility_from(has_actors,'value')
 
-            """
-            # Creating Assets
-            with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column().classes('items-start'):
-                    ui.label('Assets').classes('font-bold')
-                    ui.label("You will add these later.")
+            
+            # Creating Assets moved to its own form.
 
-            # Creating Effects
-            with ui.row().classes('items-center justify-start space-x-4'):
-                with ui.column().classes('items-start'):
-                    ui.label('Effects').classes('font-bold')
-                    ui.label('You will add these later.')
-            """
+            # Creating Effects moved to its own form.
+            
 
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):

@@ -5,6 +5,7 @@ from elements.new_string_dialog import new_string_dialog
 from helpers.utilities import format_str_for_filename_super
 from handlers.assethandler import *
 from elements.explanation import explanation
+from elements.UserConfirm import *
 import traceback
 from nicegui import app, ui
 
@@ -17,7 +18,7 @@ async def new_asset():
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
 
-    # TODO: set up handling for no selected_game here
+    user_confirm = UserConfirm()
 
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
@@ -41,9 +42,78 @@ async def new_asset():
         'icon':'', 'image':''
     }
 
-    bln_is_default = False
-    bln_has_buy_costs = False
-    bln_has_sell_prices = False
+    # Render the buy_costs.
+    @ui.refreshable
+    def render_all_buy_costs() -> ui.element:
+        with ui.row().classes('gap-2') as buy_cost_display_case:
+            for buy_cost, value in new_asset_dict['buy_costs'].items():
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(f'{buy_cost}:').classes('text-sm font-medium')
+                    ui.label(str(value)).classes('text-sm')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                            on_click=lambda b_cost=buy_cost:  
+                            user_confirm.show(f'Are you sure you want to delete {b_cost}?', 
+                                        lambda: delete_buy_cost(new_asset_dict, b_cost))).props('flat dense')
+        return buy_cost_display_case
+
+    # get the new Counter from New Counter Dialog
+    async def add_buy_cost():
+        result = await target_counter_dialog('Buy Cost for Asset')
+        print(result) 
+        if result:
+            if 'buy_costs' not in new_asset_dict:
+                new_asset_dict['buy_costs'] = {}
+            new_asset_dict['buy_costs'][result['name']] = int(result['value'])
+            render_all_buy_costs.refresh()
+        else:
+            ui.notify("""No buy costs added, dialog canceled. If you want to add buy costs use the submit button.""",
+                      type='warning',
+                      position='top',
+                      multi_line=True)
+
+    # Delete a buy_cost.
+    def delete_buy_cost(new_asset_dict, buy_cost_name: str) -> ui.element:
+        if buy_cost_name in new_asset_dict['buy_costs']:
+            del new_asset_dict['buy_costs'][buy_cost_name]
+            render_all_buy_costs.refresh()
+
+    # Render the buy_costs.
+    @ui.refreshable
+    def render_all_sell_prices() -> ui.element:
+        with ui.row().classes('gap-2') as sell_price_display_case:
+            for sell_price, value in new_asset_dict['sell_prices'].items():
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(f'{sell_price}:').classes('text-sm font-medium')
+                    ui.label(str(value)).classes('text-sm')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                            on_click=lambda s_price=sell_price:  
+                            user_confirm.show(f'Are you sure you want to delete {s_price}?', 
+                                        lambda: delete_sell_price(new_asset_dict, s_price))).props('flat dense')
+        return sell_price_display_case
+
+    # get the new Counter from New Counter Dialog
+    async def add_sell_price():
+        result = await target_counter_dialog('Sell Price for Asset') 
+        if result:
+            if 'sell_prices' not in new_asset_dict:
+                new_asset_dict['sell_prices'] = {}
+            new_asset_dict['sell_prices'][result['name']] = int(result['value'])
+            render_all_sell_prices.refresh()
+        else:
+            ui.notify("""No sell prices added, dialog canceled. If you want to add sell prices use the submit button.""",
+                      type='warning',
+                      position='top',
+                      multi_line=True)
+
+    # Delete a buy_cost.
+    def delete_sell_price(new_asset_dict, sell_price_name: str) -> ui.element:
+        if sell_price_name in new_asset_dict['sell_prices']:
+            del new_asset_dict['sell_prices'][sell_price_name]
+            render_all_sell_prices.refresh()
 
     # getting the buy costs
     async def get_buy_cost():
@@ -220,13 +290,11 @@ async def new_asset():
                             new_buy_cost = ui.button(
                                 "Add Buy Cost",
                                 icon="create",
-                                on_click=get_buy_cost
+                                on_click=add_buy_cost
                             )
-                            # TODO: Add way to view added buy costs
-                            # ui.label('Buy Costs Added:')
-                            with ui.row().classes('full flex'):
-                                for buy_cost in buy_costs:
-                                    await render_counter_bar(buy_costs, buy_cost)
+                            ui.label("Buy Costs added: ").bind_visibility_from(has_buy_costs, 'value')
+                            counter_display = render_all_buy_costs()
+                            counter_display.bind_visibility_from(has_buy_costs,'value')
                     
                 # Add Sell Prices
                 with ui.row().classes('items-center justify-start space-x-4'):
@@ -240,13 +308,13 @@ async def new_asset():
                             new_sell_cost = ui.button(
                                 "Add Sell Cost",
                                 icon="create",
-                                on_click=get_sell_price
+                                on_click=add_sell_price
                             )
                             # TODO: Add way to see already added sell costs
                             # ui.label('Sell Prices Added:')
-                            with ui.row().classes('full flex'):
-                                for sell_price in sell_prices:
-                                    await render_counter_bar(sell_prices, sell_price)
+                            ui.label("Sell Prices added: ").bind_visibility_from(has_sell_prices, 'value')
+                            counter_display = render_all_sell_prices()
+                            counter_display.bind_visibility_from(has_sell_prices,'value')
 
                 # Add any extra special text to the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
@@ -296,17 +364,6 @@ async def new_asset():
                     with ui.column().classes('items-start'):
                         ui.label("Done?")
                         ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
-
-# Render the counters.
-@ui.refreshable
-async def render_counter_bar(counters: dict, counter: str) -> ui.element:
-    print("inside render_counter_bar")
-    current_counter = ui.label(f'{counter}:').classes('text-sm')
-    print(counters)
-    print(counter)
-    # Work around for showing Current Counter amount without being able to fiddle with it.
-    temp_current_amount = counters[counter]
-    current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
 
 # Loads the page
 @ui.refreshable
