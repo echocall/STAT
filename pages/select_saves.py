@@ -10,8 +10,14 @@ async def view_saves():
     with theme.frame('View Saves'):
         # File path for save data
         selected_game = app.storage.user.get("selected_game", {})
-        saves_paths = selected_game.get("save_files_path", "Not Set")
-        existing_saves = {}
+        # Store config as nested dictionary
+        config = get_config_as_dict('config.txt')
+        # Get the paths
+        paths = config.get("Paths",{})
+        root_path = paths.get("osrootpath")
+        games_path = paths.get("gamespath", "Not Set")
+        saves_path = paths.get("savespath", "Not Set")
+
 
         # No game selected
         if not selected_game or 'name' not in selected_game:
@@ -23,10 +29,24 @@ async def view_saves():
             ui.label('Then return here to view the save files.')
             with ui.link(target = '/selectgames'):
                 ui.button('Find Game File')
+        # There IS a selected_game
         else:
+            # Getting the games
+            str_games_path = root_path + games_path
+            # formatting the game name
+            game_format_result = format_str_for_filename_super
+            game_file_name = ''
+            if game_format_result['result']:
+                game_file_name = game_format_result['string']
+            else:
+                ui.notify("Error with formatting selected_game name.", position='top', type='warning')
+
+            
+            str_saves_path = str_games_path + '\\' + game_file_name + '\\' +  saves_path
+            existing_saves = {}
             # getting the existing saves for the loaded game
             try:
-                existing_saves = get_saves(saves_paths)
+                existing_saves = get_saves(str_saves_path)
             except Exception as e:
                 ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
                 return
@@ -44,7 +64,7 @@ async def view_saves():
                 else:
                     ui.label("No saves to display!")
 
-def load_save(existing_saves, selected_save_name):
+def load_save_from_storage(existing_saves, selected_save_name):
     for name in selected_save_name:
         selected_save = {}
         save_to_get = convert_save_name(name)
@@ -70,5 +90,5 @@ async def render_save_cards(existing_saves, save):
             ui.label().bind_text_from(save, 'date_last_save',
                                                     backward=lambda last_save: f'Last Save: {last_save}')
             with ui.card_actions().classes("w-full justify-end"):
-                ui.button('Select Save', on_click=lambda: load_save(existing_saves, {save['name']}))
+                ui.button('Select Save', on_click=lambda: load_save_from_storage(existing_saves, {save['name']}))
 

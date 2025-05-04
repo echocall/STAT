@@ -13,7 +13,6 @@ import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
 
-
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *

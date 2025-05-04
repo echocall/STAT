@@ -13,4 +13,4 @@ async def view_effect():
 
     with theme.frame('View Effect'):
         with ui.column().classes("flex content-center w-100"):
-            
+            ui.label("TODO: Make this work")

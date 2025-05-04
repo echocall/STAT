@@ -13,7 +13,6 @@ async def dashboard():
     with theme.frame('Dashboard'):
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
-        game_paths = paths.get("gamespath", "Not Set")
 
         # Getting assets sorted.
         selected_game = {}
@@ -22,7 +21,6 @@ async def dashboard():
         counters = {}
         selected_save = load_from_storage("selected_save")
         selected_game = load_from_storage("selected_game")
-        saves_paths = selected_game.get("save_files_path", "Not Set")
         turn_type = ""
 
         # No game or save selected
@@ -43,16 +41,28 @@ async def dashboard():
             ui.label('Please select a game from \'View Saves\'.')
             with ui.link(target = '/selectsaves'):
                 ui.button('Find Save File')
-            
-
+        # We have a selected_game and a selected_save
         else:
+            # Paths for DAYS BAYBEEEE
+            root_path = paths.get("osrootpath", "Not Set")
+            games_path = paths.get("gamespath", "Not Set") 
+            saves_path = paths.get("savespath", "Not Set")
+            assets_path = paths.get("assetspath", "Not Set")
+            default_assets_path = paths.get("defaultassetspath", "Not Set")
+            custom_assets_path = paths.get("customassetspath", "Not Set")
+            str_games_path = root_path + games_path
+            str_saves_path =  str_games_path + '\\' +  selected_game['name'] + '\\' +  saves_path
+            str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
+            str_default_assets_path = str_games_path + '\\' +  selected_game['name'] + default_assets_path
+            str_custom_assets_path = str_games_path + '\\' +  selected_game['name'] + custom_assets_path
+
             # Everything has loaded properly, go for it!
             counters = selected_save['counters']
 
-            assets = asset_handler(selected_game['asset_default_path'],
+            assets = asset_handler(str_default_assets_path,
                                        selected_game['default_assets'],
                                        selected_save['asset_customs'],
-                                       selected_save['asset_customs_path'])
+                                       str_custom_assets_path)
 
             # loading in the assets.
             assets_as_dict = {}
@@ -284,19 +294,6 @@ async def view_asset_details(asset: dict):
     ui.navigate.reload()
     # viewed_asset = asset_detail_dialog()
 
-
-def select_game(games_path: str, selected_game_name: str):
-    for name in selected_game_name:
-        selected_game = {}
-        try:
-            selected_game = get_game(selected_game_name, games_path, 'games')
-            app.storage.user['is_game_loaded']  = True
-        except:
-            ui.notify("Warning! Problem with loading game. Please check that game file exists.", type='warning', position="top",)
-        finally:
-            app.storage.user['selected_game'] = selected_game
-            render_counter_bar.refresh()
-
 def buy_asset(asset: dict, counters: dict):
     g = 7+7
     # Subtract asset's buy_costs from appropriate counters.
@@ -305,7 +302,8 @@ def buy_asset(asset: dict, counters: dict):
     # if it doesn't exist in the Owned_Assets, add it to there.
     # Increase amount of asset in owned_assets by one.
 
-def save_game():
+# TODO
+def save_current_session():
     c = 3+3
     # TODO: write from app.storage.user to .json file
     # TODO: return result of save.

@@ -29,6 +29,7 @@ async def new_asset():
                         ui.label('Source Game: ').classes('font-bold')
                         ui.label(f'{selected_game['name']}')
 
+                # Change this as we no longer need a selected_save to find our assets
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         # If no selected_save, open up prompt to select one

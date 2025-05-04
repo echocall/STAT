@@ -74,7 +74,7 @@ async def edit_game():
                             for actor in default_actors:
                                 with ui.list().props('separator'):
                                     ui.item(actor)
-                                    # TODO: this should pop up an 'edit actor' dialog box.
+                                    # TODO: this should tell them to go to Edit Asset to edit the asset
                                     ui.icon('Edit')
                                     # TODO: this should pop up a 'are you sure you want to delete?
                                     ui.icon('Delete')

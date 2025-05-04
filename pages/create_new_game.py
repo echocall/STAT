@@ -13,20 +13,18 @@ def create_game():
     # File path for game data
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
-    game_paths = paths.get("gamespath", "Not Set")
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "Not Set")
     template_paths = paths.get("templatefilepath", "Not Set")
-    save_paths = paths.get("savespath", "Not Set")
-    datapack_paths = paths.get("datapackspath", "Not Set")
+
+    str_games_path = root_path + games_path
 
     new_game_dict = {'name': '','description':'', 'has_counters': False,
-                'counters': {}, 'has_actors': False,
-                'actor_default_path':'', 'default_actors':["Player"],
-                'has_assets': False, 'asset_default_path':'',
-                'default_assets':[], 'has_events': False, 
-                'event_default_path':'', 'default_events':[],
-                'has_effects': False, 'effect_default_path':'',
-                'default_effects':[],'icon':'',
-                'save_files_path':'', 'has_turns':False,
+                'counters': {}, 'has_actors': False, 'default_actors':["Player"], 
+                'has_assets': False, 'default_assets':[],
+                'has_events': False, 'default_events':[],
+                'has_effects': False, 'default_effects':[],
+                'icon':'', 'has_turns':False,
                 'turn_type':'', 'start_turn':0
                 }
 
@@ -44,10 +42,10 @@ def create_game():
         new_game_dict['actors'].append(result['name'])
 
     async def create_game_json():
-        matches_template = False;
+        matches_template = False
         game_name = {}
-        create_game_result = False;
-    
+        create_game_result = False
+        # Creating the game
         try:
             # Ensure the game matches the template
             matches_template = check_template_bool(new_game_dict, template_paths)
@@ -55,54 +53,39 @@ def create_game():
                 # Check if a game with that name already exists
                 new_game_name = new_game_dict['name']
 
-                game_name = get_new_game_name(new_game_name, game_paths)
-                if "_Placeholder" in game_name['name']:
-                    with ui.dialog() as name_existed, ui.card():
-                        ui.label("Notice!").classes('h3')
-                        ui.label("A game by the same name already exists.")
-                        ui.label(f"Your game will be saved as: {game_name['name']}")
-                        ui.button('Close', on_click=name_existed.close)
-                    name_existed.open
-                
-                folder_creation= create_folders(game_name, game_paths, datapack_paths, save_paths)
-
-                if folder_creation:
-                    # Attempt to save the game
+                game_name = get_new_game_name(new_game_name, str_games_path)
+                if not "_Placeholder" in game_name['name']:
                     try:
-                        create_game_result = new_game_gui(game_paths, datapack_paths, save_paths, new_game_dict, game_name['file'])
+                        create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
                         if create_game_result['result']:
                             app.storage.user['selected_game'] = create_game_result['dict']
                             ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
                                     You can view it on the select games screen.""",
-                                      multi_line = True,
-                                      type='positive',
-                                      position="top")
+                                        multi_line = True,
+                                        type='positive',
+                                        position='top')
                             
-                            # ui.navigate.reload()
+                            ui.navigate.reload()
                             
                         else:
-                            ui.notify("Game file could not be created. Please check file permissions.",
-                                      type='negative',
-                                      position="top",
-                                      multi_line = True,)
-                            raise Exception("Game file could not be created. Please check file permissions.")
+                            ui.notify(f"""Game file could not be created. Please check file permissions.
+                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                                        type='negative',
+                                        position='top',
+                                        multi_line = True,)
                     except Exception as e:
-                        with ui.dialog() as save_error, ui.card():
-                            ui.label("Error!").classes('h3')
-                            ui.label("Failed to save the game file.")
-                            ui.label(f"Details: {str(e)}")
-                            ui.label("Please ensure the application has write permissions to the target directory.")
-                            ui.button('Close', on_click=save_error.close)
-                        save_error.open
-                # failed to create folder
+                            ui.notify(f"""Game file could not be created.
+                                        Please check file permissions.
+                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                                        type='negative',
+                                        position='top',
+                                        multi_line = True)
                 else:
-                    ui.notify("""Error! Unable to create the folders.
-                              Please check application has write permissions and folder locations and try again.""",
-                                type='negative',
-                                position="top",
-                                multi_line = True,
-                                )
-
+                    ui.notify(f"""Notice! A game of that name already exists. Please pick a new name.""",
+                              type='warning',
+                              position='top',
+                              multi_line = True)
+                
             # Template Mismatch
             else:
                 ui.notify("""Error! The new game dictionary does not match the expected game template.
@@ -144,6 +127,9 @@ def create_game():
 
     with theme.frame('Create a Game'):
         with ui.column().classes("full-flex content-center w-full md:w-1/2"):
+            ui.label("Welcome to creating a game!")
+            ui.label("""Upon successful completion the forms should empty themselves 
+                    and you should see 'selected game' in the bottom left update with name of the new game.""")
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
@@ -192,6 +178,7 @@ def create_game():
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
                     ui.label('Do you want to add Actors now?').classes('font-bold')
+                    ui.label('By default \"Player\" is added as an actor.')
                     has_actors = ui.switch()
                     has_actors.on('click', has_actors.set_value(has_actors.value))
                     has_actors.bind_value(new_game_dict, 'has_actors')
@@ -204,37 +191,13 @@ def create_game():
             # Creating Assets
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
-                    ui.label('Do you want to add Assets?').classes('font-bold') 
-                    has_assets = ui.switch()
-                    has_assets.on('click', has_assets.set_value(has_assets.value))
-                    has_assets.bind_value(new_game_dict, 'has_assets')
-                    asset_notice = ui.label("After completing the initial game setup you'll be taken to a page to add assets to the game.")
-                    asset_notice.bind_visibility_from(has_assets, 'value')
+                    ui.label('Assets').classes('font-bold')
 
             # Creating Effects
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
-                    ui.label('Do you want to add Effects?').classes('font-bold')
-                    has_effects = ui.switch()
-                    has_effects.on('click', has_effects.set_value(has_effects.value))
-                    has_effects.bind_value(new_game_dict, 'has_effects')
-                    effects_notice = ui.label("After completing the initial game setup you'll be taken to a page to add effects to the game.")
-                    effects_notice.bind_visibility_from(has_effects, 'value')
-
-
-            # Creating Events
-            # TODO: Implement later
-            """
-            with ui.row().classes('w-80 items-stretch'):
-                ui.label('Do you want to add Events now?')
-                has_events = ui.switch()
-                has_events.on('click', has_events.set_value(has_events.value))
-                has_events.bind_value(new_game, 'has_events')
-                # The button will pull up a different dialog box for creating an event.
-                create_events = ui.button('Create Events', 
-                                        on_click=lambda: ui.notify('You clicked Create Events!'))
-                create_events.bind_visibility_from(has_events, 'value')
-            """
+                    ui.label('Effects').classes('font-bold')
+                    ui.label('You will add these later.')
 
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):

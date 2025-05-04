@@ -2,15 +2,26 @@
 darkmode = True
 
 [Paths]
-defaultwindowspath = C:\Program Files
-defaultstatassetspath = \STAT\statassets\
-custompaths = True
-gamespath = C:\Users\strip\Documents\github\STAT\statassets\games
-datapackspath = C:\Users\strip\Documents\github\STAT\statassets\datapacks
-savespath = C:\Users\strip\Documents\github\STAT\statassets\saves
-templatefilepath = C:\Users\strip\\Documents\github\STAT\statassets\templates
+osrootpath = C:\Users\strip\AppData\Local\STAT
+defaultrootpath = C:\Users\strip\AppData\Local\STAT
+customosrootpath = 
+templatespath = \statassets\templates
+gamespath = \statassets\games
+savespath = \saves
+assetspath = \assets
+defaultassetspath = \assets\default
+customassetspath = \assets\custom
+effectspath = \effects
+defaulteffectspath = \effects\default
+customeffectspath = \effects\custom
+eventspath = \events
+defaulteventspath = \events\default
+customeventspath = \events\custom
+imagespath = \images
 
 [Toggles]
+firstsetup = False
 showwelcome = False
 showexplanations = True
+customroot = False
 

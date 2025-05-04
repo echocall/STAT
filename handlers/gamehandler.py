@@ -3,68 +3,137 @@ from helpers.utilities import *
 from handlers.assethandler import * # TODO: Change this later.
 import classes.MyGame as mg
 import traceback
+from pathlib import Path
 import os, shutil
 
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
      
-def new_game_gui(game_path: str,datapack_path: str, save_path: str,  new_game_dict: dict, file_name: str) -> bool:
-    write_result = {'result':False,'string':'', 'dict':{}}
-    error_message = ""
-    save_location = ""
-
+def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> dict:
+    write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
+    file_name = ""
     try:
-        # Write the paths for the folder locations
-        save_location = game_path + "\\" + file_name
-        new_game_dict['actor_default_path'] = datapack_path + "\\" + file_name + "\\default\\actors\\"
-        new_game_dict['asset_default_path'] = datapack_path + "\\" + file_name + "\\default\\assets\\"
-        new_game_dict['effect_default_path'] = datapack_path + "\\" + file_name + "\\default\\effects\\"
-        new_game_dict['event_default_path'] = datapack_path + "\\" + file_name + "\\default\\events\\"
-        new_game_dict['save_files_path'] = save_path + "\\" + file_name + "\\"
-        new_game_dict['image_file_path'] = game_path + "\\" + file_name + "\\images\\"
+        # Load configuration
+        config = get_config_as_dict(configfilename)
+        paths = config.get("Paths", {})
+        root_path = paths.get("osrootpath", "Not Set")
+        games_path = paths.get("gamespath", "")
+        saves_path = paths.get("savespath", "")
+        default_assets_path = paths.get("defaultassetspath", "")
+        custom_assets_path = paths.get("customassetspath", "")
+        default_effects_path = paths.get("defaulteffectspath", "")
+        custom_effects_path = paths.get("customeffectspath", "")
+        default_events_path = paths.get("defaulteventspath", "")
+        custom_events_path = paths.get("customeventspath", "")
+        images_path = paths.get("imagespath", "")
 
-        create_new_directory(new_game_dict['actor_default_path'])
-        create_new_directory(new_game_dict['asset_default_path'])
-        create_new_directory(new_game_dict['effect_default_path'])
-        create_new_directory(new_game_dict['event_default_path'])
-        create_new_directory(new_game_dict['actor_default_path'])
-        
-        write_result['result'] = create_new_json_file(file_name, save_location, new_game_dict)
+        game_name_result = format_str_for_filename_super(new_game_dict['name'])
+        write_result['debug'].append({'game_name_result': game_name_result})
+        file_name = game_name_result['string']
+
+        # Assemble full directory paths
+        game_base_path = Path(root_path + games_path) / file_name
+        game_file_path = game_base_path / f"{file_name}.json"
+        debug_log_path = game_base_path / f"{file_name}_debug.log"
+
+        image_dir = game_base_path / images_path.strip("\\")
+        saves_dir = game_base_path / saves_path.strip("\\")
+        default_assets_dir = game_base_path / default_assets_path.strip("\\")
+        custom_assets_dir = game_base_path / custom_assets_path.strip("\\")
+        default_effects_dir = game_base_path / default_effects_path.strip("\\")
+        custom_effects_dir = game_base_path / custom_effects_path.strip("\\")
+        default_events_dir = game_base_path / default_events_path.strip("\\")
+        custom_events_dir = game_base_path / custom_events_path.strip("\\")
+
+        # Create required directories
+        dir_results = []
+        for path in [
+            image_dir,
+            saves_dir,
+            default_assets_dir,
+            custom_assets_dir,
+            default_effects_dir,
+            custom_effects_dir,
+            default_events_dir,
+            custom_events_dir,
+        ]:
+            dir_results.append(create_new_directory(str(path)))
+
+        write_result['debug'].append({'created_dirs': dir_results})
+
+        # Write the new game dictionary to file
+        json_result = create_new_json_file(str(game_file_path), new_game_dict)
+        write_result['debug'].append({'json_result': json_result})
+
+        if json_result['result']:
+            write_result['result'] = True
+            write_result['string'] = 'Successfully wrote game to file.'
+            write_result['dict'] = new_game_dict
+        else:
+            write_result['string'] = 'Failed to write game to file.'
     except Exception:
-        print(traceback.format_exc())
+        error_info = traceback.format_exc()
+        write_result['string'] = "Unhandled exception occurred."
+        write_result['debug'].append({'exception': error_info})
 
-    if write_result['result'] == True:
-        write_result['string'] = 'Successfully wrote game to file.'
-        write_result['dict'] = new_game_dict
-        return write_result
-    else:
-        write_result['string'] = "Warning, could not save new game to JSON file."
-        return write_result
-     
-def get_game(game_name: str, file_path: str, type: str) -> dict:
-    game = single_json_getter(game_name, file_path, type)
-    return game
+    # Save debug info to log file
+    try:
+        debug_text = json.dumps(write_result['debug'], indent=2)
+        debug_log_path.parent.mkdir(parents=True, exist_ok=True)  # ensure folder exists
+        with open(debug_log_path, 'w') as log_file:
+            log_file.write(debug_text)
+    except Exception as log_exception:
+        write_result['debug'].append({'log_error': str(log_exception)})
 
-def get_games(file_path: str) -> dict:
-    game_names = get_games_names(file_path)
-    
-    all_games = {}
-    for name in game_names:
-        all_games[name] = get_game(name, file_path, "game")
-    
-    return all_games
+    return write_result
 
-def get_game_as_obj(game_name: str, file_path: str, type: str) -> object:
-    game = single_json_getter(game_name, file_path, type)
-    game_object = {}
-    game_object = dict_to_game_object(game)
-    return game_object
+# return a result_dict hopefully with the game in 'json'     
+def get_game(file_path: str) -> dict:
+    get_game_result = single_json_getter_fullpath(file_path, 'game')
+    return get_game_result
 
-def get_games_names(filePath: str) -> list:
+# TODO: check get_game part of this for using new filepaths
+def get_games(directory_path: str) -> dict:
+    game_names_result = get_games_names(directory_path)
     game_names = []
-    game_names = multi_json_names_getter(filePath, "games")
+    get_games_result = {'result': False, 'message': 'Something went wrong...', 'games': {}}
+    
+    if game_names_result:
+        game_names = game_names_result['list']
+        all_games = {}
+        for name in game_names:
+            str_game_path = directory_path  + '\\' + name + '\\' + name +  '.json'
+            all_games[name] = get_game(str_game_path)['json']
+        get_games_result['result'] = True
+        get_games_result['games'] = all_games
+    else:
+        get_games_result['message'] = "Unable to get the names of the games. Please cheek the gamepath and rootpath in config.txt"
+    
+    return get_games_result
 
-    return game_names
+# Not currently used.
+def get_game_as_obj(full_game_path: str) -> object:
+    get_game_result = single_json_getter_fullpath(full_game_path, 'game')
+    if get_game_result['result']:
+        game = get_game_result['json']
+        game_object = {}
+        game_object = dict_to_game_object(game)
+        return game_object
+    else:
+        print("Error! Could not get game!")
+        return {}
+
+# TODO: Handle errors better as program
+def get_games_names(directory_path: str) -> dict:
+    game_name_result = {}
+    try:
+        game_name_result = multi_file_names_getter(directory_path, "games" )
+    except Exception as e:
+            # TODO: Handle this error better as a progroam
+            print(f"An unexpected error occurred while getting game names. See terminal for more.")
+            print(f"{e}\n{traceback.format_exc()}")
+    finally:
+        return game_name_result
 
 # TODO: finish
 def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> bool:
@@ -107,25 +176,6 @@ def check_template_bool(game: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
     
-# select game
-def select_game(file_path: str) -> object:
-    games = []
-    target_game = ''
-    target_dict = {}
-    game_object = {}
-    # load list of game names from games folder.
-    games = multi_json_names_getter(file_path, 'games')
-
-    # call List_to_Menu
-    target_game = list_to_menu('Select a game: ', games)
-
-    # load in the game_dict
-    target_dict = get_game(target_game, file_path, 'game')
-
-    # turn the game dict into a game_object
-    game_object = dict_to_game_object(target_dict)
-
-    return game_object
 
 # dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> object:
@@ -141,6 +191,7 @@ def dict_to_game_object(targetDict: dict) -> object:
 def get_new_game_name(name: str, file_path: str) -> dict:
     file_name = ""
     games = []
+    games_names_result = {}
     game_name = {"name": "", "file":""}
     valid = False
 
@@ -148,8 +199,11 @@ def get_new_game_name(name: str, file_path: str) -> dict:
         file_name = format_str_for_filename(name)
 
         # check that a game by that name doesn't already exists
-        games = multi_json_names_getter(file_path, "games")
+        games_names_result = multi_file_names_getter(file_path, "games")
         
+        if games_names_result['result']:
+            games = games_names_result['list']
+
         if name in games:
     # if file_name already exists, append placeholder and alert user
             valid = True

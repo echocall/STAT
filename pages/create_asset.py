@@ -2,7 +2,6 @@ import elements.theme as theme
 from classes.Enable import Enable
 from elements.target_counter_dialog import target_counter_dialog
 from elements.new_string_dialog import new_string_dialog
-from helpers.crud import single_json_getter_fullpath
 from helpers.utilities import format_str_for_filename_super
 from handlers.assethandler import *
 from elements.explanation import explanation
@@ -18,9 +17,20 @@ async def new_asset():
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
 
+    # TODO: set up handling for no selected_game here
+
     config = app.storage.user.get("config", {})
     paths = config.get("Paths",{})
-    template_paths = paths.get("templatefilepath", "Not Set")
+    templates_paths = paths.get("templatefilepath", "Not Set")
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "Not Set")
+    assets_path = paths.get("assetspath", "Not Set")
+    default_assets_path = paths.get("defaultassetspath", "Not Set")
+    custom_assets_path = paths.get("customassetspath", "Not Set")
+
+    str_templates_path = root_path + templates_paths
+    str_games_path = root_path + games_path
+    str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
 
     new_asset_dict = {
         'name': '', 'category':'',
@@ -28,7 +38,7 @@ async def new_asset():
         'asset_type': '', 'attributes': [],
         'buy_costs':{}, 'sell_prices': {},
         'special':'', 'effects':[],
-        'icon':'', 'image':'str'
+        'icon':'', 'image':''
     }
 
     bln_is_default = False
@@ -51,115 +61,68 @@ async def new_asset():
         new_asset_dict['sell_prices'][result['name']] = int(result['value'])
         render_counter_bar.refresh()
 
-    async def choose_game():
-        game_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-        for file in game_files:
-            game = single_json_getter_fullpath(file)
-            # Get the game from the path
-        selected_game = game
-        app.storage.user['selected_game'] = game
-
-    async def choose_save():
-        save_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-        for file in save_files:
-            save = single_json_getter_fullpath(file)
-            # Get the game from the path
-        selected_save = save
-        app.storage.user['selected_save'] = save
-
     # Calls the methods to write the asset to .json
     async def create_asset_json(is_default: bool):
-        # if Default or Custom pick where to put asset
         create_result = {}
 
         try:
-            # Ensure the game matches the template
-            matches_template = check_template_bool(new_asset_dict, template_paths)
-            if matches_template:
-                # Try to format the name.
-                new_asset_name = new_asset_dict['name']
+            # Ensure the asset matches the template
+            matches_template = check_template_bool(new_asset_dict, str_templates_path)
+            if matches_template['match']:
+                # check for duplicates
+                asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
 
-                format_result = {}
-                name_result = {}
-
-                format_result = format_str_for_filename_super(new_asset_dict['name'])
-
-                if format_result['result']:
-                    file_name = format_result['string']
-                    # check for duplicates
-                    if is_default:
-                        asset_name = get_new_asset_name(new_asset_dict['name'], selected_game['asset_default_path'])
-                    else:
-                        asset_name = get_new_asset_name(new_asset_dict['name'], selected_save['asset_customs_path'])
-                
-                    if "_Placeholder" in asset_name['name']:
-                        with ui.dialog() as name_existed, ui.card():
-                            ui.label("Notice!").classes('h3')
-                            ui.label("A game by the same name already exists.")
-                            ui.label(f"Your game will be saved as: {asset_name['name']}")
-                            ui.button('Close', on_click=name_existed.close)
-                        name_existed.open
-                    # attempt to create asset here.
-                    try:
-                        create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save, asset_name['file'])
-                        if create_result['result']:
-                            with ui.dialog() as success_create, ui.card():
-                                ui.label('Success!').classes('font-bold')
-                                ui.label(create_result['message'])
-                                ui.label('Feel free to leave this page now.')
-                                ui.button('Close', on_click=success_create.close)
-                            success_create.open
-                            ui.notify("Congrats! Asset created!", 
-                                      type='positive', 
-                                      position="top",)
-                            # clear page somehow
-                    except:
-                        # failed to create the asset
-                        with ui.dialog() as fail_create, ui.card():
-                            ui.label('Oh no!').classes('font-bold')
-                            ui.label(create_result['message'])
-                            ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
-                            ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
-                            ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
-                            ui.button('Close', on_click=fail_create.close)
-                        fail_create.open
+                if "_Placeholder" in asset_name['name']:
+                    ui.notify(f"""Notice! An asset by the same name already exists. 
+                              Could not save asset. 
+                              Check the log file in folder where the asset would be created for more details.""",
+                                type='warning',
+                                position='top',
+                                multi_line=True)
+                # attempt to create asset here.
+                try:
+                    create_result = new_asset_gui(is_default, 'config.txt', new_asset_dict, selected_game, selected_save)
+                    if create_result['result']:
+                        ui.notify("Congrats! Asset created!", 
+                                    type='positive', 
+                                    position="top")
+                        # clear page somehow
+                except:
+                    # failed to create the asset
+                    with ui.dialog() as fail_create, ui.card():
+                        ui.label('Oh no!').classes('font-bold')
+                        ui.label(create_result['message'])
+                        ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
+                        ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
+                        ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
+                        ui.button('Close', on_click=fail_create.close)
+                    fail_create.open
             # Template Mismatch
             else:
-                with ui.dialog() as template_error, ui.card():
-                    ui.label("Error!").classes('h3')
-                    ui.label("The new asset dictionary does not match the expected asset template.")
-                    ui.label("Unable to save the asset.")
-                    ui.button('Close', on_click=template_error.close())
-                template_error.open
+                ui.notify("Error: Coule not save. The new asset dictionary does not match expected asset template. Unable to save.", 
+                          position='top', 
+                          type='negative',
+                            multi_line=True)
 
         except FileNotFoundError as e:
-            print(traceback.format_exc())
-            with ui.dialog() as file_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("File not found.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the specified file paths are correct.")
-                ui.button('Close', on_click=file_error.close)
-            file_error.open
+            ui.notify("""Error: could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.""",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except PermissionError as e:
             print(traceback.format_exc())
-            with ui.dialog() as permission_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("Permission denied.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please ensure the application has the necessary permissions.")
-                ui.button('Close', on_click=permission_error.close)
-            permission_error.open
+            ui.notify("Error: Could not save. STAT does not have permission to write to the folder in those locations. Please check the file paths in config.txt are correct.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
         except Exception as e:
-            with ui.dialog() as general_error, ui.card():
-                ui.label("Error!").classes('h3')
-                ui.label("An unexpected error occurred.")
-                ui.label(f"Details: {str(e)}")
-                ui.label("Please check the application logs for more information.")
-                ui.button('Close', on_click=general_error.close)
-            general_error.open
+            print(e)
+            ui.notify("""Error: Could not save. An unexpected error has occured. Please check application logs for more information.""",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
     with theme.frame('Create an Asset'):
         buy_costs = new_asset_dict['buy_costs']
@@ -182,7 +145,8 @@ async def new_asset():
                         ui.label('Source Game: ').classes('font-bold')
                         ui.icon('info')
                         source_game = ui.label(f'{selected_game['name']}')
-                        source_game.bind_text(new_asset_dict, 'source_game')
+                        source_game.bind_text(new_asset_dict, 'source')
+                        new_asset_dict['source'] = selected_game['name']
                     
                 # Is this a Default or Custom Asset?
                 # If Custom, pick associated Save
@@ -191,18 +155,6 @@ async def new_asset():
                         ui.label("Is this for a default asset?").classes('font-semibold')
                         is_default = ui.toggle({True:'Default', False:'Custom'})
                         is_default.classes('bg-blue-600')
-                        if not is_default.value:
-                            # If no selected_save, open up prompt to select one
-                            if not selected_save or 'name' not in selected_save:
-                                ui.label('Warning: No selected save detected.')
-                                ui.label('Please select a save .json file.')
-                                with ui.link(target=f'/selectsaves/{selected_game['name']}'):
-                                    ui.button('Find Save File')
-                            else:
-                                # Name the source save
-                                with ui.column().classes('items-start'):
-                                    ui.label('Source Save: ').classes('font-bold')
-                                    ui.label(f'{selected_save['name']}')
                             
                 # Input name for the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
@@ -296,7 +248,6 @@ async def new_asset():
                                 for sell_price in sell_prices:
                                     await render_counter_bar(sell_prices, sell_price)
 
-
                 # Add any extra special text to the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
@@ -344,7 +295,7 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label("Done?")
-                        ui.button("Sumbit", on_click=lambda: create_asset_json(is_default.value))
+                        ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
 
 # Render the counters.
 @ui.refreshable
