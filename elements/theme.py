@@ -15,8 +15,8 @@ def frame(navigation_title: str):
     selected_asset = app.storage.user.get("selected_asset", {})
 
     ui.add_head_html('''
-    <style type="text/tailwindcss">
-        link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <style>
         * {
             font-family: 'Barlow', sans-serif;
             color: #F8B55F;
@@ -25,8 +25,7 @@ def frame(navigation_title: str):
             color: inherit;
             text-decoration: none;
         }
-    </style>                
-
+    </style>
     ''')
 
     # Custom page frame to share the same styling and behavior across all pages.
@@ -42,6 +41,7 @@ def frame(navigation_title: str):
               light='#998adb',
               dark='#3D365C',
               dark_page='#23242f ')
+    
     with ui.header().classes('items-center justify-center w-full'):
         with ui.row().classes('w-full justify-between'):
             with ui.link(target='/').classes('text-amber-300'):
@@ -76,7 +76,7 @@ def frame(navigation_title: str):
             light_switch.bind_value_from(config['Preferences'].getboolean('darkMode'))
 
             menu()
-    with ui.column().classes('items-center justify-center w-full'):
+    with ui.column().classes('w-full items-stretch items-center justify-center'):
         yield
     with ui.footer().props(f' color=#d5c7ba'):
         # Selected Game
