@@ -3,6 +3,7 @@ from classes.Enable import *
 from elements.new_counter_dialog import new_counter_dialog
 from elements.new_actor_dialog import new_actor_dialog
 from handlers.gamehandler import *
+from elements.UserConfirm import *
 from nicegui import app,ui
 import traceback
 
@@ -28,6 +29,40 @@ async def create_game():
                 'turn_type':'', 'start_turn':0
                 }
 
+    
+    # Render the counters.
+    @ui.refreshable
+    def render_all_counters(confirm, new_game_dict) -> ui.element:
+        with ui.row().classes('gap-2') as counter_display_case:
+            for counter, value in new_game_dict['counters'].items():
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(f'{counter}:').classes('text-sm font-medium')
+                    ui.label(str(value)).classes('text-sm')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                            on_click=lambda c=counter:  
+                            confirm.show(f'Are you sure you want to delete {c}?', 
+                                        lambda: delete_counter(new_game_dict, c))).props('flat dense')
+        return counter_display_case
+
+    # Render the actors.
+    @ui.refreshable
+    def render_all_actors(confirm, new_game_dict) -> ui.element:
+        with ui.row().classes('gap-2') as actor_display_case:
+            for value in new_game_dict.get('default_actors',[]):
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(str(value)).classes('text-sm font-medium')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                        on_click=lambda v = value:
+                        confirm.show(f'Are you sure you want to delete {v}?', 
+                                    lambda: delete_actor(new_game_dict, v))
+                                    ).props('flat dense')
+        return actor_display_case
+
+
     # get the new Counter from New Counter Dialog
     async def add_counter():
         result = await new_counter_dialog() 
@@ -42,13 +77,12 @@ async def create_game():
                       position='top',
                       multi_line=True)
         
-
     async def add_actor():
         result = await new_actor_dialog()
         if result:
-            if 'actors' not in new_game_dict:
-                new_game_dict['actors'] = []
-            new_game_dict['actors'].append(result['name'])
+            if 'default_actors' not in new_game_dict:
+                new_game_dict['default_actors'] = []
+            new_game_dict['default_actors'].append(result['name'])
             render_all_actors.refresh()
         else:
             ui.notify("""Warning: Dialog cancelled. No Actors added.""",
@@ -56,9 +90,6 @@ async def create_game():
                       psoition='top',
                       multi_line=True)
     
-
-
-
     async def create_game_json():
         matches_template = False
         game_name_result = {}
@@ -142,12 +173,14 @@ async def create_game():
                 ui.button('Close', on_click=general_error.close)
             general_error.open
 
-
     with theme.frame('Create a Game'):
         with ui.column().classes("full-flex content-center w-full md:w-1/2"):
             ui.label("Welcome to creating a game!")
             ui.label("""Upon successful completion the forms should empty themselves 
                     and you should see 'selected game' in the bottom left update with name of the new game.""")
+            
+            confirm = UserConfirm()
+            
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
@@ -187,9 +220,9 @@ async def create_game():
                             on_click=add_counter
                         )
                         new_counter_btn.bind_visibility_from(has_counters, 'value')
-                        # TODO: give user way to view counters added
                         ui.label("Counters added: ").bind_visibility_from(has_counters, 'value')
-                        counter_display = render_all_counters(new_game_dict)
+                        counter_display = render_all_counters(confirm, new_game_dict)
+                        counter_display.bind_visibility_from(has_counters,'value')
              
             # Creating Actors
             with ui.row().classes('items-center justify-start space-x-4'):
@@ -199,24 +232,30 @@ async def create_game():
                     has_actors = ui.switch()
                     has_actors.on('click', has_actors.set_value(has_actors.value))
                     has_actors.bind_value(new_game_dict, 'has_actors')
-                    # The button will pull up a different dialog box for creating an event
-                    create_actors = ui.button('Create Actors',
-                                            icon="create",
-                                            on_click=add_actor)
+
+                    create_actors = ui.button(
+                        'Create Actors', 
+                        icon="create", 
+                        on_click=add_actor
+                    )
                     create_actors.bind_visibility_from(has_actors, 'value')
                     ui.label("Actors added: ").bind_visibility_from(has_actors, 'value')
-                    actors_display = render_all_actors(new_game_dict)
+                    actors_display = render_all_actors(confirm, new_game_dict)
+                    actors_display.bind_visibility_from(has_actors,'value')
 
+            """
             # Creating Assets
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
                     ui.label('Assets').classes('font-bold')
+                    ui.label("You will add these later.")
 
             # Creating Effects
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
                     ui.label('Effects').classes('font-bold')
                     ui.label('You will add these later.')
+            """
 
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):
@@ -252,51 +291,15 @@ async def create_game():
                 # Disable the button by default until validation is done.
                 submit.disable()
 
-# Render the counters.
-@ui.refreshable
-def render_all_counters(new_game_dict) -> ui.element:
-    with ui.row().classes('gap-2') as counter_display_case:
-        for counter, value in new_game_dict['counters'].items():
-            with ui.row().classes('items-center gap-2'):
-                ui.label(f'{counter}:').classes('text-sm font-medium')
-                ui.label(str(value)).classes('text-sm')
+    # Delete a counter.
+    def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
+        if counter_name in new_game_dict['counters']:
+            del new_game_dict['counters'][counter_name]
+            render_all_counters.refresh()
 
-                 # Add delete button
-                ui.button(icon='delete', color='red', on_click=lambda c=counter: delete_counter(new_game_dict, c)).props('flat dense')
-    return counter_display_case
-
-# Render the actors.
-@ui.refreshable
-def render_all_actors(new_game_dict: dict) -> ui.element:
-    with ui.row().classes('gap-2') as actor_display_case:
-        for value in new_game_dict['default_actors']:
-                ui.label(value).classes('text-sm font-medium')
-    return actor_display_case
-
-async def confirm_delete():
-    try:
-        with ui.dialog("Are you sure you want to delete?") as dialog:
-            ui.label("Warning!").classes('h3')
-            ui.label("Are you sure you want to delete this?")
-            submit = ui.button(
-                        "Create Counter",
-                        on_click=lambda: dialog.submit()
-                    )
-            ui.button("Cancel", on_click=lambda: dialog.submit(None))
-
-        # gracefully handling cancelling
-        result = await dialog
-        if result is None:
-            print("Dialog was cancelled.")
-            return None  
-        return result
-
-    except Exception:
-        print(traceback.format_exc())
-        return None
-
-# Delete a counter.
-def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
-    if counter_name in new_game_dict['counters']:
-        del new_game_dict['counters'][counter_name]
-        render_all_counters.refresh()
+    # Delete a counter.
+    def delete_actor(new_game_dict: dict, actor_name: str) -> ui.element:
+        if actor_name in new_game_dict['default_actors']:
+            target_index = new_game_dict['default_actors'].index(actor_name)
+            del new_game_dict['default_actors'][target_index]
+            render_all_actors.refresh()
