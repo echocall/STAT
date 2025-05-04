@@ -16,12 +16,10 @@ async def new_counter_dialog():
                 name_input = ui.input("Name of the counter?",
                                 on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                 name_input.bind_value(new_counter, 'name')
-                # allows user to clear the field
+                # Allows user to clear the field
                 name_input.props('clearable')
-
                 # This handles the validation of the field.
                 name_input.validation={"Must have a value": enable.not_null} 
-
                 # Displays the characters.        
                 name_chars_left = ui.label()
 

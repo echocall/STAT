@@ -5,6 +5,8 @@ from handlers.gamehandler import *
 from elements.CategoryLabel import CategoryLabel
 from elements.asset_detail_dialog import asset_detail_dialog
 import elements.theme as theme
+from elements.UserConfirm import *
+import traceback
 
 # Dashboard for after a game has been selected, and a save has been loaded.
 # Displays the user's information.
@@ -22,6 +24,8 @@ async def dashboard():
         selected_save = load_from_storage("selected_save")
         selected_game = load_from_storage("selected_game")
         turn_type = ""
+
+        user_confirm = UserConfirm()
 
         # No game or save selected
         if not selected_game or 'name' not in selected_game:
