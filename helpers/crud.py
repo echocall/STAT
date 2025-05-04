@@ -169,8 +169,8 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
                     target_json_objects.append(json_file)
     # If we are looking for assets, effect, or events
     elif objectType.lower() in {"assets", "effects", "events"}:
-        # Look in 'Defaults' and 'Customs' inside passed-in directory
-        for category in ["Defaults", "Customs"]:
+        # Look in 'default' and 'custom' inside passed-in directory
+        for category in ["default", "custom"]:
             category_path = directory_path / category
             if category_path.exists():
                 for json_file in category_path.glob("*.json"):
@@ -225,7 +225,7 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
                             result['debug'].append(f"Found game JSON: {json_file}")
 
         elif objectType.lower() in {"assets", "effects", "events"}:
-            for category in ["Defaults", "Customs"]:
+            for category in ["default", "custom"]:
                 category_path = directory_path / category
                 if category_path.exists():
                     for json_file in category_path.glob("*.json"):

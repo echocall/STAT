@@ -31,8 +31,6 @@ async def new_asset():
     str_templates_path = root_path + templates_paths
     str_games_path = root_path + games_path
     str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
-    str_default_assets_path = str_games_path + '\\' +  selected_game['name'] + default_assets_path
-    str_custom_assets_path = str_games_path + '\\' +  selected_game['name'] + custom_assets_path
 
     new_asset_dict = {
         'name': '', 'category':'',
@@ -70,41 +68,35 @@ async def new_asset():
         try:
             # Ensure the asset matches the template
             matches_template = check_template_bool(new_asset_dict, str_templates_path)
-            if matches_template:
-                # Try to format the name.
-                format_result = {}
-                format_result = format_str_for_filename_super(new_asset_dict['name'])
+            if matches_template['match']:
+                # check for duplicates
+                asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
 
-                if format_result['result']:
-                    file_name = format_result['string']
-                    # check for duplicates
-                    asset_name = get_new_asset_name(new_asset_dict['name'], str_assets_path)
-                    print(asset_name)
-                
-                    if "_Placeholder" in asset_name['name']:
-                        ui.notify(f"Notice! An asset by the same name already exists. Your asset will be saved as {asset_name['name']}",
-                                 type='warning',
-                                 position='top',
-                                 multi_line=True)
-                    # attempt to create asset here.
-                    try:
-                        print("About to try create_result")
-                        create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save, str_default_assets_path, str_custom_assets_path)
-                        if create_result['result']:
-                            ui.notify("Congrats! Asset created!", 
-                                      type='positive', 
-                                      position="top")
-                            # clear page somehow
-                    except:
-                        # failed to create the asset
-                        with ui.dialog() as fail_create, ui.card():
-                            ui.label('Oh no!').classes('font-bold')
-                            ui.label(create_result['message'])
-                            ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
-                            ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
-                            ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
-                            ui.button('Close', on_click=fail_create.close)
-                        fail_create.open
+                if "_Placeholder" in asset_name['name']:
+                    ui.notify(f"""Notice! An asset by the same name already exists. 
+                              Could not save asset. 
+                              Check the log file in folder where the asset would be created for more details.""",
+                                type='warning',
+                                position='top',
+                                multi_line=True)
+                # attempt to create asset here.
+                try:
+                    create_result = new_asset_gui(is_default, 'config.txt', new_asset_dict, selected_game, selected_save)
+                    if create_result['result']:
+                        ui.notify("Congrats! Asset created!", 
+                                    type='positive', 
+                                    position="top")
+                        # clear page somehow
+                except:
+                    # failed to create the asset
+                    with ui.dialog() as fail_create, ui.card():
+                        ui.label('Oh no!').classes('font-bold')
+                        ui.label(create_result['message'])
+                        ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
+                        ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
+                        ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
+                        ui.button('Close', on_click=fail_create.close)
+                    fail_create.open
             # Template Mismatch
             else:
                 ui.notify("Error: Coule not save. The new asset dictionary does not match expected asset template. Unable to save.", 
@@ -113,7 +105,7 @@ async def new_asset():
                             multi_line=True)
 
         except FileNotFoundError as e:
-            ui.notify("Error: Could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.",
+            ui.notify("""Error: could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.""",
                       position='top',
                       type='negative',
                       multi_line=True)
@@ -126,7 +118,8 @@ async def new_asset():
                       multi_line=True)
 
         except Exception as e:
-            ui.notify("Error: Could not save. An unexpected error has occured. Please check application logs for more information.",
+            print(e)
+            ui.notify("""Error: Could not save. An unexpected error has occured. Please check application logs for more information.""",
                       position='top',
                       type='negative',
                       multi_line=True)
@@ -255,7 +248,6 @@ async def new_asset():
                                 for sell_price in sell_prices:
                                     await render_counter_bar(sell_prices, sell_price)
 
-
                 # Add any extra special text to the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
@@ -303,7 +295,7 @@ async def new_asset():
                 with ui.row().classes('items-center justify-start space-x-4'):
                     with ui.column().classes('items-start'):
                         ui.label("Done?")
-                        ui.button("Sumbit", on_click=lambda: create_asset_json(is_default.value))
+                        ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
 
 # Render the counters.
 @ui.refreshable

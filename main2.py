@@ -97,7 +97,7 @@ for test_target in test_targets:
     elif test_target == 'image':
         print('== Testing: ' + test_target + ' ==')
         directory_path = Path(str_images_path)
-        print('Getting the names of the games with multi_json_names_getter:')
+        print('Getting the names of the images with multi_json_names_getter:')
         print(multi_file_names_getter(directory_path, 'images'))
         print()
 
@@ -108,7 +108,7 @@ for test_target in test_targets:
     elif test_target == 'save':
         print('== Testing: ' + test_target + ' ==')
         directory_path = Path(str_saves_path)
-        print('Getting the names of the games with multi_json_names_getter:')
+        print('Getting the names of the saves with multi_json_names_getter:')
         print(multi_file_names_getter(directory_path, 'saves'))
         print()
 
@@ -119,7 +119,8 @@ for test_target in test_targets:
     elif test_target == 'asset':
         print('== Testing: ' + test_target + ' ==')
         directory_path = Path(str_assets_path)
-        print('Getting the names of the games with multi_json_names_getter:')
+        print('Getting the names of the assets with multi_json_names_getter:')
+        print(directory_path)
         print(multi_file_names_getter(directory_path, 'assets'))
         print()
 

@@ -104,43 +104,66 @@ def asset_loader(asset_objects: dict):
     # prep the types for being seen
 
 # create new asset from the gui
-def new_asset_gui(
-    is_default: bool,
-    new_asset: dict,
-    game_dict: dict,
-    save_dict: dict,
-    default_directory_path: str,
-    custom_directory_path: str
+def new_asset_gui( is_default: bool, configfilename: str,
+    new_asset: dict, game_dict: dict, save_dict: dict
 ) -> dict:
-    write_result = {}
-    format_result = format_str_for_filename_super(new_asset['name'])
+    write_result = {'result': False, 'message': '', 'debug': []}
+    try:
+        game_name_result = format_str_for_filename_super(game_dict['name'])
+        write_result['debug'].append({'game_name_result': game_name_result})
+        game_name = game_name_result['string']
 
-    if format_result['result']:
-        formatted_name = format_result['string']
-        print("Inside new_asset_gui")
+        config = get_config_as_dict(configfilename)
+        paths = config.get("Paths", {})
+        root_path = paths.get("osrootpath", "")
+        games_path = paths.get("gamespath", "")
+        default_assets_path = paths.get("defaultassetspath", "")
+        custom_assets_path = paths.get("customassetspath", "")
 
-        # Construct full file path using directory + new file name
-        if is_default:
-            full_file_path = str(Path(default_directory_path).with_name(f"{formatted_name}.json"))
-        else:
-            full_file_path = str(Path(custom_directory_path).with_name(f"{formatted_name}.json"))
+        game_base_path = Path(root_path + games_path) / game_name
 
-        # Write to file
-        write_result = create_new_json_file(full_file_path, new_asset)
+        format_result = format_str_for_filename_super(new_asset['name'])
+        write_result['debug'].append({'format_result': format_result})
 
-        if write_result['result']:
-            write_result['message'] = 'Saved asset as .json file successfully!'
-
-            # Update dictionaries only after successful write
+        if format_result['result']:
+            formatted_name = format_result['string']
             if is_default:
-                game_dict['default_assets'].append(new_asset['name'])
+                target_dir = game_base_path / default_assets_path.strip("\\")
             else:
-                save_dict['asset_customs'].append(new_asset['name'])
+                target_dir = game_base_path / custom_assets_path.strip("\\")
+
+            full_file_path = str(target_dir / f"{formatted_name}.json")
+            debug_log_path = target_dir / f"{formatted_name}_debug.log"
+
+            create_result = create_new_json_file(full_file_path, new_asset)
+            write_result['debug'].append({'create_result': create_result})
+
+            if create_result['result']:
+                write_result['result'] = True
+                write_result['message'] = 'Saved asset as .json file successfully!'
+                if is_default:
+                    game_dict['default_assets'].append(new_asset['name'])
+                else:
+                    save_dict['asset_customs'].append(new_asset['name'])
+            else:
+                write_result['message'] = 'Failed to save the asset as a .json file.'
 
         else:
-            write_result['message'] = 'Failed to save the asset as a .json file.'
-    else:
-        write_result['message'] = 'Formatting the asset name to a file name failed!'
+            write_result['message'] = 'Formatting the asset name to a file name failed!'
+
+    except Exception:
+        error_info = traceback.format_exc()
+        write_result['message'] = 'Unhandled exception occurred.'
+        write_result['debug'].append({'exception': error_info})
+
+    # Save debug log
+    try:
+        debug_text = json.dumps(write_result['debug'], indent=2)
+        debug_log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(debug_log_path, 'w') as log_file:
+            log_file.write(debug_text)
+    except Exception as log_exception:
+        write_result['debug'].append({'log_error': str(log_exception)})
 
     return write_result
 
@@ -276,12 +299,11 @@ def dict_to_objects(targetDict: dict) -> dict:
     # Sort the assets by category
 
 # gets an asset_name, converts it to file format, checks if already exists.
-def get_new_asset_name(name: str, directory_path: str) -> dict:
-    file_name = ""
+def get_new_asset_name(directory_path: str, name: str) -> dict:
     assets = []
     asset_name = {"name": "", "file":""}
     valid = False
-
+    
     while valid != True:
         format_result = format_str_for_filename_super(name)
         if format_result['result']:
@@ -289,20 +311,20 @@ def get_new_asset_name(name: str, directory_path: str) -> dict:
             # Send the Directory Path
             assets_result = multi_file_names_getter(directory_path, "assets")
             
-            if assets_result['results']:
+            if assets_result['result']:
                 assets = assets_result['list']
             else:
                 print("Warning! Could not retrieve the names of assets.")
             
             if format_result['string'] in assets:
-        # if file_name already exists, append placeholder and alert user
+        # if format_result['string'] already exists, append placeholder and alert user
                 valid = True
                 asset_name["name"] = name + "_Placeholder"
-                asset_name["file"] = file_name + "_placeholder"
+                asset_name["file"] = format_result['string'] + "_placeholder"
             else:
                 valid = True
                 asset_name["name"] = name
-                asset_name["file"] = file_name
+                asset_name["file"] = format_result['string']
 
     return  asset_name
 

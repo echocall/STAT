@@ -1,5 +1,7 @@
 from helpers.crud import *
 from helpers.utilities import *
+from pathlib import Path
+import json
 from datetime import datetime
 import traceback
 
@@ -21,58 +23,85 @@ def get_saves(saves_directory_path: str) -> dict:
     return save_files
 
 # for creating a new save from the gui
-def new_save_gui( configfilename: str, game_name:str,
-                  new_save_dict: dict, file_name: str) -> dict:
+def new_save_gui(configfilename: str, game_name: str, new_save_dict: dict) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
+    create_result = {'result': False, 'message': '', 'dict':{}}
 
     try:
-        # Load configuration
+        # Format game name
+        game_name_result = format_str_for_filename_super(game_name)
+        write_result['debug'].append({'game_name_result': game_name_result})
+        if not game_name_result['result']:
+            raise ValueError("Failed to format game name.")
+        game_name_formatted = game_name_result['string']
+
+        # Format save name
+        save_format_result = format_str_for_filename_super(new_save_dict['name'])
+        
+        # Load config and paths
         config = get_config_as_dict(configfilename)
         paths = config.get("Paths", {})
-        root_path = paths.get("osrootpath", "Not Set")
+        root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")
         saves_path = paths.get("savespath", "")
 
-        # Assemble full directory paths
-        game_base_path = Path(root_path + games_path) / new_game_dict['name']
-        game_file_path = game_base_path / f"{file_name}.json"
-        debug_log_path = game_base_path / f"{file_name}_debug.log"
+        write_result['debug'].append({'save_format_result': save_format_result})
+        if not save_format_result['result']:
+            raise ValueError("Failed to format save name.")
+        file_name = save_format_result['string']
 
-        save_base_path = save_directory_path + '\\' + new_save_dict['name']
+        # Build full save directory path: <root>/<games>/<game>/<saves>/<file_name>/
+        str_save_directory = root_path + games_path + '//' + game_name_formatted + saves_path + '//' + file_name 
+        str_saves_path = root_path + games_path + '//' + game_name_formatted + saves_path
+        save_directory = Path(str_save_directory) 
+        saves_path = Path(str_saves_path)
+        save_file_path = Path(save_directory / f"{file_name}.json")
+        debug_log_path = Path(saves_path / f"{file_name}_debug.log")
 
-        # Get the date of creation
+        # Create directory
+        dir_create_result = create_new_directory(str(save_directory), debug_mode=True)
+        write_result['debug'].append({'directory_creation': dir_create_result})
+
+        # Check if directory creation failed in a meaningful way
+        if not dir_create_result['result'] and "already exists" not in dir_create_result['message'].lower():
+            write_result['string'] = "Failed to create save folder."
+            return write_result
+
+        # Ensure the save name is updated/unique
+        new_save_name = new_save_dict['name']
+        resolved_name = get_new_save_name(str(save_directory.parent), new_save_name)
+        write_result['debug'].append({'resolved_save_name': resolved_name})
+
+        # Set timestamps
         date_created = datetime.now().strftime('%b-%d-%Y %H:%M:%S')
         new_save_dict['create_date'] = date_created
-        # last save date
-        last_save_date = date_created
-        new_save_dict['date_last_save'] = last_save_date
+        new_save_dict['date_last_save'] = date_created
 
-        write_result = create_new_json_file(save_base_path, new_save_dict)
-        debug_log_path = save_directory_path / f"{file_name}_debug.log"
-        
-        # If we wrote the dict to the .JSON file
-        if write_result['result'] == True:
-            write_result['string'] = 'Successfully wrote save to file.'
-            write_result['dict'] = new_save_dict
-            return write_result
+        # Write save file
+        create_result = create_new_json_file(str(save_file_path), new_save_dict)
+        write_result['debug'].append({'save_path': str(save_file_path)})
+
+        if create_result['result']:
+            create_result['string'] = 'Successfully wrote save to file.'
+            create_result['dict'] = new_save_dict
         else:
-            write_result['string'] = "Warning, could not write new save to JSON file."
+            create_result['string'] = "Warning, could not write new save to JSON file."
 
     except Exception:
-            error_info = traceback.format_exc()
-            write_result['string'] = "Unhandled exception occurred."
-            write_result['debug'].append({'exception': error_info})
+        error_info = traceback.format_exc()
+        write_result['string'] = "Unhandled exception occurred."
+        write_result['debug'].append({'exception': error_info})
 
-    # Save debug info to log file
+    # Write debug log
     try:
         debug_text = json.dumps(write_result['debug'], indent=2)
-        debug_log_path.parent.mkdir(parents=True, exist_ok=True)  # ensure folder exists
+        debug_log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(debug_log_path, 'w') as log_file:
             log_file.write(debug_text)
     except Exception as log_exception:
         write_result['debug'].append({'log_error': str(log_exception)})
 
-    return write_result
+    return create_result
 
 def get_save_names(directory_path: str) -> list:
     save_names = []

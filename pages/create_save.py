@@ -13,13 +13,13 @@ def create_save():
     paths = config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
-    template_paths = paths.get("templatefilepath", "Not Set")
     saves_path = paths.get("savespath", "Not Set")
-    datapack_paths = paths.get("datapackspath", "Not Set")
+    template_paths = paths.get("templatefilepath", "Not Set")
     selected_game = app.storage.user.get('selected_game', {})
 
     str_games_path = root_path + games_path
-    str_saves_path = str_games_path + '\\' +  selected_game['name'] + '\\' +  saves_path
+
+
 
     new_save_dict = {'name': '','base_game': '', 'create_date':'', 
                      'date_last_save': '','description': '', 
@@ -34,54 +34,82 @@ def create_save():
 
     async def create_save_json():
         matches_template = False
-        save_name = {}
+        save_name_result = {}
         create_save_result = False
-    
+        game_file_name = ''
+        print("Inside create_save_json in create_save.py")
         try:
             # Ensure the game matches the template
             matches_template = check_template_bool(new_save_dict, template_paths)
+
             if matches_template:
-                # Check if a save with that name already exists
-                new_save_name = new_save_dict['name']
+                # Convert game name to file friendly format
+                game_name_result = format_str_for_filename_super(selected_game['name'])
+                if game_name_result['result']:
+                    game_file_name = game_name_result['string']
 
-                save_name = get_new_save_name(str_saves_path, new_save_name)
-                print(save_name)
-                if "_Placeholder" in save_name['name']:
-                    ui.notify(f"A save by that same name already exists. Your save will be saved as: {save_name['name']}",
-                              position='top',
-                              type='warning',
-                              multi_line=True)
-            
-                # Get the starting information from the game
-                new_save_dict['base_game'] = selected_game['name']
-                new_save_dict['counters'] = selected_game['counters']
-                new_save_dict['actors'] = selected_game['default_actors']
-                new_save_dict['current_turn'] = selected_game['start_turn']
+                    # Make str_save_directory_path here
+                    str_save_directory_path = str_games_path + '\\' +  game_file_name +  saves_path
 
-                try:
-                    create_save_result = new_save_gui(str_saves_path, new_save_dict, save_name['file'])
-                    if create_save_result['result']:
-                        ui.notify("Save created! You can now use to the dashboard.",
-                                  position='top',
-                                  type='positive')
-                        # Navigate to the game view
-                        # Make sure to get the dictionary back from create_game_result as it handles multiple fields
-                        app.storage.user['selected_save'] = create_save_result['dict']
-                        
+                    save_name_result = format_str_for_filename_super(new_save_dict['name'])
+                    if save_name_result['result']:
+                        # Check for duplicates
+                        save_name_check = get_new_save_name(str_save_directory_path, new_save_dict['name'])
+
+                        if "_Placeholder" in save_name_check['name']:
+                            ui.notify(f"""Notice! An asset by the same name already exists. 
+                                    Could not save asset.""",
+                                        type='warning',
+                                        position='top',
+                                        multi_line=True)
+
+                        # Get the starting information from the game
+                        new_save_dict['base_game'] = selected_game['name']
+                        new_save_dict['counters'] = selected_game['counters']
+                        new_save_dict['actors'] = selected_game['default_actors']
+                        new_save_dict['current_turn'] = selected_game['start_turn']
+                        try:
+                            create_save_result = new_save_gui('config.txt', selected_game['name'], new_save_dict)
+                            if create_save_result['result']:
+                                ui.notify("Save created! You can now use to the dashboard.",
+                                        position='top',
+                                        type='positive')
+                                # Pull the newly created save out of the file and use that.
+                                app.storage.user['selected_save'] = create_save_result['dict']
+                                # refresh screen to see the change
+                                ui.navigate.reload()
+                                
+                            else:
+                                ui.notify(f"""Save file could not be created. Please check file permissions. 
+                                    Check the log file in folder where the asset would be created for more details.""",
+                                        type='negative',
+                                        position="top",)
+                                raise Exception(f"""Save file could not be created. 
+                                    Check the log file in folder where the asset would be created for more details.""")
+                        except Exception as e:
+                                print(traceback.format_exc())
+                                ui.notify("Error: Failed to save save file. Please ensure file paths in config.txt are correct and STAT has write permission to the folders.",
+                                        position='top',
+                                        type='negative',
+                                        multi_line=True)
+                    # unable to format save name
                     else:
-                        ui.notify("Save file could not be created. Please check file permissions.",
-                                  type='negative',
-                                  position="top",)
-                        raise Exception("Save file could not be created. Please check file permissions.")
-                except Exception as e:
-                        print(traceback.format_exc())
-                        ui.notify("Error: Failed to save save file. Please ensure file paths in config.txt are correct and STAT has write permission to the folders.",
-                                  position='top',
-                                  type='negative',
-                                  multi_line=True)
+                        ui.notify(f"""Warning: the new save file's name could not be converted into a file-friendly format!
+                                Please try a different name.""",
+                                position='top',
+                                type='warning',
+                                multi_line=True)
+                # unable to format game name
+                else:
+                    ui.notify(f"""Warning: the new game's name could not be converted into a file-friendly format!
+                            How in the codebase did you manage THAT?""",
+                            position='top',
+                            type='warning',
+                            multi_line=True)
             else:
                 # Template mismatch
-                ui.notify("Error: The new save dictionary does not match the expected save template! Please check that template files are correct.",
+                ui.notify("""Error: The new save dictionary does not match the expected save template! 
+                          Please check that template files are correct.""",
                           position="top",
                           type='negative',
                           multi_line=True)
@@ -107,12 +135,11 @@ def create_save():
 
     async def handle_create_save():
         await create_save_json()
-        ui.navigate.to(f"/loadeddash/")
 
     with theme.frame('Create New Save'):
         with ui.column().classes("flex content-center w-100"):
-        # Name of the Save
             with ui.column().classes('justify-center items-center w-full mt-4'):
+                # Checking if a selected game is loaded.
                 if not selected_game or 'name' not in selected_game:
                     with ui.row():
                         ui.icon('warning').classes('text-3xl')
@@ -121,9 +148,11 @@ def create_save():
                     ui.label('Please select a game from \'Select Games\' first.')
                     with ui.link(target = '/selectgames'):
                         ui.button('Find Game File')
+                # Actually creating the save.
                 else:
-                    ui.label("All we need from you is the name of the save and a description. ").classes('h-5')
+                    ui.label("All we need from you is the name of the save and a description.").classes('h-5')
                     ui.label("We'll handle the rest!")
+                    ui.label("The form will clear itself after a successful save file creation, make sure to check selected_save in the bottom left corner!")
                     with ui.column().classes('items-start'):
                         name_input = ui.input(label='Save Name: ', placeholder='50 character limit',
                                         on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
