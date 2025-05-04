@@ -90,7 +90,7 @@ async def new_asset():
                         name_existed.open
                     # attempt to create asset here.
                     try:
-                        create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save, asset_name['file'])
+                        create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save, str_default_assets_path, str_custom_assets_path)
                         if create_result['result']:
                             with ui.dialog() as success_create, ui.card():
                                 ui.label('Success!').classes('font-bold')
@@ -100,7 +100,7 @@ async def new_asset():
                             success_create.open
                             ui.notify("Congrats! Asset created!", 
                                       type='positive', 
-                                      position="top",)
+                                      position="top")
                             # clear page somehow
                     except:
                         # failed to create the asset

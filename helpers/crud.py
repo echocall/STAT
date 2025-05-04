@@ -5,52 +5,87 @@ from helpers.utilities import *
 import traceback
 
 # CREATE
-def create_new_json_file(passedFileName: str, passedDirectoryPath: str, dict_to_convert: dict) -> bool:
-    result = False
-    error_message = ""
-    str_target_directory_path = passedDirectoryPath
-    str_target_file_name = passedFileName + '.json'
-    str_target_file_path = str_target_directory_path + '\\' + str_target_file_name
-    json_obj = ''
+def create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict:
+    result_dict = {
+        'result': False,
+        'message': '',
+        'path': str(full_file_path),
+    }
 
-    json_obj = convert_obj_to_json(dict_to_convert)
+    debug_info = {}
 
-    # casting to Path 
-    target_directory_path = Path(str_target_directory_path)
-    target_file_path = Path(str_target_file_path)
+    target_file_path = Path(full_file_path)
+    target_directory_path = target_file_path.parent
 
-    if target_directory_path.exists():
-        if(target_file_path.exists()):
-            error_message = "Error: " + str_target_file_name + " already exists."
-        else:
-            f = open(str_target_file_path, "w")
+    try:
+        json_obj = convert_obj_to_json(dict_to_convert)
+        if include_debug:
+            debug_info['json_size'] = len(json_obj)
+    except Exception as e:
+        result_dict['message'] = f"Error converting dictionary to JSON: {e}"
+        if include_debug:
+            debug_info['conversion_error'] = str(e)
+        result_dict['debug'] = debug_info
+        return result_dict
+
+    if include_debug:
+        debug_info['directory_exists'] = target_directory_path.exists()
+        debug_info['file_exists'] = target_file_path.exists()
+        debug_info['directory'] = str(target_directory_path)
+        debug_info['filename'] = target_file_path.name
+
+    if not target_directory_path.exists():
+        result_dict['message'] = f"Directory not found: {target_directory_path}"
+        if include_debug:
+            result_dict['debug'] = debug_info
+        return result_dict
+
+    if target_file_path.exists():
+        result_dict['message'] = f"File already exists: {target_file_path.name}"
+        if include_debug:
+            result_dict['debug'] = debug_info
+        return result_dict
+
+    try:
+        with target_file_path.open("w", encoding="utf-8") as f:
             f.write(json_obj)
-            f.close()
-            result = True
-    else:
-        error_message = "Incorrect Path: directory not found for file creation!"
+        result_dict['result'] = True
+        result_dict['message'] = "File created successfully."
+    except Exception as e:
+        result_dict['message'] = f"Error writing file: {e}"
+        if include_debug:
+            debug_info['write_error'] = str(e)
 
-    if result == True:
-        return result
-    else:
-        print(error_message)
-        return result
+    if include_debug:
+        result_dict['debug'] = debug_info
 
-# Takes a file path and tries to create it at that location.
-def create_new_directory(passed_directory_path: str) -> dict:
-    # TODO: Fix this one's error handling.
-    result = { 'created': False, 'create_folder_message': '' }
-    error_message = ""
+    return result_dict
+
+# Takes a directory path and tries to create a folder at that location.
+def create_new_directory(passed_directory_path: str, debug_mode: bool = False) -> dict:
+    result_dict = {
+        'result': False,
+        'message': '',
+    }
 
     try:
         Path(passed_directory_path).mkdir(parents=True, exist_ok=False)
-        result['created'] = True
-        result['create_folder_message'] = "Successfully created the folder!"
-    except Exception:
-        result['create_folder_message'] = traceback.format_exc()
-        result['created'] = False
-    
-    return result
+        result_dict['result'] = True
+        result_dict['message'] = "Successfully created the folder."
+    except FileExistsError:
+        result_dict['message'] = "Directory already exists."
+        if debug_mode:
+            result_dict['debug'] = f"The path '{passed_directory_path}' already exists."
+    except PermissionError as e:
+        result_dict['message'] = "Permission denied while creating the folder."
+        if debug_mode:
+            result_dict['debug'] = str(e)
+    except Exception as e:
+        result_dict['message'] = "An unexpected error occurred while creating the folder."
+        if debug_mode:
+            result_dict['debug'] = traceback.format_exc()
+
+    return result_dict
 
 # READ
 # single JSON getter with known, full file path
@@ -276,7 +311,6 @@ def get_template_json(template_type: str, directory_path: str) -> dict:
         print(f"An unexpected error occurred while getting game names. See terminal for more.")
         print(f"{e}\n{traceback.format_exc()}")
         return template
-
 
 # gets the config files as a nested dictionary
 def get_config_as_dict(configfilename: str) -> dict:

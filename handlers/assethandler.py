@@ -104,50 +104,45 @@ def asset_loader(asset_objects: dict):
     # prep the types for being seen
 
 # create new asset from the gui
-def new_asset_gui(is_default: bool, new_asset: dict, game_dict: dict, save_dict: dict, file_name: str) -> dict:
-    write_result = { 'result': False, 'message': ''}
-    error_message = ""
-    save_location = {}
-
+def new_asset_gui(
+    is_default: bool,
+    new_asset: dict,
+    game_dict: dict,
+    save_dict: dict,
+    default_directory_path: str,
+    custom_directory_path: str
+) -> dict:
+    write_result = {}
     format_result = format_str_for_filename_super(new_asset['name'])
 
     if format_result['result']:
-        file_name = format_result['string']
+        formatted_name = format_result['string']
 
-        # is this a default asset for a game?
-        if is_default: 
-            # update the game file
-            game_dict['default_assets'].append(new_asset['name'])
-
-            # write asset to appropriate location
-            write_result['result'] = create_new_json_file(file_name, game_dict['asset_default_path'], new_asset)
-            # Check write_result
-            if write_result['result']:
-                write_result['message'] = 'Saved asset as .json file successfully!'
-                return write_result
-            else:
-                write_result['message'] = 'Failed to save the default asset as a .json file.'
-                return write_result
-            
-        # Custom asset
+        # Construct full file path using directory + new file name
+        if is_default:
+            full_file_path = str(Path(default_directory_path).with_name(f"{formatted_name}.json"))
         else:
-            # update the save file
-            save_dict['asset_customs'].append(new_asset['name'])
+            full_file_path = str(Path(custom_directory_path).with_name(f"{formatted_name}.json"))
 
-            #write asset to appropriate location
-            write_result['result'] = create_new_json_file(file_name, save_dict['asset_customs_path'], new_asset)
-            # Check write result
-            if write_result['result']:
-                write_result['message'] = 'Saved asset as .json file successfully!'
-                return write_result
+        # Write to file
+        write_result = create_new_json_file(full_file_path, new_asset)
+
+        if write_result['result']:
+            write_result['message'] = 'Saved asset as .json file successfully!'
+
+            # Update dictionaries only after successful write
+            if is_default:
+                game_dict['default_assets'].append(new_asset['name'])
             else:
-                write_result['message'] = 'Failed to save the custom asset as a .json file.'
-                return write_result
+                save_dict['asset_customs'].append(new_asset['name'])
 
+        else:
+            write_result['message'] = 'Failed to save the asset as a .json file.'
     else:
         write_result['message'] = 'Formatting the asset name to a file name failed!'
-        # could not format the name @_@
+
     return write_result
+
 
 def category_explanation() -> str:
     category_info = """A category is the largest organization chunk for an asset.

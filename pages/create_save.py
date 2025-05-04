@@ -58,7 +58,7 @@ def create_save():
                 new_save_dict['current_turn'] = selected_game['start_turn']
 
                 try:
-                    create_save_result = new_save_gui(datapack_paths, saves_path, new_save_dict, save_name['file'])
+                    create_save_result = new_save_gui(str_saves_path, new_save_dict, save_name['file'])
                     if create_save_result['result']:
                         ui.notify("Save created! You can now use to the dashboard.",
                                   position='top',

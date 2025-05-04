@@ -72,7 +72,7 @@ def create_game():
                 if folder_creation:
                     # Attempt to save the game
                     try:
-                        create_game_result = new_game_gui(games_path, datapack_paths, save_paths, new_game_dict, game_name['file'])
+                        create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
                         if create_game_result['result']:
                             app.storage.user['selected_game'] = create_game_result['dict']
                             ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
@@ -84,23 +84,23 @@ def create_game():
                             # ui.navigate.reload()
                             
                         else:
-                            ui.notify("Game file could not be created. Please check file permissions.",
+                            ui.notify(f"""Game file could not be created. Please check file permissions. 
+                                      More information can be found in: 
+                                      C:\Users\strip\AppData\Local\STAT\statassets\games\{game_name['file']}\{game_name['file']}_debug.log""",
                                       type='negative',
                                       position="top",
                                       multi_line = True,)
-                            raise Exception("Game file could not be created. Please check file permissions.")
                     except Exception as e:
-                        with ui.dialog() as save_error, ui.card():
-                            ui.label("Error!").classes('h3')
-                            ui.label("Failed to save the game file.")
-                            ui.label(f"Details: {str(e)}")
-                            ui.label("Please ensure the application has write permissions to the target directory.")
-                            ui.button('Close', on_click=save_error.close)
-                        save_error.open
+                            ui.notify(f"""Game file could not be created. Please check file permissions. 
+                                      More information can be found in: 
+                                      C:\Users\strip\AppData\Local\STAT\statassets\games\{game_name['file']}\{game_name['file']}_debug.log""",
+                                      type='negative',
+                                      position="top",
+                                      multi_line = True,)
                 # failed to create folder
                 else:
                     ui.notify("""Error! Unable to create the folders.
-                              Please check application has write permissions and folder locations and try again.""",
+                              Please check application has write permissions to the folder locations in config.txt and try again.""",
                                 type='negative',
                                 position="top",
                                 multi_line = True,

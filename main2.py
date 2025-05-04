@@ -3,7 +3,7 @@ from helpers.utilities import *
 from helpers.crud import *
 
 
-# Store as nested dictionary
+# Get Config as nested dictionary
 config = get_config_as_dict('config.txt')
 # Get the paths
 paths = config.get("Paths",{})
@@ -34,7 +34,7 @@ str_games_path = root_path + games_path
 
 
 str_images_path = str_games_path + '\\' + game_file_name + images_path
-str_saves_path = str_games_path + '\\' +  game_file_name + '\\' +  saves_path
+str_saves_path = str_games_path + '\\' +  game_file_name +  saves_path
 
 str_image_path = ''
 
@@ -65,10 +65,10 @@ str_game_path = str_games_path + '\\' + game_file_name + '\\' + game_file_name +
 str_save_path = str_saves_path + '\\' + "save_a" + '\\' + "save_a.json"
 str_default_asset_path = str_default_assets_path + '\\' + 'forge.json'
 str_custom_asset_path = str_custom_assets_path + '\\' + 'soldier.json'
-
+"""
 print(str_default_asset_path)
 print(str_custom_asset_path)
-
+"""
 # TODO: fix these with proper names of effects
 """
 str_default_effect_path = str_default_effects_path + '\\' + 'forge.json'
@@ -86,7 +86,6 @@ for test_target in test_targets:
     if test_target == 'game':
         print('== Testing: ' + test_target + ' ==')
         directory_path = Path(str_games_path)
-        print(directory_path)
         print('Getting the names of the games with multi_json_names_getter:')
         print(multi_file_names_getter(directory_path, 'games'))
         print()

@@ -21,62 +21,46 @@ def get_saves(saves_directory_path: str) -> dict:
     return save_files
 
 # for creating a new save from the gui
-def new_save_gui(datapack_path: str, save_path: str,
+def new_save_gui( save_directory_path: str,
                   new_save_dict: dict, file_name: str) -> dict:
-    write_result = {'result':False,'string':'', 'dict':{}}
-    folders_create = False
-    error_message = ""
+    write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
 
-    # Get the date of creation
-    date_created = datetime.now().strftime('%b-%d-%Y %H:%M:%S')
-    new_save_dict['create_date'] = date_created
-    # last save date
-    last_save_date = date_created
-    new_save_dict['date_last_save'] = last_save_date
+    try:
+        save_base_path = save_directory_path + '\\' + new_save_dict['name']
 
-    # Create the folders for the customs.
-    game_file = {}
-    game_file = format_str_for_filename_super(new_save_dict['base_game'])
-    
-    if game_file['result']:
-        customs_path = datapack_path + game_file['string'] + "\\customs\\"  + file_name + "\\"
-        # assembling the paths that need to be made
-        actor_customs_path = customs_path + "actors\\"
-        asset_customs_path = customs_path + "assets\\"
-        effect_customs_path = customs_path + "effects\\"
-        events_customs_path = customs_path + "events\\"
-    else:
-        actor_customs_path = ""
-        asset_customs_path = ""
-        effect_customs_path = ""
-        events_customs_path = ""
-    new_save_dict['actor_customs_path'] = actor_customs_path
-    new_save_dict['asset_customs_path'] = asset_customs_path
-    new_save_dict['effect_customs_path'] = effect_customs_path
-    new_save_dict['event_customs_path'] = events_customs_path
-    new_save_dict['log_file_path'] = save_path + "\\" + game_file['string'] + "\\"
-    
-    folders_create = create_save_folders(file_name, new_save_dict['base_game'], datapack_path)
-    if not folders_create:
-        # warn user via error message
-        error_mesage = "Error: failed to create directories for new save."
-        g = 2+7
+        # Get the date of creation
+        date_created = datetime.now().strftime('%b-%d-%Y %H:%M:%S')
+        new_save_dict['create_date'] = date_created
+        # last save date
+        last_save_date = date_created
+        new_save_dict['date_last_save'] = last_save_date
 
-    save_path_full = save_path + '\\' + game_file['string'] + '\\' + file_name
+        write_result = create_new_json_file(save_base_path, new_save_dict)
+        debug_log_path = save_directory_path / f"{file_name}_debug.log"
+        
+        # If we wrote the dict to the .JSON file
+        if write_result['result'] == True:
+            write_result['string'] = 'Successfully wrote save to file.'
+            write_result['dict'] = new_save_dict
+            return write_result
+        else:
+            write_result['string'] = "Warning, could not write new save to JSON file."
 
-    # create the folder where the save goes
-    save_folder_blns = create_new_directory(save_path_full)
+    except Exception:
+            error_info = traceback.format_exc()
+            write_result['string'] = "Unhandled exception occurred."
+            write_result['debug'].append({'exception': error_info})
 
-    write_result['result'] = create_new_json_file(file_name, save_path_full, new_save_dict)
-    
-    # If we wrote the dict to the .JSON file
-    if write_result['result'] == True:
-        write_result['string'] = 'Successfully wrote save to file.'
-        write_result['dict'] = new_save_dict
-        return write_result
-    else:
-        write_result['string'] = "Warning, could not write new save to JSON file."
-        return write_result
+    # Save debug info to log file
+    try:
+        debug_text = json.dumps(write_result['debug'], indent=2)
+        debug_log_path.parent.mkdir(parents=True, exist_ok=True)  # ensure folder exists
+        with open(debug_log_path, 'w') as log_file:
+            log_file.write(debug_text)
+    except Exception as log_exception:
+        write_result['debug'].append({'log_error': str(log_exception)})
+
+    return write_result
 
 def get_save_names(directory_path: str) -> list:
     save_names = []
@@ -191,29 +175,8 @@ def update_save(save_dict: dict, save_path: str, template_path: str) -> dict:
     else:
         return template_result
 
-
-# TODO: Create a new save file
-def new_save(save_name: str, game: dict):
-    print("TODO: Create a new save file.")
-    file_save_name = ""
-    new_save_file = {'name': "", 'create_date': "", "date_last_save": "",
-                     "description": "", "asset_customs": False, "asset_customs_path": "",
-                     "actor_customs": False,"actor_customs_path": "",
-                     "event_customs": False, "event_customs_path": "",
-                     "effect_customs": False, "effect_customs_path": "",
-                     "counters":{}, "assets":{}, "actors":{}, "current_events":{},
-                     "current_effects":{},"current_turn":0, "log_file_path":""}
-    # build the save dict
-
-    # Convert save_name to file_name friendly format
-    file_save_name = format_str_for_filename(save_name)
-
-    # Get default values from the game.
-    new_save_file['name'] = save_name;
-    new_save_file['']
-
 # TODO:
-def save_current():
+def save_current(old_save: dict, new_save: dict):
     print("TODO: save current STAT instance to save file.")
     # Call update save functions in MySave
 
@@ -221,41 +184,6 @@ def save_current():
 def save_as_new_file():
     print("TODO: Create a new save file.")
 
-# create the folders for a new save.
-def create_save_folders(file_name: str, game_name: str, datapack_path: str) -> bool:
-    folder_created = False
-    folders_created = {}
-    result = False
-    folders = []
-    game_file = {}
-
-    game_file = format_str_for_filename_super(game_name)
-    
-    if game_file['result']:
-        customs_path = datapack_path+ "\\"+ game_file['string']  + "\\customs\\" + file_name + '\\'
-        # assembling the paths that need to be made
-        actors_customs_path = customs_path + "actors\\"
-        asset_customs_path = customs_path + "assets\\"
-        effect_customs_path = customs_path + "effects\\"
-        events_customs_path = customs_path + "events\\"
-
-        folders.append(actors_customs_path)
-        folders.append(asset_customs_path)
-        folders.append(effect_customs_path)
-        folders.append(events_customs_path)
-
-        # For each filepath to a directory, create that directory
-        for folder in folders:
-            folder_created = create_new_directory(folder)['created']
-            folders_created['folder']=folder_created
-
-        if False not in folders_created:
-            result = True
-    else:
-        b = 2+2
-        # TODO: error handling for if this doesn't work.
-    
-    return result
 
 # TODO: implement
 # delete a save
