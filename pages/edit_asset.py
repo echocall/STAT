@@ -128,19 +128,6 @@ async def content() -> None:
                               position='top',
                               type='negative',
                               multi_line=True)
-                
-                if asset_exists:
-                    if is_default:
-                        # build path for default path here
-                        str_default_asset_path = str_default_assets_path + '\\' + selected_name + '.json'
-                    else:
-                        # build path for custom path here
-                        str_custom_asset_path = str_custom_assets_path + '\\' + selected_name + '.json'
-                else:
-                    ui.notify(f"Warning! Could not verify existance of asset. Please check the asset exists in either the default folder at: {str_default_assets_path} or in the customs folder at: {str_custom_assets_path} then try again.",
-                              position='top',
-                              type='negative',
-                              multi_line=True)
             except:
                 ui.notify("Error: Issue with formatting the name result! Please use standard utf8 characters and try again.",
                             position='top',

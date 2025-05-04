@@ -16,20 +16,15 @@ def create_game():
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
     template_paths = paths.get("templatefilepath", "Not Set")
-    save_paths = paths.get("savespath", "Not Set")
-    datapack_paths = paths.get("datapackspath", "Not Set")
 
     str_games_path = root_path + games_path
 
     new_game_dict = {'name': '','description':'', 'has_counters': False,
-                'counters': {}, 'has_actors': False,
-                'actor_default_path':'', 'default_actors':["Player"],
-                'has_assets': False, 'asset_default_path':'',
-                'default_assets':[], 'has_events': False, 
-                'event_default_path':'', 'default_events':[],
-                'has_effects': False, 'effect_default_path':'',
-                'default_effects':[],'icon':'',
-                'save_files_path':'', 'has_turns':False,
+                'counters': {}, 'has_actors': False, 'default_actors':["Player"], 
+                'has_assets': False, 'default_assets':[],
+                'has_events': False, 'default_events':[],
+                'has_effects': False, 'default_effects':[],
+                'icon':'', 'has_turns':False,
                 'turn_type':'', 'start_turn':0
                 }
 
@@ -183,6 +178,7 @@ def create_game():
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
                     ui.label('Do you want to add Actors now?').classes('font-bold')
+                    ui.label('By default \"Player\" is added as an actor.')
                     has_actors = ui.switch()
                     has_actors.on('click', has_actors.set_value(has_actors.value))
                     has_actors.bind_value(new_game_dict, 'has_actors')
@@ -195,37 +191,13 @@ def create_game():
             # Creating Assets
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
-                    ui.label('Do you want to add Assets?').classes('font-bold') 
-                    has_assets = ui.switch()
-                    has_assets.on('click', has_assets.set_value(has_assets.value))
-                    has_assets.bind_value(new_game_dict, 'has_assets')
-                    asset_notice = ui.label("After completing the initial game setup you'll be taken to a page to add assets to the game.")
-                    asset_notice.bind_visibility_from(has_assets, 'value')
+                    ui.label('Assets').classes('font-bold')
 
             # Creating Effects
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column().classes('items-start'):
-                    ui.label('Do you want to add Effects?').classes('font-bold')
-                    has_effects = ui.switch()
-                    has_effects.on('click', has_effects.set_value(has_effects.value))
-                    has_effects.bind_value(new_game_dict, 'has_effects')
-                    effects_notice = ui.label("After completing the initial game setup you'll be taken to a page to add effects to the game.")
-                    effects_notice.bind_visibility_from(has_effects, 'value')
-
-
-            # Creating Events
-            # TODO: Implement later
-            """
-            with ui.row().classes('w-80 items-stretch'):
-                ui.label('Do you want to add Events now?')
-                has_events = ui.switch()
-                has_events.on('click', has_events.set_value(has_events.value))
-                has_events.bind_value(new_game, 'has_events')
-                # The button will pull up a different dialog box for creating an event.
-                create_events = ui.button('Create Events', 
-                                        on_click=lambda: ui.notify('You clicked Create Events!'))
-                create_events.bind_visibility_from(has_events, 'value')
-            """
+                    ui.label('Effects').classes('font-bold')
+                    ui.label('You will add these later.')
 
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):

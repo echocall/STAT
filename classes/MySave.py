@@ -10,13 +10,9 @@ class MySave:
     date_last_save: str
     description: str
     asset_customs: bool
-    asset_customs_path: str
     actor_customs: bool
-    actor_customs_path: str
     event_customs: bool
-    event_customs_path: str
     effect_customs: bool
-    effect_customs_path: str
     counters: dict
     assets: dict
     actors: list
@@ -26,8 +22,8 @@ class MySave:
     log_file_path: str
 
     def __post__init__(self, name, baseGame, createDate, dateLastSave, description, 
-                 assetCustoms, assetCustomsPath, actorCustoms, actorCustomsPath,
-                 eventCustoms,eventCustomsPath, effectCustoms, effectCustomsPath,
+                 assetCustoms, actorCustoms,
+                 eventCustoms, effectCustoms,
                    counters, assets, actors, currentEvents,
                      currentEffects, logFilePath ):
         self.name = name
@@ -36,13 +32,9 @@ class MySave:
         self.date_last_save = datetime.strptime(str(dateLastSave), '%\d-%m-%Y %H:%M:%S')
         self.description = description
         self.asset_customs = assetCustoms
-        self.asset_customs_path = assetCustomsPath
         self.actor_customs = actorCustoms
-        self.actor_customs_path = actorCustomsPath
         self.event_customs = eventCustoms
-        self.event_customs_path = eventCustomsPath
         self.effect_customs = effectCustoms
-        self.effect_customs_path = effectCustomsPath
         self.counters = counters
         self.assets = assets
         self.actors = actors

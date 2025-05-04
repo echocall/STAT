@@ -8,54 +8,44 @@ class MyGame:
     has_counters: bool
     counters: dict
     has_actors: bool
-    actor_default_path: str
     default_actors: list
     has_assets: bool
-    asset_default_path: str
     default_assets: list
     has_events: bool
-    event_default_path: str
     default_events: list
     has_effects: bool
-    effect_default_path: str
     default_effects: list
     icon: str
-    save_files_path: str
     has_turns: bool
     turn_type: str
     start_turn: int
-    image_file_path: str
+    image: str
 
     
     def __post__init__ (self, name: str, description: str, has_counters: bool, counters: dict,
-                has_actors: bool, actor_default_path: str, default_actors: list,
-                  has_assets: bool, asset_default_path: str, default_assets: list, 
-                 has_events: bool, event_default_path: str, default_events: list, 
-                 has_effects: bool, effect_default_path: str, default_effects: list,
-                   icon: str, save_files_path: str, has_turns: bool, 
-                   turn_type: str, start_turn: int, image_file_path: str):
+                has_actors: bool, default_actors: list,
+                  has_assets: bool,default_assets: list, 
+                 has_events: bool, default_events: list, 
+                 has_effects: bool, default_effects: list,
+                   icon: str, has_turns: bool, 
+                   turn_type: str, start_turn: int, image: str):
         self.name = name
         self.description = description
         self.has_counters = has_counters
         self.counters = counters
         self.has_actors = has_actors
-        self.actor_default_path = actor_default_path
         self.default_actors = default_actors
         self.has_assets = has_assets
-        self.asset_default_path = asset_default_path
         self.default_assets = default_assets
         self.has_events = has_events
-        self.event_default_path = event_default_path
         self.default_events = default_events
         self.has_effects = has_effects
-        self.effect_default_path = effect_default_path
         self.default_effects = default_effects
         self.icon = icon
-        self.save_files_path = save_files_path
         self.has_turns = has_turns
         self.turn_type = turn_type
         self.start_turn = start_turn
-        self.image_file_path = image_file_path
+        self.image = image
 
     def set_from_dict(self, gameDict):
         if self is None and gameDict is not None:

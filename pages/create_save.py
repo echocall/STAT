@@ -23,10 +23,8 @@ def create_save():
 
     new_save_dict = {'name': '','base_game': '', 'create_date':'', 
                      'date_last_save': '','description': '', 
-                     'asset_customs': False, 'asset_customs_path':'',
-                     'actor_customs': False, 'actor_customs_path':'',
-                     'event_customs': False, 'event_customs_path':'',
-                     'effect_customs': False, 'effect_customs_path':'',
+                     'asset_customs': False,'actor_customs': False,
+                     'event_customs': False, 'effect_customs': False,
                      'counters':{}, 'assets': {}, 'actors':[],
                      'current_events':{}, 'current_effects': {},
                      'current_turn': -1, 'log_file_path': ''
