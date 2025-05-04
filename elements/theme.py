@@ -76,7 +76,7 @@ def frame(navigation_title: str):
             light_switch.bind_value_from(config['Preferences'].getboolean('darkMode'))
 
             menu()
-    with ui.column().classes('w-full items-stretch justify-center'):
+    with ui.column().classes('w-full items-stretch items-center justify-center'):
         yield
     with ui.footer().props(f' color=#d5c7ba'):
         # Selected Game
