@@ -6,15 +6,15 @@ from nicegui import ui
 enable = Enable()
 
 async def new_string_dialog(string_name):
-    new_string = ''
+    new_string = {'name':''}
     try:
         with ui.dialog() as dialog, ui.card().classes("w-full"):
             ui.label(f"Create a new {string_name}").classes('h3')
             # Get name of counter
-            with ui.card_section().classes('w-80 items-stretch'):
-                string_input = ui.input("Name of the counter?",
+            with ui.card_section().classes('w-100 items-stretch'):
+                string_input = ui.input(f"Name of the {string_name}?",
                                 on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' characters used.'))
-                string_input.bind_value(new_string)
+                string_input.bind_value(new_string, 'name')
                 # allows user to clear the field
                 string_input.props('clearable')
                 # This handles the validation of the field.

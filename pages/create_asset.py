@@ -2,7 +2,6 @@ import elements.theme as theme
 from classes.Enable import Enable
 from elements.target_counter_dialog import target_counter_dialog
 from elements.new_string_dialog import new_string_dialog
-from helpers.utilities import format_str_for_filename_super
 from handlers.assethandler import *
 from elements.explanation import explanation
 from elements.UserConfirm import *
@@ -114,6 +113,43 @@ async def new_asset():
         if sell_price_name in new_asset_dict['sell_prices']:
             del new_asset_dict['sell_prices'][sell_price_name]
             render_all_sell_prices.refresh()
+
+    # Render the actors.
+    @ui.refreshable
+    def render_all_attributes(User_confirm, new_asset_dict) -> ui.element:
+        with ui.row().classes('gap-2') as attributes_display_case:
+            for value in new_asset_dict.get('attributes',[]):
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(str(value)).classes('text-sm font-medium')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                        on_click=lambda v = value:
+                        User_confirm.show(f'Are you sure you want to delete {v}?', 
+                                    lambda: delete_attribute(new_asset_dict, v))
+                                    ).props('flat dense')
+        return attributes_display_case
+
+    # adding an attribute
+    async def add_attribute():
+        result = await new_string_dialog('Attribute')
+        if result:
+            if 'attributes' not in new_asset_dict:
+                new_asset_dict['attributes'] = []
+            new_asset_dict['attributes'].append(result['name'])
+            render_all_attributes.refresh()
+        else:
+            ui.notify("""Warning: Dialog cancelled. No Attributes added.""",
+                      type='warning',
+                      psoition='top',
+                      multi_line=True)
+
+    # Delete an attribute.
+    def delete_attribute(new_game_dict: dict, attribute_name: str) -> ui.element:
+        if attribute_name in new_game_dict['attributes']:
+            target_index = new_game_dict['attributes'].index(attribute_name)
+            del new_game_dict['attributes'][target_index]
+            render_all_attributes.refresh()
 
     # getting the buy costs
     async def get_buy_cost():
@@ -275,8 +311,10 @@ async def new_asset():
                         ui.button(
                             "Add Attribute", 
                                   icon="create", 
-                                  on_click=lambda: new_string_dialog('Attribute')
+                                  on_click=lambda: add_attribute()
                                   )
+                        ui.label("Attributes added: ")
+                        attributes_display = render_all_attributes(user_confirm, new_asset_dict)
 
                 # Add Buy Costs
                 with ui.row().classes('items-left justify-start space-x-4'): 

@@ -1,7 +1,7 @@
 import elements.theme as theme
 from classes.Enable import *
 from elements.new_counter_dialog import new_counter_dialog
-from elements.new_actor_dialog import new_actor_dialog
+from elements.new_string_dialog import new_string_dialog
 from handlers.gamehandler import *
 from elements.UserConfirm import *
 from nicegui import app,ui
@@ -76,9 +76,10 @@ async def create_game():
                       type='warning',
                       position='top',
                       multi_line=True)
-        
+ 
+    # adding an actor
     async def add_actor():
-        result = await new_actor_dialog()
+        result = await new_string_dialog('Actor')
         if result:
             if 'default_actors' not in new_game_dict:
                 new_game_dict['default_actors'] = []
@@ -90,6 +91,20 @@ async def create_game():
                       psoition='top',
                       multi_line=True)
     
+    
+    # Delete a counter.
+    def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
+        if counter_name in new_game_dict['counters']:
+            del new_game_dict['counters'][counter_name]
+            render_all_counters.refresh()
+
+    # Delete an actor.
+    def delete_actor(new_game_dict: dict, actor_name: str) -> ui.element:
+        if actor_name in new_game_dict['default_actors']:
+            target_index = new_game_dict['default_actors'].index(actor_name)
+            del new_game_dict['default_actors'][target_index]
+            render_all_actors.refresh()
+
     async def create_game_json():
         matches_template = False
         game_name_result = {}
@@ -277,15 +292,3 @@ async def create_game():
                 # Disable the button by default until validation is done.
                 submit.disable()
 
-    # Delete a counter.
-    def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
-        if counter_name in new_game_dict['counters']:
-            del new_game_dict['counters'][counter_name]
-            render_all_counters.refresh()
-
-    # Delete a counter.
-    def delete_actor(new_game_dict: dict, actor_name: str) -> ui.element:
-        if actor_name in new_game_dict['default_actors']:
-            target_index = new_game_dict['default_actors'].index(actor_name)
-            del new_game_dict['default_actors'][target_index]
-            render_all_actors.refresh()
