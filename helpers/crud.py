@@ -96,7 +96,7 @@ def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
     fetch_success = False
     get_json_result = {'result': False, 'message': '', 'json': target_object}
 
-    if len(passed_file_path) == 0:
+    if len(str(passed_file_path)) == 0:
         get_json_result['result'] = False
         get_json_result['message'] = "Error: empty filepath! cannot find " + objectType
         get_json_result['json'] = {}
@@ -284,15 +284,15 @@ def get_template_json(template_type: str, directory_path: str) -> dict:
     error_message = ""
     
     if template_type == 'game':
-       str_full_path = str_directory_path + 'template_game.json'
+       str_full_path = str_directory_path + '\\' + 'template_game.json'
     elif template_type =='save':
-       str_full_path = str_directory_path + 'template_save.json'
+       str_full_path = str_directory_path + '\\' + 'template_save.json'
     elif template_type == 'asset':
-       str_full_path = str_directory_path + 'template_asset.json'
+       str_full_path = str_directory_path + '\\' + 'template_asset.json'
     elif template_type == 'effect':
-       str_full_path = str_directory_path + 'template_effect.json'
+       str_full_path = str_directory_path + '\\' + 'template_effect.json'
     elif template_type == 'event':
-       str_full_path = str_directory_path + 'template_event.json'
+       str_full_path = str_directory_path + '\\' + 'template_event.json'
     else:
         error_message = "Template type not recognized."
         return error_message

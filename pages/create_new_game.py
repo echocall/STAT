@@ -67,45 +67,33 @@ def create_game():
                         ui.button('Close', on_click=name_existed.close)
                     name_existed.open
                 
-                folder_creation= create_folders(game_name, games_path, datapack_paths, save_paths)
-
-                if folder_creation:
-                    # Attempt to save the game
-                    try:
-                        create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
-                        if create_game_result['result']:
-                            app.storage.user['selected_game'] = create_game_result['dict']
-                            ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
-                                    You can view it on the select games screen.""",
-                                      multi_line = True,
-                                      type='positive',
-                                      position="top")
-                            
-                            # ui.navigate.reload()
-                            
-                        else:
-                            ui.notify(f"""Game file could not be created. Please check file permissions. 
-                                      More information can be found in: 
-                                      C:\Users\strip\AppData\Local\STAT\statassets\games\{game_name['file']}\{game_name['file']}_debug.log""",
-                                      type='negative',
-                                      position="top",
-                                      multi_line = True,)
-                    except Exception as e:
-                            ui.notify(f"""Game file could not be created. Please check file permissions. 
-                                      More information can be found in: 
-                                      C:\Users\strip\AppData\Local\STAT\statassets\games\{game_name['file']}\{game_name['file']}_debug.log""",
-                                      type='negative',
-                                      position="top",
-                                      multi_line = True,)
-                # failed to create folder
-                else:
-                    ui.notify("""Error! Unable to create the folders.
-                              Please check application has write permissions to the folder locations in config.txt and try again.""",
-                                type='negative',
-                                position="top",
-                                multi_line = True,
-                                )
-
+                try:
+                    create_game_result = new_game_gui('config.txt', new_game_dict, game_name['file'])
+                    if create_game_result['result']:
+                        app.storage.user['selected_game'] = create_game_result['dict']
+                        ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
+                                You can view it on the select games screen.""",
+                                    multi_line = True,
+                                    type='positive',
+                                    position="top")
+                        
+                        # ui.navigate.reload()
+                        
+                    else:
+                        ui.notify(f"""Game file could not be created. Please check file permissions.
+                                    More information can be found in:
+                                    C:\\Users\\strip\\AppData\\Local\\STAT\\statassets\\games\\{game_name['file']}\\{game_name['file']}_debug.log""",
+                                    type='negative',
+                                    position="top",
+                                    multi_line = True,)
+                except Exception as e:
+                        ui.notify(f"""Game file could not be created.
+                                    Please check file permissions.
+                                    More information can be found in: C:\\Users\\strip\\AppData\\Local\\STAT\\statassets\\games\\{game_name['file']}\\{game_name['file']}_debug.log""",
+                                    type='negative',
+                                    position="top",
+                                    multi_line = True,)
+                
             # Template Mismatch
             else:
                 ui.notify("""Error! The new game dictionary does not match the expected game template.

@@ -45,6 +45,7 @@ def create_save():
                 new_save_name = new_save_dict['name']
 
                 save_name = get_new_save_name(str_saves_path, new_save_name)
+                print(save_name)
                 if "_Placeholder" in save_name['name']:
                     ui.notify(f"A save by that same name already exists. Your save will be saved as: {save_name['name']}",
                               position='top',

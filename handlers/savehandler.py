@@ -21,11 +21,23 @@ def get_saves(saves_directory_path: str) -> dict:
     return save_files
 
 # for creating a new save from the gui
-def new_save_gui( save_directory_path: str,
+def new_save_gui( configfilename: str, game_name:str,
                   new_save_dict: dict, file_name: str) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
 
     try:
+        # Load configuration
+        config = get_config_as_dict(configfilename)
+        paths = config.get("Paths", {})
+        root_path = paths.get("osrootpath", "Not Set")
+        games_path = paths.get("gamespath", "")
+        saves_path = paths.get("savespath", "")
+
+        # Assemble full directory paths
+        game_base_path = Path(root_path + games_path) / new_game_dict['name']
+        game_file_path = game_base_path / f"{file_name}.json"
+        debug_log_path = game_base_path / f"{file_name}_debug.log"
+
         save_base_path = save_directory_path + '\\' + new_save_dict['name']
 
         # Get the date of creation

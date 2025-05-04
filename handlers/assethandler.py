@@ -117,6 +117,7 @@ def new_asset_gui(
 
     if format_result['result']:
         formatted_name = format_result['string']
+        print("Inside new_asset_gui")
 
         # Construct full file path using directory + new file name
         if is_default:

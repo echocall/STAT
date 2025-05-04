@@ -109,16 +109,16 @@ def list_compare(initialList: list, secondList: list) -> dict:
         print(error_message)
 
 def dict_key_compare(initialDict: dict, secondDict: dict) -> dict:
-    result = { "match": False, "missing_values": []}
+    result = { "match": False, "message": "", "missing_values": []}
     mismatch_found = False
-    error_message = ""
     try:
         for key in secondDict.keys():
             if not key in initialDict:
-                rmismatch_found = True
+                mismatch_found = True
+                result['message'] = "Missing key!"
                 result["missing_values"].append(key)
     except:
-        error_message = "Could not compare the dictionaries."
+        result['message'] =  "Could not compare the dictionaries."
     
     if mismatch_found == False:
         result["match"] = True

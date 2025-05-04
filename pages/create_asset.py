@@ -40,7 +40,7 @@ async def new_asset():
         'asset_type': '', 'attributes': [],
         'buy_costs':{}, 'sell_prices': {},
         'special':'', 'effects':[],
-        'icon':'', 'image':'str'
+        'icon':'', 'image':''
     }
 
     bln_is_default = False
@@ -65,7 +65,6 @@ async def new_asset():
 
     # Calls the methods to write the asset to .json
     async def create_asset_json(is_default: bool):
-        # if Default or Custom pick where to put asset
         create_result = {}
 
         try:
@@ -80,24 +79,18 @@ async def new_asset():
                     file_name = format_result['string']
                     # check for duplicates
                     asset_name = get_new_asset_name(new_asset_dict['name'], str_assets_path)
+                    print(asset_name)
                 
                     if "_Placeholder" in asset_name['name']:
-                        with ui.dialog() as name_existed, ui.card():
-                            ui.label("Notice!").classes('h3')
-                            ui.label("A game by the same name already exists.")
-                            ui.label(f"Your game will be saved as: {asset_name['name']}")
-                            ui.button('Close', on_click=name_existed.close)
-                        name_existed.open
+                        ui.notify(f"Notice! An asset by the same name already exists. Your asset will be saved as {asset_name['name']}",
+                                 type='warning',
+                                 position='top',
+                                 multi_line=True)
                     # attempt to create asset here.
                     try:
+                        print("About to try create_result")
                         create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save, str_default_assets_path, str_custom_assets_path)
                         if create_result['result']:
-                            with ui.dialog() as success_create, ui.card():
-                                ui.label('Success!').classes('font-bold')
-                                ui.label(create_result['message'])
-                                ui.label('Feel free to leave this page now.')
-                                ui.button('Close', on_click=success_create.close)
-                            success_create.open
                             ui.notify("Congrats! Asset created!", 
                                       type='positive', 
                                       position="top")
@@ -159,7 +152,8 @@ async def new_asset():
                         ui.label('Source Game: ').classes('font-bold')
                         ui.icon('info')
                         source_game = ui.label(f'{selected_game['name']}')
-                        source_game.bind_text(new_asset_dict, 'source_game')
+                        source_game.bind_text(new_asset_dict, 'source')
+                        new_asset_dict['source'] = selected_game['name']
                     
                 # Is this a Default or Custom Asset?
                 # If Custom, pick associated Save
@@ -168,18 +162,6 @@ async def new_asset():
                         ui.label("Is this for a default asset?").classes('font-semibold')
                         is_default = ui.toggle({True:'Default', False:'Custom'})
                         is_default.classes('bg-blue-600')
-                        if not is_default.value:
-                            # If no selected_save, open up prompt to select one
-                            if not selected_save or 'name' not in selected_save:
-                                ui.label('Warning: No selected save detected.')
-                                ui.label('Please select a save .json file.')
-                                with ui.link(target=f'/selectsaves/{selected_game['name']}'):
-                                    ui.button('Find Save File')
-                            else:
-                                # Name the source save
-                                with ui.column().classes('items-start'):
-                                    ui.label('Source Save: ').classes('font-bold')
-                                    ui.label(f'{selected_save['name']}')
                             
                 # Input name for the asset.
                 with ui.row().classes('items-center justify-start space-x-4'):
