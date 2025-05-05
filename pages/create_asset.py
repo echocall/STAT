@@ -151,22 +151,6 @@ async def new_asset():
             del new_game_dict['attributes'][target_index]
             render_all_attributes.refresh()
 
-    # getting the buy costs
-    async def get_buy_cost():
-        result = await target_counter_dialog('Buy Cost for Asset')
-        if 'buy_costs' not in new_asset_dict:
-            new_asset_dict['buy_costs'] = {}
-        new_asset_dict['buy_costs'][result['name']] = int(result['value'])
-        render_counter_bar.refresh()
-    
-    # getting the sell prices
-    async def get_sell_price():
-        result = await target_counter_dialog('Sell Price for Asset')
-        if 'sell_prices' not in new_asset_dict:
-            new_asset_dict['sell_prices'] = {}
-        new_asset_dict['sell_prices'][result['name']] = int(result['value'])
-        render_counter_bar.refresh()
-
     # Calls the methods to write the asset to .json
     async def create_asset_json(is_default: bool):
         create_result = {}

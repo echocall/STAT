@@ -194,7 +194,6 @@ def asset_type_explanation() -> str:
     Name: Lion ||| Category: Mammal ||| Asset Type: Predator"""
     return type_info
 
-
 def attributes_explanation() -> str:
     attributes_info = """Attributes are different from Categories and Type.
     They can be used to describe a asset, and in the future to search
@@ -226,7 +225,6 @@ def costs_explanation() -> str:
     Tip: If you set the value of a cost to a negative, you will GAIN that much instead."""
     return cost_info
 
-
 def prices_explanation() -> str:
     # TODO
     prices_info = """A sell price is made up of the name of one of the counters in the game (ideally) and a number.
@@ -249,7 +247,6 @@ def special_explanation() -> str:
     isn't required. Its only purpose is to exist in case you want
     to separate some text out of the description."""
     return special_explanation
-
 
 # ###################################
 # Takes singular asset dictionary and returns
