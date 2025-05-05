@@ -12,14 +12,14 @@ import pages.edit_game as edit_game
 import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
+from fastapi import Depends 
+from nicegui import ui, app
 
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *
 import configparser
 
-from fastapi import Depends 
-from nicegui import ui, app
 
 # Load configuration
 config = configparser.ConfigParser()

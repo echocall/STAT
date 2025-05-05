@@ -25,4 +25,3 @@ firstsetup = False
 showwelcome = False
 showexplanations = True
 customroot = False
-

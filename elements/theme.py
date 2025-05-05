@@ -1,11 +1,14 @@
 from contextlib import contextmanager
 from elements.menu import menu
-from nicegui import app,ui
+import helpers.font_picker as font_picker
 import configparser
+from pathlib import Path
+from nicegui import app,ui
 
 config = configparser.ConfigParser()
 config.read('config.txt')
 
+# DONT REMOVE THIS.
 dark = ui.dark_mode()
 
 @contextmanager
@@ -14,13 +17,10 @@ def frame(navigation_title: str):
     selected_save = app.storage.user.get("selected_save", {})
     selected_asset = app.storage.user.get("selected_asset", {})
 
-    ui.add_head_html('''
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            font-family: 'Barlow', sans-serif;
-        }
+    font_picker.apply_font()
 
+    ui.add_head_html('''
+     <style>
         /* Base font size */
         html {
             font-size: 18px;
@@ -52,7 +52,6 @@ def frame(navigation_title: str):
             text-decoration: none;
         }
                      
-        
         .txt-inherit-accent,
         .q-header,
         .q-footer,
@@ -130,7 +129,7 @@ def frame(navigation_title: str):
                     print('Enabling Light Mode')
                     config['Preferences']['darkMode'] = 'False'
                     # save updated config
-                    with open('config.txt', 'w') as configfile:
+                    with open('c./static/onfig.txt', 'w') as configfile:
                         config.write(configfile)
                     dark.disable()
                     ui.notify("Please close the application and reopen it to see this change take effect.",
