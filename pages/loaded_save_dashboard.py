@@ -12,9 +12,6 @@ import traceback
 # Displays the user's information.
 @ui.page('/loadeddash')
 async def dashboard():
-
-    # TODO: Move functions here.
-
     with theme.frame('Dashboard'):
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
