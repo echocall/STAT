@@ -71,10 +71,6 @@ async def select_games():
                 with ui.button_group().classes('gap-2'):
                     ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']})) \
                         .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-                    ui.button('Edit').classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-                    ui.button('Delete', color='red') \
-                        .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1') \
-                        .on_click(lambda: ui.notify('Hi'))
 
     with theme.frame('All Games'):
         # File path for game data

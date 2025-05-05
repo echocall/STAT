@@ -158,7 +158,7 @@ async def new_asset():
         try:
             # Ensure the asset matches the template
             matches_template = check_asset_template_bool(new_asset_dict)
-            if matches_template['match']:
+            if matches_template['result']:
                 # check for duplicates
                 asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
 

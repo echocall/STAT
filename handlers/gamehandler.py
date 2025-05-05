@@ -131,7 +131,7 @@ def check_game_template_bool(game_dict: dict) -> bool:
     """"Takes a game dict and template path and checks if the game dict matches the template.
     Only needs the game_dict to be checked."""
     error_message = ''
-    result = False
+    result = {}
     try:
         game_template = get_template_json("game")
         result = dict_key_compare(game_template, game_dict)
@@ -232,7 +232,6 @@ def update_game(game_dict: dict):
     """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
     config = get_config_as_dict('config.txt')
     
-    print("Pringing: Inside update_game.")
 
     paths = config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
@@ -241,58 +240,51 @@ def update_game(game_dict: dict):
 
     template_result = {}
     format_result = {}
-    write_result = {}
+    write_result = {'result':False, 'message':''}
     
-    # check the template is okay
+    # check against the template
+    # Currently bugged so removed for now.
+    """
     try:
         template_result = check_game_template_bool(game_dict)['result]']
         
-        print("Pringing template_result inside update_game.")
-        print(template_result)
     except:
         template_result['result'] = False
         template_result['message'] = 'Given object did not match game template.'
+    """
 
-  
     # it matches the template!
-    if template_result['result']:
+   # if template_result['result']:
         # try formatting the game name for a string
+    try:
+        format_result = format_str_for_filename_super(game_dict['name'])
+    except:
+        format_result['result'] = False
+        format_result['message'] = 'Formatting name for game update failed.'
+
+    # it formatted the name!
+    if format_result['result']:
+        # Create the game path.
+        str_game_path = root_path + games_path + '\\' + format_result['string'] + '\\' + format_result['string'] + '.json'
+
+        # try writing to the json_file
         try:
-            format_result = format_str_for_filename_super(game_dict['name'])
+            write_result = overwrite_json_file(game_dict, str_game_path, format_result['string'])
         except:
-            format_result['result'] = False
-            format_result['message'] = 'Formatting name for game update failed.'
-
-        print("Pringing format_result inside update_game.")
-        print(format_result)
-
-        # it formatted the name!
-        if format_result['result']:
-            # Create the game path.
-            str_game_path = root_path + games_path + '\\' + format_result['string'] + '\\' + format_result['string'] + '.json'
-
-            game_file_path = Path(str_game_path)
-
-            # try writing to the json_file
-            try:
-                write_result = overwrite_json_file(game_dict, game_file_path, format_result['string'])
-                print("Pringing write_result inside update_game.")
-                print(write_result)
-            except:
-                write_result['success'] = False
-                write_result['message'] = 'Overwriting to game json failed.'
-            # successfully wrote!
-            if write_result['success']:
-                write_result['message'] = 'Successfully wrote to the file!'
-            # did not successfully write
-            else:
-                write_result['message'] = 'Did not successfully update file.'
-        # did not format name
+            write_result['result'] = False
+            write_result['message'] = 'Overwriting to game json failed.'
+        # successfully wrote!
+        if write_result['result']:
+            write_result['message'] = 'Successfully wrote to the file!'
+        # did not successfully write
         else:
-            write_result['Message'] = 'Formatting the name failed!'
-    # did not get a match on the template
+            write_result['message'] = 'Did not successfully update file.'
+    # did not format name
     else:
-        write_result['Message'] = 'Failed at matching the template.'
+        write_result['message'] = 'Formatting the name failed!'
+    # did not get a match on the template
+    #else:
+    #    write_result['message'] = 'Failed at matching the template.'
     
     return write_result
 

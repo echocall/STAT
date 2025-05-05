@@ -334,7 +334,7 @@ def get_config_as_dict(configfilename: str) -> dict:
 
 # UPDATE
 # TODO: test
-def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict:
+def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -> dict:
     """
     Overwrites or creates a JSON file in the specified directory.
     Args:
@@ -347,17 +347,10 @@ def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict
     """
     result = {'success': False, 'message': ''}
     try:
-        # Construct paths using pathlib
-        target_directory_path = Path(directory_path)
-        target_file_path = target_directory_path / f"{file_name}.json"
-
-        # Ensure the directory exists
-        if not target_directory_path.exists():
-            result['message'] = f"Directory not found: {directory_path}"
-            return result
-
         # Convert the dictionary to a JSON string
         json_obj = json.dumps(data, indent=4)
+
+        target_file_path = Path(str_target_file_path)
 
         # Check if the file exists
         if target_file_path.exists():

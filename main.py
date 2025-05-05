@@ -11,7 +11,6 @@ import pages.create_asset as create_asset
 import pages.create_save as create_save
 import pages.create_effect as create_effect
 import pages.loaded_save_dashboard as loaded_save_dashboard
-import pages.edit_game as edit_game
 import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
@@ -48,5 +47,5 @@ async def index_page() -> None:
     else:
         dark_mode_on = False
 
-ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
+ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False,
         storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkMode'))
