@@ -309,7 +309,8 @@ async def content() -> None:
                         lbl_start_edit = ui.label('New Start Turn: ').classes('font-bold text-lg')
                         lbl_start_edit.bind_visibility_from(toggle_edit, 'value')
 
-                        start_edit = ui.number(value=selected_game['start_turn'])
+                        start_edit = ui.number(value=selected_game['start_turn'],
+                                               on_change=lambda e: edited_game.__setitem__('start_turn', int(e.value) if e.value is not None else 0))
                         start_edit.props('clearable')
                         start_edit.bind_visibility_from(toggle_edit, 'value')
                 

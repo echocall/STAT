@@ -274,11 +274,12 @@ async def create_game():
                         ui.label("Do the turns increase or decrease as you play?")
                         turn_type = ui.radio({'Increasing':'Increasing', 'Decreasing':'Decreasing'}).props('inline left-label')
                         ui.label("What turn or round number does your game start on?")
-                        start_turn = ui.number("Enter a whole number.")
                         turn_type.bind_value(
                             new_game_dict, 
                             'turn_type')
-                        start_turn.bind_value(new_game_dict, 'start_turn')
+                        start_turn = ui.number("Enter a whole number.",
+                                               on_change=lambda e: new_game_dict.__setitem__('start_turn', int(e.value) if e.value is not None else 0))
+                        
 
             # Submit button.
             with ui.row():
