@@ -31,8 +31,8 @@ async def content() -> None:
         with ui.row().classes('gap-2') as counter_display_case:
             for counter, value in edited_game['counters'].items():
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(f'{counter}:').classes('text-sm font-medium')
-                    ui.label(str(value)).classes('text-sm')
+                    ui.label(f'{counter}:').classes('font-medium')
+                    ui.label(str(value)).classes('')
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -142,17 +142,19 @@ async def content() -> None:
                 # Toggle for editing or not
                 with ui.row().classes():
                     with ui.column().classes():
-                        toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
-                        
+                        toggle_edit = ui.switch('Do you want to edit?')
+                        toggle_edit.classes('font-medium')
+                        toggle_edit.props('color="green"')
                 
+                # ICON
                 with ui.row().classes():
                     with ui.column().classes():
-                    # ICON
                         if selected_game['icon']:
                             game_icon = ui.image(f'{selected_game['icon']}')
+                            ui.label("The icon for your game.").classes('font-medium')
                             ui.button("Reload Icon", on_click=game_icon.force_reload)
                         else:
-                            ui.label("No Icon to display")
+                            ui.label("No Icon to display").classes('font-medium')
                     # TODO: Display option to change the Icon's path.
 
                 # Section for rest of the data
@@ -161,7 +163,7 @@ async def content() -> None:
                 with ui.row().classes():
                     with ui.column().classes():
                         # DISPLAY section
-                        lbl_game_name = ui.label("Current Name :").classes('font-bold')
+                        lbl_game_name = ui.label("Current Name :").classes('font-medium')
                         game_name = ui.label(f"{selected_game['name']}")
                         lbl_game_name.bind_visibility_from(toggle_edit, 
                                                             'value', 
@@ -170,7 +172,7 @@ async def content() -> None:
                                                         'value', 
                                                         backward=lambda toggle_edit: not toggle_edit)
                         # EDIT section
-                        lbl_name_edit = ui.label('New Name: ').classes('font-bold')
+                        lbl_name_edit = ui.label('New Name: ').classes('font-medium')
                         lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
                         name_edit = ui.input(placeholder=f'{selected_game['name']}',
                                                     on_change=lambda e: game_name.set_text(e.value))
@@ -183,7 +185,7 @@ async def content() -> None:
                 with ui.row().classes():
                     with ui.column().classes():
                         # DISPLAY section
-                        lbl_descript = ui.label("Description: ").classes('font-bold')
+                        lbl_descript = ui.label("Description: ").classes('font-medium')
                         lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
                         lbl_description.bind_visibility_from(toggle_edit, 
                                                                 'value', 
@@ -199,7 +201,7 @@ async def content() -> None:
                 # COUNTERS
                 with ui.row().classes():
                     with ui.column().classes():
-                        ui.label("View Counters?")
+                        ui.label("View Counters?").classes('font-medium')
                         # If there
                         has_counters = ui.switch()
                         if edited_game['counters']:
@@ -207,16 +209,16 @@ async def content() -> None:
                         else:
                             has_counters.set_value(False)
 
+                        ui.label("Counters: ").bind_visibility_from(has_counters, 'value')
+                        counter_display = render_all_counters(user_confirm, edited_game)
+                        counter_display.bind_visibility_from(has_counters,'value')
+                        # Button for adding counters only appears if user wishes to edit.
                         new_counter_btn = ui.button(
                             "Add Counter",
                             icon="create",
                             on_click=add_counter
                         )
                         new_counter_btn.bind_visibility_from(toggle_edit, 'value')
-
-                        ui.label("Counters: ").bind_visibility_from(has_counters, 'value')
-                        counter_display = render_all_counters(user_confirm, edited_game)
-                        counter_display.bind_visibility_from(has_counters,'value')
 
                 # View lists of actors of the selected game
                 with ui.row().classes():
@@ -244,7 +246,7 @@ async def content() -> None:
                         game_image = ui.image(f'{selected_game['image']}')
                         with ui.button("Reload Image", on_click=game_image.force_reload):
                             ui.tooltip("This attempts to reload the associated image.")
-                        ui.label("Image file path").classes('font-bold')
+                        ui.label("Image file path").classes('font-medium')
                         lbl_image_path = ui.label(f'{selected_game['image']}')
 
                         # EDIT
@@ -252,7 +254,7 @@ async def content() -> None:
                         btn_find_image = ui.button("Find New Image").on_click(lambda: choose_image_file)
                         btn_find_image.bind_visibility_from(toggle_edit, 'value')
                         # display new file path
-                        lbl_new_image_path = ui.label(f'{edited_game['image']}').classes('font-bold')
+                        lbl_new_image_path = ui.label(f'{edited_game['image']}').classes('font-medium')
                         lbl_new_image_path.bind_visibility_from(toggle_edit, 'value')
                         # display the new image
                         new_image = ui.image(f'{edited_game['image']}')
