@@ -4,6 +4,7 @@ import pages.select_saves as select_saves
 from handlers.gamehandler import *
 from elements.alert_dialog import alert_dialog
 from helpers.utilities import format_str_for_filename_super
+from elements.UserConfirm import *
 
 @ui.page('/selectgames')
 async def select_games():
@@ -13,9 +14,12 @@ async def select_games():
         paths = config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "Not Set")
+        user_confirm = UserConfirm()
 
         selected_game = app.storage.user.get("selected_game", {})
         existing_games = app.storage.user.get("existing_games", {})
+
+        # Get the games_directory_path
         try:
             str_games_directory_path = root_path + games_path
             # getting the existing games from the file path.
@@ -86,26 +90,25 @@ def select_target_game(existing_games: dict, selected_game_name: str):
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
-    with ui.card().tight().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; max-height: 175px;'):
-        with ui.card_section():
-            ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}')
-            ui.label().bind_text_from(game, 'description', backward=lambda description: f'{description}')
-        with ui.card_actions().classes("w-full justify-end"):
-            ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']}))
-            with ui.button(icon='edit').props('round'):
-                ui.tooltip("Edit game.")
-            # TODO: Erase game and ALL associated children folders/files
-            with ui.button(icon='delete').props('round'):
-                ui.tooltip("Delete this game and all files associated with it.")
+    with ui.card().classes('w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-2'):  # reduced padding, responsive width
+        with ui.row().classes('w-full justify-between items-start'):  # name in top-left
+            ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}').classes('text-lg font-bold mb-1')
 
-# Confirm we want to delete the game and its files then call
-# TODO: finish
-async def confirm_game_delete()-> ui.element:
-    # Are you sure you want to delete?
-    with ui.dialog() as confirm_delete, ui.card():
-                ui.label('Are you sure you want to delete ALL files?')
-                with ui.row():
-                    ui.button('Yes', on_click=ui.notify("This will delete the game's JSON file."))
-                    ui.button('No', on_click=confirm_delete.close)
+        # Show first 25 characters of description with ellipsis if longer
+        desc = game.get('description') or ''
+        short_desc = (desc[:25] + '...') if len(desc) > 25 else desc
+        ui.label(short_desc).classes('text-sm text-gray-600 mt-0')
+
+        # Spacer to push buttons to the bottom
+        ui.element('div').classes('flex-grow')
+
+        # Button row anchored bottom-right
+        with ui.row().classes('w-full justify-end'):
+            with ui.button_group().classes('gap-2'):
+                ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']})) \
+                    .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
+                ui.button('Edit').classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
+                ui.button('Delete', color='red') \
+                    .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
 
 

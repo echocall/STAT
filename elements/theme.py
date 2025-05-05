@@ -55,27 +55,27 @@ def frame(navigation_title: str):
                      
         /* Base tooltip font size */
         .q-tooltip {
-            font-size: 0.875rem; /* ~14px */
+            font-size: 0.75rem; 
         }
 
         /* Medium screens */
         @media (min-width: 768px) {
             .q-tooltip {
-                font-size: 1rem; /* ~16px */
+                font-size: 0.875rem; 
             }
         }
 
         /* Large screens */
         @media (min-width: 1280px) {
             .q-tooltip {
-                font-size: 1.125rem; /* ~18px */
+                font-size: 1rem; 
             }
         }
 
         /* Extra-large monitors */
         @media (min-width: 1920px) {
             .q-tooltip {
-                font-size: 1.25rem; /* ~20px */
+                font-size: 1.125rem; 
             }
         }
     </style>
