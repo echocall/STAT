@@ -238,12 +238,26 @@ def save_current(old_save: dict, new_save: dict):
 def save_as_new_file():
     print("TODO: Create a new save file.")
 
+# delete a directory and its files
+def delete_all_saves(save_directory_path) -> bool:
+    all_delete_result = False
+    """ deletes a save's folder and everything inside. Return a bool."""
+    try:
+        delete_directory(save_directory_path)
+        all_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
 
-# TODO: implement
-# delete a save
-def delete_save(save_name: str, saves_path: str) -> bool:
-    bln_result = False
-    # Ensure custom assets fields are empty (whether due to deletion or moving)
-    # delete save folders by calling: shutil.rmtree('/path/to/folder')
+    return all_delete_result
 
-    return bln_result
+# delete a save file at the specified path.
+def delete_save_file(asve_file_path: str) -> bool:
+    """ deletes a save's file. Return a bool."""
+    save_delete_result = False
+    try:
+        delete_file(asve_file_path)
+        save_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
+
+    return save_delete_result

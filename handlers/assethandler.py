@@ -244,25 +244,6 @@ def prices_explanation() -> str:
     """
     return prices_info
 
-# TODO: error handling
-def set_sell_prices(counter_names: list) -> dict:
-    sell_prices = {}
-    list_size = 0
-    list_size = len(counter_names)
-    
-    if list_size == 0:
-        # no list, manual input of value names.
-        game_resources_int = okay_user_int(0,"How many different cost do"
-        " you get for selling or destroying this asset?")
-        sell_prices = get_user_input_loop(game_resources_int, "Enter the cost name and "
-        "type you get for selling or destroying this asset: ", "dict", "str")
-    else:
-        game_resources_int = okay_user_int(0,"How many different cost do"
-        " you get for selling or destroying this asset?")
-        sell_prices = get_user_input_loop_list(game_resources_int, "Enter the cost name and "
-        "type you get for selling or destroying this asset: ", "dict", "str", counter_names)
-    return sell_prices
-
 def special_explanation() -> str:
     special_info = """Special is an extra text field that
     isn't required. Its only purpose is to exist in case you want
@@ -384,10 +365,6 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
                     print(error_message)
         return owned_assets
 
-# TODO: maybe fill in?
-def fetch_assets() -> dict:
-    a = 1+1
-
 def check_template_bool(asset: dict, template_path: str) -> bool:
     error_message = ''
     result = False
@@ -399,30 +376,26 @@ def check_template_bool(asset: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
 
-# TODO: implement
-# delete an asset
-# Call BEFORE deleting save or a game if not deleting all.
-def delete_asset(asset_dict: dict, asset_path: str) -> dict:
-    result = {}
-    format_result
-    # Remove targeted asset from its parents (save and game)
-        # What if asset is used in multiple saves?
-        # What if asset is a default asset?
+# delete a directory and its files
+def delete_all_assets(asset_directory_path) -> bool:
+    all_delete_result = False
+    """ deletes a asset's folder and everything inside. Return a bool."""
+    try:
+        delete_directory(asset_directory_path)
+        all_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
 
-    # delete the asset's file
-        # Get file path to asset
-    try: 
-        # try formatting the name for a file
-        try:
-            format_result = format_str_for_filename_super(asset_path['name'])
-        except:
-            format_result['result'] = False
-            format_result['message'] = 'Formatting name for save update failed.'
+    return all_delete_result
 
+# delete a asset file at the specified path.
+def delete_asset_file(asset_file_path: str) -> bool:
+    """ deletes a asset's file. Return a bool."""
+    asset_delete_result = False
+    try:
+        delete_file(asset_file_path)
+        asset_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
 
-    except:
-        result['message'] = "Deleting the file failed."
-    # call: shutil.rmtree('/path/to/folder')
-    # set bln_result to True
-
-    return result
+    return asset_delete_result

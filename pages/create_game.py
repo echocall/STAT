@@ -138,7 +138,8 @@ async def create_game():
                                         position='top',
                                         multi_line = True,)
                     except Exception as e:
-                            ui.notify(f"""Game file could not be created.
+                        print(traceback.format_exc())
+                        ui.notify(f"""Game file could not be created.
                                         Please check file permissions.
                                         More information can be found in the debug log in the folder where STAT was trying to create the game.""",
                                         type='negative',
