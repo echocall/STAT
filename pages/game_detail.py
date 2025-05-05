@@ -31,7 +31,7 @@ async def content() -> None:
         with ui.row().classes('gap-2') as counter_display_case:
             for counter, value in edited_game['counters'].items():
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(f'{counter}:').classes('font-medium')
+                    ui.label(f'{counter}:').classes('font-bold')
                     ui.label(str(value)).classes('')
 
                     # Add delete button
@@ -71,7 +71,7 @@ async def content() -> None:
         with ui.row().classes('gap-2') as actor_display_case:
             for value in edited_game.get('default_actors',[]):
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(str(value)).classes('text-sm font-medium')
+                    ui.label(str(value)).classes('text-sm font-bold')
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -143,7 +143,7 @@ async def content() -> None:
                 with ui.row().classes():
                     with ui.column().classes():
                         toggle_edit = ui.switch('Do you want to edit?')
-                        toggle_edit.classes('font-medium')
+                        toggle_edit.classes('font-bold')
                         toggle_edit.props('color="green"')
                 
                 # ICON
@@ -151,10 +151,10 @@ async def content() -> None:
                     with ui.column().classes():
                         if selected_game['icon']:
                             game_icon = ui.image(f'{selected_game['icon']}')
-                            ui.label("The icon for your game.").classes('font-medium')
+                            ui.label("The icon for your game.").classes('font-bold')
                             ui.button("Reload Icon", on_click=game_icon.force_reload)
                         else:
-                            ui.label("No Icon to display").classes('font-medium')
+                            ui.label("No Icon to display").classes('font-bold')
                     # TODO: Display option to change the Icon's path.
 
                 # Section for rest of the data
@@ -163,7 +163,7 @@ async def content() -> None:
                 with ui.row().classes():
                     with ui.column().classes():
                         # DISPLAY section
-                        lbl_game_name = ui.label("Current Name :").classes('font-medium')
+                        lbl_game_name = ui.label("Current Name :").classes('font-bold')
                         game_name = ui.label(f"{selected_game['name']}")
                         lbl_game_name.bind_visibility_from(toggle_edit, 
                                                             'value', 
@@ -172,7 +172,7 @@ async def content() -> None:
                                                         'value', 
                                                         backward=lambda toggle_edit: not toggle_edit)
                         # EDIT section
-                        lbl_name_edit = ui.label('New Name: ').classes('font-medium')
+                        lbl_name_edit = ui.label('New Name: ').classes('font-bold')
                         lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
                         name_edit = ui.input(placeholder=f'{selected_game['name']}',
                                                     on_change=lambda e: game_name.set_text(e.value))
@@ -185,7 +185,7 @@ async def content() -> None:
                 with ui.row().classes():
                     with ui.column().classes():
                         # DISPLAY section
-                        lbl_descript = ui.label("Description: ").classes('font-medium')
+                        lbl_descript = ui.label("Description: ").classes('font-bold')
                         lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
                         lbl_description.bind_visibility_from(toggle_edit, 
                                                                 'value', 
@@ -201,7 +201,7 @@ async def content() -> None:
                 # COUNTERS
                 with ui.row().classes():
                     with ui.column().classes():
-                        ui.label("View Counters?").classes('font-medium')
+                        ui.label("View Counters?").classes('font-bold')
                         # If there
                         has_counters = ui.switch()
                         if edited_game['counters']:
@@ -223,14 +223,38 @@ async def content() -> None:
                 # View lists of actors of the selected game
                 with ui.row().classes():
                     with ui.column().classes():
-                        ui.label("View Default Actors?")
+                        with ui.label("View Default Actors?"):
+                            ui.tooltip("The default actors can be used as targets/causes for effects later on.")
+                        has_actors = ui.switch()
+                        # If there
+                        if edited_game['default_actors']:
+                            has_actors.set_value(True)
+                        else:
+                            has_actors.set_value(False)
 
+                        ui.label("Default Actors: ").bind_visibility_from(has_actors, 'value')
+                        actors_display = render_all_actors(user_confirm, edited_game)
+                        actors_display.bind_visibility_from(has_actors,'value')
 
+                        create_actors = ui.button(
+                            'Add Default Actor', 
+                            icon="create", 
+                            on_click=add_actor
+                        )
+                        create_actors.bind_visibility_from(has_actors, 'value')
 
                 """Not viewing assets here except as name. 
                 Must go to select_asset -> asset detail to edit an asset."""
 
-                # same as above.
+                # TODO: 'if you delete a default asset from 'view assets' page, it will delete this here as well.
+                # If you wish to move an asset from one game to the other:
+                # First, creat a copy of the asset's folder and place it in the new game's folder.
+                # Then, in STAT return to the original game, go to 'view assets', then delete the asset that way.
+
+                # TODO: functionality: Add Default Asset() -> Gets Asset file, adds its name to default_assets list
+                # TODO: functionality: Add Custom Asset() -> Gets asset file.
+
+                # same as above for effects.
 
                 # Saves_File_Path
                     # Show the path
@@ -246,7 +270,7 @@ async def content() -> None:
                         game_image = ui.image(f'{selected_game['image']}')
                         with ui.button("Reload Image", on_click=game_image.force_reload):
                             ui.tooltip("This attempts to reload the associated image.")
-                        ui.label("Image file path").classes('font-medium')
+                        ui.label("Image file path").classes('font-bold')
                         lbl_image_path = ui.label(f'{selected_game['image']}')
 
                         # EDIT
@@ -254,7 +278,7 @@ async def content() -> None:
                         btn_find_image = ui.button("Find New Image").on_click(lambda: choose_image_file)
                         btn_find_image.bind_visibility_from(toggle_edit, 'value')
                         # display new file path
-                        lbl_new_image_path = ui.label(f'{edited_game['image']}').classes('font-medium')
+                        lbl_new_image_path = ui.label(f'{edited_game['image']}').classes('font-bold')
                         lbl_new_image_path.bind_visibility_from(toggle_edit, 'value')
                         # display the new image
                         new_image = ui.image(f'{edited_game['image']}')
