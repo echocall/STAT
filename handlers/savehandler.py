@@ -146,7 +146,7 @@ def load_save(full_save_path: str) -> dict:
         return {}
 
 # Checks the save dict's keys against the keys of the save template.
-def check_template_bool(save: dict, template_path: str) -> bool:
+def check_save_template_bool(save: dict, template_path: str) -> bool:
     error_message = ''
     result = False
     try:
@@ -195,7 +195,7 @@ def update_save(save_dict: dict, save_path: str, template_path: str) -> dict:
     write_result = {}
     # check the template is okay
     try:
-        template_result['result'] = check_template_bool(save_path, template_path)
+        template_result['result'] = check_save_template_bool(save_path, template_path)
     except:
         template_result['result'] = False
         template_result['message'] = 'Given object did not match save template.'

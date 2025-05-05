@@ -37,7 +37,7 @@ def create_save():
         game_file_name = ''
         try:
             # Ensure the game matches the template
-            matches_template = check_template_bool(new_save_dict)
+            matches_template = check_save_template_bool(new_save_dict)
 
             if matches_template:
                 # Convert game name to file friendly format

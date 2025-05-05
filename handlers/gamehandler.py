@@ -127,7 +127,7 @@ def get_games_names(directory_path: str) -> dict:
     finally:
         return game_name_result
 
-def check_template_bool(game_dict: dict) -> bool:
+def check_game_template_bool(game_dict: dict) -> bool:
     """"Takes a game dict and template path and checks if the game dict matches the template.
     Only needs the game_dict to be checked."""
     error_message = ''
@@ -245,13 +245,14 @@ def update_game(game_dict: dict):
     
     # check the template is okay
     try:
-        template_result = check_template_bool(game_dict)
+        template_result = check_game_template_bool(game_dict)['result]']
+        
+        print("Pringing template_result inside update_game.")
+        print(template_result)
     except:
         template_result['result'] = False
         template_result['message'] = 'Given object did not match game template.'
 
-    print("Pringing template_result inside update_game.")
-    print(template_result)
   
     # it matches the template!
     if template_result['result']:

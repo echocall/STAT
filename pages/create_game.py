@@ -115,7 +115,7 @@ async def create_game():
         # Creating the game
         try:
             # Ensure the game matches the template
-            matches_template = check_template_bool(new_game_dict)
+            matches_template = check_game_template_bool(new_game_dict)
             if matches_template:
                 # Check if a game with that name already exists
                 new_game_name = new_game_dict['name']
