@@ -106,6 +106,9 @@ async def create_game():
             render_all_actors.refresh()
 
     async def create_game_json():
+        """Checks that the name hasn't been used for a game already. 
+        Sends the name of the config file, the new_game_dict,
+          and the game_name_result['file'] to new_game_gui in gamehandler."""
         matches_template = False
         game_name_result = {}
         create_game_result = False
@@ -244,7 +247,7 @@ async def create_game():
                     has_actors.bind_value(new_game_dict, 'has_actors')
 
                     create_actors = ui.button(
-                        'Create Actors', 
+                        'Add Actor', 
                         icon="create", 
                         on_click=add_actor
                     )
