@@ -71,7 +71,7 @@ async def content() -> None:
         with ui.row().classes('gap-2') as actor_display_case:
             for value in edited_game.get('default_actors',[]):
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(str(value)).classes('text-sm font-bold')
+                    ui.label(str(value)).classes('text-sm')
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -232,7 +232,7 @@ async def content() -> None:
                         else:
                             has_actors.set_value(False)
 
-                        ui.label("Default Actors: ").bind_visibility_from(has_actors, 'value')
+                        ui.label("Default Actors: ").bind_visibility_from(has_actors, 'value').classes('font-bold')
                         actors_display = render_all_actors(user_confirm, edited_game)
                         actors_display.bind_visibility_from(has_actors,'value')
 
