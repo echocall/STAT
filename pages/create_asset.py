@@ -383,8 +383,3 @@ async def new_asset():
                 with ui.column().classes():
                     ui.label("Done?")
                     ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
-
-# Loads the page
-@ui.refreshable
-def load_page() -> ui.element:
-    a = 1+1
