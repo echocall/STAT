@@ -362,11 +362,11 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
                     print(error_message)
         return owned_assets
 
-def check_template_bool(asset: dict, template_path: str) -> bool:
+def check_template_bool(asset: dict) -> bool:
     error_message = ''
     result = False
     try:
-        asset_template = get_template_json("asset", template_path)
+        asset_template = get_template_json("asset")
         result = dict_key_compare(asset_template, asset)
         return result
     except Exception:

@@ -37,6 +37,7 @@ def format_str_for_filename(string: str) -> str:
 
 # Returns a result dictionary    
 def format_str_for_filename_super(string: str) -> dict:
+    """Returns a result dict of 'result' and 'string'. """
     # TODO: Upgrade this to use regex to strip unwanted characters.
     result_dict = {'result': False, 'string':""}
     error_message = ""

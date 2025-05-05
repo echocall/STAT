@@ -11,19 +11,6 @@ enable = Enable()
 
 @ui.page('/viewgame/')
 async def content() -> None:
-
-    async def choose_icon_file() -> str:
-            """For bringing up a file picker to select an image."""
-            files = await app.native.main_window.create_file_dialog(allow_multiple=False)
-            for file in files:
-                edited_game['icon'] = file
-
-    async def choose_image_file() -> str:
-        """For bringing up a file picker to select an image."""
-        files = await app.native.main_window.create_file_dialog(allow_multiple=False)
-        for file in files:
-            edited_game['image'] = file
-
    # Render the counters.
     @ui.refreshable
     def render_all_counters(user_confirm, edited_game) -> ui.element:
@@ -62,7 +49,6 @@ async def content() -> None:
         if counter_name in edited_game['counters']:
             del edited_game['counters'][counter_name]
             render_all_counters.refresh()
-
 
     # Render the actors.
     @ui.refreshable
@@ -104,7 +90,26 @@ async def content() -> None:
             del edited_game['default_actors'][target_index]
             render_all_actors.refresh()
 
-
+    def update_game_wrapper(game_dict):
+        """This exists to allow us to not have to worry about the 
+        function getting called on page load."""
+        update_result = update_game(game_dict)
+        print("Pringing update_result")
+        print(update_result)
+        """
+        if update_result['result']:
+            ui.notify("Congrats! You've successfully updated the game.",
+                      position='top',
+                      type='positive',
+                      multi_line=True)
+            app.storage.user['selected_game'] = edited_game
+        else:
+            ui.notify("Error: Updating the game has failed. Please check paths in config.txt.",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
+            """
+            
     with theme.frame(f'Game Details'):
         edited_game = {}
         selected_game = app.storage.user.get("selected_game", {})
@@ -157,6 +162,15 @@ async def content() -> None:
                             ui.label("No Icon to display").classes('text-sm')
                     # TODO: Display option to change the Icon's path.
 
+                    async def choose_icon():
+                        icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                        for file in icon_files:
+                            asset_icon = file
+                        edited_game['icon'] = asset_icon
+                    
+                    pick_icon = ui.button('Choose file', on_click=choose_icon)
+                    pick_icon.bind_visibility_from(toggle_edit, 'value')
+
                 # Section for rest of the data
                 # with ui.row().classes():
                     # NAME
@@ -172,14 +186,14 @@ async def content() -> None:
                                                         'value', 
                                                         backward=lambda toggle_edit: not toggle_edit)
                         # EDIT section
-                        lbl_name_edit = ui.label('New Name: ').classes('text-base')
-                        lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
-                        name_edit = ui.input(placeholder=f'{selected_game['name']}',
-                                                    on_change=lambda e: game_name.set_text(e.value))
-                        name_edit.props('clearable')
-                        name_edit.bind_value(edited_game, 'name')
-                        name_edit.validation={"Too short!": enable.is_too_short} 
-                        name_edit.bind_visibility_from(toggle_edit, 'value')
+                        lbl_name_edit = ui.label('Due to the time-constraints please create a new game if you want to change the name.').classes('text-base break-all')
+
+                        # lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
+                        # name_edit = ui.input(placeholder=f'{selected_game['name']}',
+                        #                            on_change=lambda e: game_name.set_text(e.value))
+                        # name_edit.bind_value(edited_game, 'name')
+                        # name_edit.validation={"Too short!": enable.is_too_short} 
+                        # name_edit.bind_visibility_from(toggle_edit, 'value')
 
                 # DESCRIPTION
                 with ui.row().classes():
@@ -291,7 +305,7 @@ async def content() -> None:
                         edit_turn_type.props('inline left-label')
                         edit_turn_type.classes('text-sm')
                         edit_turn_type.bind_value(
-                            name_edit, 
+                            edited_game, 
                             'turn_type')
                         edit_turn_type.bind_visibility_from(toggle_edit, 'value')
                         edit_turn_type.bind_visibility_from(toggle_edit, 'value')
@@ -321,27 +335,36 @@ async def content() -> None:
                 # IMAGE
                 with ui.row().classes():
                     with ui.column().classes():
-                        game_image = ui.image(f'{selected_game['image']}')
+                        game_image = ui.image(selected_game['image'])
                         with ui.button("Reload Image", on_click=game_image.force_reload):
                             ui.tooltip("This attempts to reload the associated image.")
                         ui.label("Image file path").classes('text-base')
-                        lbl_image_path = ui.label(f'{selected_game['image']}').classes('text-sm')
+                        lbl_image_path = ui.label(selected_game['image']).classes('text-sm')
 
                         # EDIT
                         # Call the dialog to get new file path
-                        btn_find_image = ui.button("Find New Image").on_click(lambda: choose_image_file)
-                        btn_find_image.bind_visibility_from(toggle_edit, 'value')
+                        async def choose_icon():
+                            image_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                            for file in image_files:
+                                asset_image = file
+                            edited_game['image'] = asset_image
+                        
+                        pick_icon = ui.button('Choose file', on_click=choose_icon)
+                        pick_icon.bind_visibility_from(toggle_edit, 'value')
+
                         # display new file path
                         lbl_new_image_path = ui.label(f'{edited_game['image']}')
                         lbl_new_image_path.classes('text-base')
                         lbl_new_image_path.bind_visibility_from(toggle_edit, 'value')
+
                         # display the new image
                         new_image = ui.image(f'{edited_game['image']}')
                         new_image.bind_visibility_from(toggle_edit, 'value')
+
                         # reload the new image
                         btn_reload_new = ui.button("Reload New",on_click=new_image.force_reload)
                         btn_reload_new.bind_visibility_from(toggle_edit, 'value')
 
-            ui.button('Submit')
+            ui.button('Submit', on_click=lambda: update_game_wrapper(edited_game))
 
                 

@@ -93,7 +93,7 @@ def create_new_directory(passed_directory_path: str, debug_mode: bool = False) -
 # READ
 # single JSON getter with known, full file path
 def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
-# This handles loading a JSON File
+    """Fetches a json file as part of a result_dict. Result_dict keys: 'result', 'message', 'json'. """
     error_message = ""
     target_object = ""
     fetch_success = False
@@ -274,7 +274,9 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
     return result
 
 # get json template as dict, returns template dict
-def get_template_json(template_type: str, directory_path: str) -> dict:
+def get_template_json(template_type: str) -> dict:
+    """Takes the Template type, and return the template dict.
+    Handles calculating the template path itself."""
     configfilename = 'config.txt'
     # Store as nested dictionary
     config = get_config_as_dict(configfilename)
@@ -335,7 +337,6 @@ def get_config_as_dict(configfilename: str) -> dict:
 def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict:
     """
     Overwrites or creates a JSON file in the specified directory.
-
     Args:
         data (dict): The dictionary to write to the JSON file.
         directory_path (str): The directory where the file is located.

@@ -26,7 +26,7 @@ async def create_game():
                 'has_events': False, 'default_events':[],
                 'has_effects': False, 'default_effects':[],
                 'icon':'', 'has_turns':False,
-                'turn_type':'', 'start_turn':0
+                'turn_type':'', 'start_turn':0, 'image':''
                 }
 
     # Render the counters.
@@ -115,7 +115,7 @@ async def create_game():
         # Creating the game
         try:
             # Ensure the game matches the template
-            matches_template = check_template_bool(new_game_dict, template_paths)
+            matches_template = check_template_bool(new_game_dict)
             if matches_template:
                 # Check if a game with that name already exists
                 new_game_name = new_game_dict['name']

@@ -157,7 +157,7 @@ async def new_asset():
         create_result = {}
         try:
             # Ensure the asset matches the template
-            matches_template = check_template_bool(new_asset_dict, str_templates_path)
+            matches_template = check_asset_template_bool(new_asset_dict)
             if matches_template['match']:
                 # check for duplicates
                 asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
@@ -195,21 +195,24 @@ async def new_asset():
                             multi_line=True)
 
         except FileNotFoundError as e:
-            ui.notify("""Error: could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.""",
+            ui.notify("""Error: could not save. STAT cound not find the file.
+                       Please check the file paths in config.txt are correct.""",
                       position='top',
                       type='negative',
                       multi_line=True)
 
         except PermissionError as e:
             print(traceback.format_exc())
-            ui.notify("Error: Could not save. STAT does not have permission to write to the folder in those locations. Please check the file paths in config.txt are correct.",
+            ui.notify("""Error: Could not save. STAT does not have permission to write to the folder in those locations.
+                       Please check the file paths in config.txt are correct.""",
                       position='top',
                       type='negative',
                       multi_line=True)
 
         except Exception as e:
             print(traceback.format_exc())
-            ui.notify("""Error: Could not save. An unexpected error has occured. Please check application logs for more information.""",
+            ui.notify("""Error: Could not save. An unexpected error has occured. 
+                      Please check application logs for more information.""",
                       position='top',
                       type='negative',
                       multi_line=True)
@@ -358,7 +361,7 @@ async def new_asset():
                             asset_icon = file
                         new_asset_dict['icon'] = asset_icon
                     
-                    ui.button('choose file', on_click=choose_icon)
+                    ui.button('Choose file', on_click=choose_icon)
 
             # IMAGE
             with ui.row().classes():
