@@ -48,34 +48,6 @@ async def select_games():
                 ui.notify(f"Success! You selected {name}.", type='positive', position='top')
                 ui.navigate.reload()
 
-    with theme.frame('All Games'):
-        # File path for game data
-        config = app.storage.user.get("config", {})
-        paths = config.get("Paths",{})
-        root_path = paths.get("osrootpath", "Not Set")
-        games_path = paths.get("gamespath", "Not Set")
-        user_confirm = UserConfirm()
-
-        selected_game = app.storage.user.get("selected_game", {})
-        existing_games = app.storage.user.get("existing_games", {})
-
-        # Get the games_directory_path
-        try:
-            str_games_directory_path = root_path + games_path
-            # getting the existing games from the file path.
-            get_games_result = get_games(str_games_directory_path)
-            if get_games_result['result']:
-                existing_games = get_games_result['games']
-                # setting the game objects into the user storage.
-                app.storage.user["existing_games"] = existing_games
-            else:
-                ui.notify("Error getting existing games!", position='top', type='negative')
-        except:
-            ui.notify("""Error! Unable to retrieve the games. Please check the path loctions in config.py""",
-                      position='top',
-                      type='negative',
-                      multi_line=True)
-
     # Render the cards displaying the existing games.
     async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
         """Render the cards displaying each game STAT found a JSON for."""
@@ -103,6 +75,34 @@ async def select_games():
                     ui.button('Delete', color='red') \
                         .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1') \
                         .on_click(lambda: ui.notify('Hi'))
+
+    with theme.frame('All Games'):
+        # File path for game data
+        config = app.storage.user.get("config", {})
+        paths = config.get("Paths",{})
+        root_path = paths.get("osrootpath", "Not Set")
+        games_path = paths.get("gamespath", "Not Set")
+        user_confirm = UserConfirm()
+
+        selected_game = app.storage.user.get("selected_game", {})
+        existing_games = app.storage.user.get("existing_games", {})
+
+        # Get the games_directory_path
+        try:
+            str_games_directory_path = root_path + games_path
+            # getting the existing games from the file path.
+            get_games_result = get_games(str_games_directory_path)
+            if get_games_result['result']:
+                existing_games = get_games_result['games']
+                # setting the game objects into the user storage.
+                app.storage.user["existing_games"] = existing_games
+            else:
+                ui.notify("Error getting existing games!", position='top', type='negative')
+        except:
+            ui.notify("""Error! Unable to retrieve the games. Please check the path loctions in config.py""",
+                      position='top',
+                      type='negative',
+                      multi_line=True)
 
     with ui.column():
         ui.label("Select a game to get started!").classes('text-xl text-center')
