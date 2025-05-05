@@ -106,6 +106,9 @@ async def create_game():
             render_all_actors.refresh()
 
     async def create_game_json():
+        """Checks that the name hasn't been used for a game already. 
+        Sends the name of the config file, the new_game_dict,
+          and the game_name_result['file'] to new_game_gui in gamehandler."""
         matches_template = False
         game_name_result = {}
         create_game_result = False
@@ -244,7 +247,7 @@ async def create_game():
                     has_actors.bind_value(new_game_dict, 'has_actors')
 
                     create_actors = ui.button(
-                        'Create Actors', 
+                        'Add Actor', 
                         icon="create", 
                         on_click=add_actor
                     )
@@ -253,12 +256,10 @@ async def create_game():
                     actors_display = render_all_actors(user_confirm, new_game_dict)
                     actors_display.bind_visibility_from(has_actors,'value')
 
-            
             # Creating Assets moved to its own form.
 
             # Creating Effects moved to its own form.
             
-
             # Initializing Turns
             with ui.row().classes('items-center justify-start space-x-4'):
                 with ui.column():
@@ -270,13 +271,16 @@ async def create_game():
                     with ui.column().bind_visibility_from(has_turns,'value'):
                         ui.label("Do the turns increase or decrease as you play?")
                         turn_type = ui.radio({'Increasing':'Increasing', 'Decreasing':'Decreasing'}).props('inline left-label')
-                        ui.label("What turn or round number does your game start on?")
-                        start_turn = ui.number("Enter a whole number.")
                         turn_type.bind_value(
                             new_game_dict, 
                             'turn_type')
-                        start_turn.bind_value(new_game_dict, 'start_turn')
+                        ui.label("What turn or round number does your game start on?")
+                        # Work around needed to get the value when changed 
+                        # to be written to the dictionary as int. /Ugh/.
+                        start_turn = ui.number("Enter a whole number.", 
+                                               on_change=lambda e:  new_game_dict.__setitem__('start_turn', int(e.value) if e.value is not None else 0))
 
+                        
             # Submit button.
             with ui.row():
                 # The button submits the dialog providing the text entered
