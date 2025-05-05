@@ -224,7 +224,7 @@ async def new_asset():
                       multi_line=True)
 
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             ui.notify("""Error: Could not save. An unexpected error has occured. Please check application logs for more information.""",
                       position='top',
                       type='negative',

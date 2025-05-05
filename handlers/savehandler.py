@@ -13,20 +13,29 @@ def get_saves(saves_directory_path: str) -> dict:
     save_names = []
     save_names = get_save_names(saves_directory_path)
     full_save_path = ''
-    
+    get_save_result = {}
     save_files = {}
+
     for save in save_names:
         save_name = save.lower()
-        full_save_path = saves_directory_path + '\\' + save_name + '\\' + save_name + ".json"
-        save_files[save_name] = single_json_getter_fullpath(full_save_path, 'save')
-    
-    return save_files
+        full_save_path = Path(saves_directory_path + '\\' + save_name + '\\' + save_name + ".json")
+        get_save_result = single_json_getter_fullpath(full_save_path, 'save')
+
+        ## checking the saves
+        if get_save_result['result']:
+            save_files[save] = get_save_result['json']
+        else:
+            get_save_result['message'] = "Failed! Could not retrieve the saves."
+
+    if save_files:
+        return save_files
+    else:
+        return {}
 
 # for creating a new save from the gui
 def new_save_gui(configfilename: str, game_name: str, new_save_dict: dict) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
     create_result = {'result': False, 'message': '', 'dict':{}}
-
     try:
         # Format game name
         game_name_result = format_str_for_filename_super(game_name)
@@ -103,8 +112,10 @@ def new_save_gui(configfilename: str, game_name: str, new_save_dict: dict) -> di
 
     return create_result
 
+# RThe list of names.
 def get_save_names(directory_path: str) -> list:
     save_names = []
+    save_names_result = {'result': False, 'message':"", 'list': []}
     save_names_result = multi_file_names_getter(directory_path, "saves")
     if save_names_result['result']:
         save_names = save_names_result['list']
@@ -112,6 +123,7 @@ def get_save_names(directory_path: str) -> list:
         print("Error! Problem with fetching save names.")
     return save_names
 
+# Convert the save name into a file friendly format.
 def convert_save_name(saveName: str) -> str:
     formatted_name = ""
     try:
@@ -119,8 +131,7 @@ def convert_save_name(saveName: str) -> str:
         formatted_name = formatted_name.lower()
         formatted_name = formatted_name.replace(" ", "_")
     except Exception:
-            tb = sys.exception().__traceback__
-            print(tb)
+            print(traceback.format_exc())
     return formatted_name
 
 # return a result dictionary from getting a single json file
@@ -134,6 +145,7 @@ def load_save(full_save_path: str) -> dict:
         print("Error with returning save!")
         return {}
 
+# Checks the save dict's keys against the keys of the save template.
 def check_template_bool(save: dict, template_path: str) -> bool:
     error_message = ''
     result = False
@@ -145,6 +157,7 @@ def check_template_bool(save: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
 
+# Returne a dictionary of {"name": "", "file":""} of formatted save name
 def get_new_save_name(directory_path: str, name: str, ) -> dict:
     file_name = ""
     saves = []
