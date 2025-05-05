@@ -90,14 +90,17 @@ def select_target_game(existing_games: dict, selected_game_name: str):
 
 # Render the cards displaying the existing games.
 async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
-    with ui.card().classes('w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-2'):  # reduced padding, responsive width
-        with ui.row().classes('w-full justify-between items-start'):  # name in top-left
-            ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}').classes('text-lg font-bold mb-1')
+    with ui.card().classes(
+        'w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-2 '
+        'flex flex-col justify-between h-full'
+    ):
+        with ui.row().classes('w-full justify-between items-start'):
+            ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}').classes('text-lg font-bold mb-0')
 
         # Show first 25 characters of description with ellipsis if longer
         desc = game.get('description') or ''
-        short_desc = (desc[:25] + '...') if len(desc) > 25 else desc
-        ui.label(short_desc).classes('text-sm text-gray-600 mt-0')
+        short_desc = (desc[:50] + '...') if len(desc) > 50 else desc
+        ui.label(short_desc).classes('text-sm text-gray-300 mt-0')
 
         # Spacer to push buttons to the bottom
         ui.element('div').classes('flex-grow')
