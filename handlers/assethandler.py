@@ -362,7 +362,7 @@ def fetch_owned_assets(assets: dict, assets_owned: dict) -> dict:
                     print(error_message)
         return owned_assets
 
-def check_template_bool(asset: dict) -> bool:
+def check_asset_template_bool(asset: dict) -> bool:
     error_message = ''
     result = False
     try:
