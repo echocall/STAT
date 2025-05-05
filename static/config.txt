@@ -1,6 +1,6 @@
 [Preferences]
 darkmode = True
-font = ShantellSans
+font = NotoSerif
 
 [Paths]
 osrootpath = C:\Users\strip\AppData\Local\STAT

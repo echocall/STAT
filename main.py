@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+# macOS packaging support
+from multiprocessing import freeze_support  # noqa
+freeze_support()  # noqa#!/usr/bin/env python3
+
 from typing import Annotated
 import pages.home_page as home_page
 import pages.select_games as select_games
@@ -45,5 +48,5 @@ async def index_page() -> None:
     else:
         dark_mode_on = False
 
-ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False,
+ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
         storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkMode'))
