@@ -29,7 +29,6 @@ async def create_game():
                 'turn_type':'', 'start_turn':0
                 }
 
-    
     # Render the counters.
     @ui.refreshable
     def render_all_counters(confirm, new_game_dict) -> ui.element:
@@ -62,7 +61,6 @@ async def create_game():
                                     ).props('flat dense')
         return actor_display_case
 
-
     # get the new Counter from New Counter Dialog
     async def add_counter():
         result = await new_counter_dialog() 
@@ -90,7 +88,6 @@ async def create_game():
                       type='warning',
                       psoition='top',
                       multi_line=True)
-    
     
     # Delete a counter.
     def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
