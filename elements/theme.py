@@ -52,6 +52,32 @@ def frame(navigation_title: str):
             color: inherit;
             text-decoration: none;
         }
+                     
+        /* Base tooltip font size */
+        .q-tooltip {
+            font-size: 0.875rem; /* ~14px */
+        }
+
+        /* Medium screens */
+        @media (min-width: 768px) {
+            .q-tooltip {
+                font-size: 1rem; /* ~16px */
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1280px) {
+            .q-tooltip {
+                font-size: 1.125rem; /* ~18px */
+            }
+        }
+
+        /* Extra-large monitors */
+        @media (min-width: 1920px) {
+            .q-tooltip {
+                font-size: 1.25rem; /* ~20px */
+            }
+        }
     </style>
     ''')
 
