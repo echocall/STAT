@@ -1,8 +1,11 @@
-import os
+
 import json
-from pathlib import PurePath, Path
+from pathlib import Path
 from helpers.utilities import *
 import traceback
+import os
+import shutil
+import datetime
 
 # CREATE
 def create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict:
@@ -200,6 +203,7 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
 # objectType = 'games' or 'assets'
 # targetpathkey = 'osrootpath' or 'gamespath' or 'assetspath'
 def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bool = False) -> dict:
+    """Gets all the file names. Takes objectType as a plural. returns a result_dict of 'result':bool, 'message":'str', and 'list':[]"""
     result = {
         'result': False,
         'message': '',
@@ -377,14 +381,46 @@ def overwrite_json_file(data: dict, directory_path: str, file_name: str) -> dict
     return result
 
 # DELETE
-# Delete a folder & contents
-# TODO: this
-def delete_directory(directory_path: str,):
-   result =  user_confirm("Are you sure you want to do this?")
 
-# TODO: this
+# Logging for file.
+def log_debug(message: str):
+    """Appends a debug message to the debug log file."""
+    # Define root path for logs
+    config = get_config_as_dict(config.txt)
+    paths = config.get("Paths", {})
+    root_path = paths.get("osrootpath", "Not Set")
+    osrootpath = Path(root_path)  # Replace with your real root path
+    debug_log_path = os.path.join(osrootpath, 'debug.log')
+    try:
+        os.makedirs(osrootpath, exist_ok=True)
+        with open(debug_log_path, 'a') as log_file:
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            log_file.write(f'[{timestamp}] {message}\n')
+    except Exception as e:
+        # As a last resort, print to console
+        print(f'Failed to log message: {e}')
+
+
+def delete_directory(directory_path: str):
+    """Deletes a directory and all its contents."""
+    try:
+        if os.path.exists(directory_path) and os.path.isdir(directory_path):
+            shutil.rmtree(directory_path)
+            log_debug(f"Successfully deleted directory: {directory_path}")
+        else:
+            log_debug(f"Directory not found: {directory_path}")
+    except Exception as e:
+        log_debug(f"Error deleting directory '{directory_path}': {e}")
+
+
 def delete_file(file_path: str):
-    a = 1+1
+    """Deletes a single file."""
+    try:
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            os.remove(file_path)
+            log_debug(f"Successfully deleted file: {file_path}")
+        else:
+            log_debug(f"File not found: {file_path}")
+    except Exception as e:
+        log_debug(f"Error deleting file '{file_path}': {e}")
 
-# TODO: Save this for when Error Handler is more up and running >__> 
-# And the forgiveness helpers. wtb confirm boxes.

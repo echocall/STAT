@@ -52,6 +52,33 @@ def frame(navigation_title: str):
             color: inherit;
             text-decoration: none;
         }
+                     
+        /* Base tooltip font size */
+        .q-tooltip {
+            font-size: 0.75rem;
+            color: gray;
+        }
+
+        /* Medium screens */
+        @media (min-width: 768px) {
+            .q-tooltip {
+                font-size: 0.875rem; 
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1280px) {
+            .q-tooltip {
+                font-size: 1rem; 
+            }
+        }
+
+        /* Extra-large monitors */
+        @media (min-width: 1920px) {
+            .q-tooltip {
+                font-size: 1.125rem; 
+            }
+        }
     </style>
     ''')
 
@@ -60,7 +87,7 @@ def frame(navigation_title: str):
 
     # colors from: https://colorhunt.co/palette/3d365c7c4585c95792f8b55f
     ui.colors(primary='#771c77', 
-              secondary='#C95792', 
+              secondary='#db2b86', 
               accent='#F8B55F', 
               positive='#41644A',
               warning='#F9CB43',
@@ -73,8 +100,8 @@ def frame(navigation_title: str):
         with ui.row().classes('w-full justify-between'):
             with ui.link(target='/').classes('text-amber-300'):
                 ui.label('STAT').classes('font-bold text-xl').props('color="accent"')
-            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"').classes('scale-75')
-            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"').classes('scale-75')
+            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"').classes('scale-100')
+            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"').classes('scale-100')
             ui.label(navigation_title).classes('font-bold text-2xl text-center flex-grow')
 
             def handle_switch():
@@ -103,8 +130,9 @@ def frame(navigation_title: str):
             light_switch.bind_value_from(config['Preferences'].getboolean('darkMode'))
 
             menu()
-    with ui.column().classes('w-full items-stretch items-center justify-center'):
-        yield
+    with ui.row().classes('w-full h-full justify-center items-start'):
+        with ui.column().classes('w-full max-w-screen-md items-stretch'):
+            yield
     with ui.footer().props(f' color=#d5c7ba'):
         # Selected Game
         if not selected_game:

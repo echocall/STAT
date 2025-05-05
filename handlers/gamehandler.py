@@ -111,20 +111,8 @@ def get_games(directory_path: str) -> dict:
     
     return get_games_result
 
-# Not currently used.
-def get_game_as_obj(full_game_path: str) -> object:
-    get_game_result = single_json_getter_fullpath(full_game_path, 'game')
-    if get_game_result['result']:
-        game = get_game_result['json']
-        game_object = {}
-        game_object = dict_to_game_object(game)
-        return game_object
-    else:
-        print("Error! Could not get game!")
-        return {}
-
-# TODO: Handle errors better as program
 def get_games_names(directory_path: str) -> dict:
+    """Return a result_dict with a 'list' of names."""
     game_name_result = {}
     try:
         game_name_result = multi_file_names_getter(directory_path, "games" )
@@ -135,37 +123,8 @@ def get_games_names(directory_path: str) -> dict:
     finally:
         return game_name_result
 
-# TODO: finish
-def update_game(gameName: str, filePath: str, type: str, key: str, newValue) -> bool:
-    game = {}
-    result = False
-    
-
-    # Find the value we want to change and change it in the object
-    print(game[key])
-    game[key] = newValue
-
-    # Write the dict back to the file as JSON object.
-    result = overwrite_json_file(game, filePath, gameName)
-
-    return result
-
-def check_template(game: dict) -> object:
-    error_message = ''
-    try:
-        game_template = get_template_json("game",".\\statassets\\templates")
-        result = dict_key_compare(game_template, game)
-    except Exception:
-        print(traceback.format_exc())
-
-    if result["match"] == True:
-        game_object = dict_to_game_object(game)
-        return game_object
-    else:
-        print(error_message)
-        print(result["missing_values"])
-
 def check_template_bool(game: dict, template_path: str) -> bool:
+    """"Takes a game dict and template path and checks if the game dict matches the template."""
     error_message = ''
     result = False
     try:
@@ -176,9 +135,8 @@ def check_template_bool(game: dict, template_path: str) -> bool:
         print(traceback.format_exc())
         return result
     
-
-# dict_to_game_object
 def dict_to_game_object(targetDict: dict) -> object:
+    """"Takes a dictionary and returns it as a MyGame object."""
     # get name of the dictionary and insubstantiate into a class object.
     class_object = {}
     classObjName = "c" + targetDict["name"]
@@ -189,6 +147,7 @@ def dict_to_game_object(targetDict: dict) -> object:
         print(traceback.format_exc())
 
 def get_new_game_name(name: str, file_path: str) -> dict:
+    """Checks if the given name is already a game's name, returns a result_dict"""
     file_name = ""
     games = []
     games_names_result = {}
@@ -280,7 +239,8 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 
 # TODO: test
 # updates the game's json
-def update_game(game_dict: dict, game_path: str, template_path: str):
+def update_game(game_dict: dict, game_file_path: str, template_path: str):
+    """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
     template_result = {}
     format_result = {}
     write_result = {}
@@ -304,7 +264,7 @@ def update_game(game_dict: dict, game_path: str, template_path: str):
         if format_result['result']:
             # try writing to the json_file
             try:
-                write_result = overwrite_json_file(game_dict, game_path, format_result['string'])
+                write_result = overwrite_json_file(game_dict, game_file_path, format_result['string'])
             except:
                 write_result['success'] = False
                 write_result['message'] = 'Overwriting to game json failed.'
@@ -322,27 +282,26 @@ def update_game(game_dict: dict, game_path: str, template_path: str):
         return template_result
 
 
-# TODO: implement
 # delete a game and its files
-def delete_all(name: str, game_dict: dict, game_path: str, datapack_path: str, saves_path: str) -> bool:
-    bln_result = False
-    
-    for filename in os.listdir(saves_path):
-        file_path = os.path.join(saves_path, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print("failed to delete %s. Reason: %s: " % (file_path, e))
+def delete_all(game_directory_path) -> bool:
+    all_delete_result = False
+    """ deletes a game's folder and everything inside. Return a bool."""
+    try:
+        delete_directory(game_directory_path)
+        all_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
 
-    return bln_result
+    return all_delete_result
 
-# TODO:
-# This be called AFTER delete_save in save_handler
-# and AFTER delete_asset(s) in asset_handler
-def delete_game(game_dict: dict):
-    omega = "end"
-    # ensure no children (assets, saves, or effects) exist
-    # delte folder with shutil.rmtree('/path/to/folder')
+# delete a game file at the specified path.
+def delete_game_file(game_file_path: str) -> bool:
+    """ deletes a game's folder and everything inside. Return a bool."""
+    game_delete_result = False
+    try:
+        delete_file(game_file_path)
+        game_delete_result = True
+    except Exception:
+        print(traceback.format_exc())
+
+    return game_delete_result
