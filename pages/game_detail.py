@@ -261,8 +261,57 @@ async def content() -> None:
                     # Warn user they will need to manually move saves to new location
 
                 # TURNS
-                    # Default turn
-                    # Turn Type
+                with ui.row().classes():
+                    with ui.column().classes():
+                        ui.label("Turns").classes('font-bold text-lg')
+                        has_turns = ui.switch()
+                        # If there
+                        if edited_game['has_turns']:
+                            has_turns.set_value(True)
+                        else:
+                            has_turns.set_value(False)
+
+                    # TURN TYPE
+                        # DISPLAY section
+                        lbl_turn_type = ui.label("Turn Type: ").classes('font-bold text-lg')
+                        turn_type = ui.label(f"{selected_game['turn_type']}")
+                        lbl_turn_type.bind_visibility_from(toggle_edit, 
+                                                            'value', 
+                                                            backward=lambda toggle_edit: not toggle_edit)
+                        turn_type.bind_visibility_from(toggle_edit, 
+                                                        'value', 
+                                                        backward=lambda toggle_edit: not toggle_edit)
+
+                        # EDIT section
+                        lbl_type_edit = ui.label("Select how you count turns in your game: ")
+                        lbl_type_edit.bind_visibility_from(toggle_edit, 'value')
+                        edit_turn_type = ui.radio({'Increasing':'Increasing', 'Decreasing':'Decreasing'},
+                                              value=selected_game['turn_type'])
+                        edit_turn_type.props('inline left-label')
+                        edit_turn_type.bind_value(
+                            name_edit, 
+                            'turn_type')
+                        edit_turn_type.bind_visibility_from(toggle_edit, 'value')
+                        edit_turn_type.bind_visibility_from(toggle_edit, 'value')
+
+                    # START TURN
+                        # DISPLAY section
+                        lbl_start_turn = ui.label("Start Turn: ").classes('font-bold text-lg')
+                        start_turn = ui.label(f"{selected_game['start_turn']}")
+                        lbl_start_turn.bind_visibility_from(toggle_edit, 
+                                                            'value', 
+                                                            backward=lambda toggle_edit: not toggle_edit)
+                        start_turn.bind_visibility_from(toggle_edit, 
+                                                        'value', 
+                                                        backward=lambda toggle_edit: not toggle_edit)
+                        
+                        # EDIT section
+                        lbl_start_edit = ui.label('New Start Turn: ').classes('font-bold text-lg')
+                        lbl_start_edit.bind_visibility_from(toggle_edit, 'value')
+
+                        start_edit = ui.number(value=selected_game['start_turn'])
+                        start_edit.props('clearable')
+                        start_edit.bind_visibility_from(toggle_edit, 'value')
                 
                 # IMAGE
                 with ui.row().classes():
