@@ -8,6 +8,46 @@ from elements.UserConfirm import *
 
 @ui.page('/selectgames')
 async def select_games():
+
+    # Select a game to load into app.storage.user
+    def view_game_saves(selected_game):
+        """Take user to view the saves associated with the game unless user has not selected a game."""
+        if not selected_game or 'name' not in selected_game:
+            ui.notify("Please select a game before trying to view it's saves.",
+                    position='top',
+                    type='warning')
+        else:
+            ui.navigate.to(f"/selectsaves/")
+
+    def game_view_details(selected_game):
+        """Take user to view the details of a game unless user has not selected a game."""
+        if not selected_game or 'name' not in selected_game:
+            ui.notify("Please select a game before trying to view it's details.",
+                    position='top',
+                    type='warning')
+        else:
+            ui.navigate.to(f"/viewgame/")
+
+    def select_target_game(existing_games: dict, selected_game_name: str):
+        """Load the selected game into storage and refresh the page."""
+        for name in selected_game_name:
+            # getting the name to be correct.
+            file_name = format_str_for_filename_super(name)['string']
+            selected_game = {}
+
+            # trying to get the specified game
+            try:
+                selected_game = existing_games[file_name]
+                app.storage.user['is_game_loaded']  = True
+            except:
+                alert_dialog("Problem with loading the game.",
+                            "Please check the game file exists.")
+            finally:
+                app.storage.user['selected_game'] = selected_game
+                app.storage.user['selected_save'] = {}
+                ui.notify(f"Success! You selected {name}.", type='positive', position='top')
+                ui.navigate.reload()
+
     with theme.frame('All Games'):
         # File path for game data
         config = app.storage.user.get("config", {})
@@ -36,9 +76,38 @@ async def select_games():
                       type='negative',
                       multi_line=True)
 
-        ui.label("Select a game to use it as the basis for creating an asset, save, or effect.").classes('text-xl')
-        ui.label("Please note that selecting a game will unload your currently selected save and you will lose your changes.")
-        ui.label("Make sure to save your data before doing this!")
+    # Render the cards displaying the existing games.
+    async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
+        """Render the cards displaying each game STAT found a JSON for."""
+        with ui.card().classes(
+            'w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-2 '
+            'flex flex-col justify-between h-full'
+        ):
+            with ui.row().classes('w-full justify-between items-start'):
+                ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}').classes('text-lg font-bold mb-0')
+
+            # Show first 25 characters of description with ellipsis if longer
+            desc = game.get('description') or ''
+            short_desc = (desc[:50] + '...') if len(desc) > 50 else desc
+            ui.label(short_desc).classes('text-sm text-gray-300 mt-0')
+
+            # Spacer to push buttons to the bottom
+            ui.element('div').classes('flex-grow')
+
+            # Button row anchored bottom-right
+            with ui.row().classes('w-full justify-end'):
+                with ui.button_group().classes('gap-2'):
+                    ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']})) \
+                        .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
+                    ui.button('Edit').classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
+                    ui.button('Delete', color='red') \
+                        .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1') \
+                        .on_click(lambda: ui.notify('Hi'))
+
+    with ui.column():
+        ui.label("Select a game to get started!").classes('text-xl text-center')
+        ui.label("Please note that selecting a game will unload your currently selected save.").classes('text-center')
+        ui.label("Make sure to save your data before doing this!").classes('text-center')
 
         # Buttons!!!
         with ui.row():
@@ -51,67 +120,4 @@ async def select_games():
         with game_card_container:
             for game in existing_games.values():
                 await render_game_cards(existing_games, game)
-
-# Select a game to load into app.storage.user
-def view_game_saves(selected_game):
-    if not selected_game or 'name' not in selected_game:
-        ui.notify("Please select a game before trying to view it's saves.",
-                  position='top',
-                  type='warning')
-    else:
-        ui.navigate.to(f"/selectsaves/")
-
-def game_view_details(selected_game):
-    if not selected_game or 'name' not in selected_game:
-        ui.notify("Please select a game before trying to view it's details.",
-                  position='top',
-                  type='warning')
-    else:
-        ui.navigate.to(f"/viewgame/")
-
-def select_target_game(existing_games: dict, selected_game_name: str):
-    for name in selected_game_name:
-        # getting the name to be correct.
-        file_name = format_str_for_filename_super(name)['string']
-        selected_game = {}
-
-        # trying to get the specified game
-        try:
-            selected_game = existing_games[file_name]
-            app.storage.user['is_game_loaded']  = True
-        except:
-            alert_dialog("Problem with loading the game.",
-                         "Please check the game file exists.")
-        finally:
-            app.storage.user['selected_game'] = selected_game
-            app.storage.user['selected_save'] = {}
-            ui.notify(f"Success! You selected {name}.", type='positive', position='top')
-            ui.navigate.reload()
-
-# Render the cards displaying the existing games.
-async def render_game_cards(existing_games: dict, game: dict)-> ui.element:
-    with ui.card().classes(
-        'w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-2 '
-        'flex flex-col justify-between h-full'
-    ):
-        with ui.row().classes('w-full justify-between items-start'):
-            ui.label().bind_text_from(game, 'name', backward=lambda name: f'{name}').classes('text-lg font-bold mb-0')
-
-        # Show first 25 characters of description with ellipsis if longer
-        desc = game.get('description') or ''
-        short_desc = (desc[:50] + '...') if len(desc) > 50 else desc
-        ui.label(short_desc).classes('text-sm text-gray-300 mt-0')
-
-        # Spacer to push buttons to the bottom
-        ui.element('div').classes('flex-grow')
-
-        # Button row anchored bottom-right
-        with ui.row().classes('w-full justify-end'):
-            with ui.button_group().classes('gap-2'):
-                ui.button('Select', on_click=lambda: select_target_game(existing_games, {game['name']})) \
-                    .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-                ui.button('Edit').classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-                ui.button('Delete', color='red') \
-                    .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-
 

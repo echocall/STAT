@@ -37,7 +37,7 @@ def menu() -> None:
             return ''
 
     # MAIN MENU
-    with ui.button(icon='menu').classes('scale-75').props('color="secondary"'):
+    with ui.button(icon='menu').classes('scale-100').props('color="secondary"'):
         with ui.menu() as general_menu:
             with ui.link(target='/'):
                 ui.menu_item('Home')
@@ -115,7 +115,7 @@ def menu() -> None:
             ui.button('Yes', on_click=app.shutdown)
             ui.button('No', on_click=confirm_close.close)
     # Settings menu
-    with ui.button(icon='settings').classes('scale-75').props('color="secondary"'):
+    with ui.button(icon='settings').classes('scale-100').props('color="secondary"'):
         with ui.menu() as settings_menu:
             ui.menu_item('Settings', lambda: ui.notify('Preferences'))
             ui.menu_item('Preferences', lambda: ui.notify('Preferences'))

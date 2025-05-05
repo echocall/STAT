@@ -47,8 +47,8 @@ async def new_asset():
         with ui.row().classes('gap-2') as buy_cost_display_case:
             for buy_cost, value in new_asset_dict['buy_costs'].items():
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(f'{buy_cost}:').classes('text-sm font-medium')
-                    ui.label(str(value)).classes('text-sm')
+                    ui.label(f'{buy_cost}:').classes('font-medium')
+                    ui.label(str(value)).classes()
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -60,7 +60,6 @@ async def new_asset():
     # get the new Counter from New Counter Dialog
     async def add_buy_cost():
         result = await target_counter_dialog('Buy Cost for Asset')
-        print(result) 
         if result:
             if 'buy_costs' not in new_asset_dict:
                 new_asset_dict['buy_costs'] = {}
@@ -84,8 +83,8 @@ async def new_asset():
         with ui.row().classes('gap-2') as sell_price_display_case:
             for sell_price, value in new_asset_dict['sell_prices'].items():
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(f'{sell_price}:').classes('text-sm font-medium')
-                    ui.label(str(value)).classes('text-sm')
+                    ui.label(f'{sell_price}:').classes('font-medium')
+                    ui.label(str(value)).classes()
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -120,7 +119,7 @@ async def new_asset():
         with ui.row().classes('gap-2') as attributes_display_case:
             for value in new_asset_dict.get('attributes',[]):
                 with ui.row().classes('items-center gap-2'):
-                    ui.label(str(value)).classes('text-sm font-medium')
+                    ui.label(str(value)).classes('font-medium')
 
                     # Add delete button
                     ui.button(icon='delete', color='red', 
@@ -146,6 +145,7 @@ async def new_asset():
 
     # Delete an attribute.
     def delete_attribute(new_game_dict: dict, attribute_name: str) -> ui.element:
+        """Deletes an attribute from the new_game_dict's attribute list and refreshes the attribute section."""
         if attribute_name in new_game_dict['attributes']:
             target_index = new_game_dict['attributes'].index(attribute_name)
             del new_game_dict['attributes'][target_index]
@@ -153,8 +153,8 @@ async def new_asset():
 
     # Calls the methods to write the asset to .json
     async def create_asset_json(is_default: bool):
+        """Calls the methods in assethandler to write the asset to .json"""
         create_result = {}
-
         try:
             # Ensure the asset matches the template
             matches_template = check_template_bool(new_asset_dict, str_templates_path)
@@ -180,7 +180,7 @@ async def new_asset():
                 except:
                     # failed to create the asset
                     with ui.dialog() as fail_create, ui.card():
-                        ui.label('Oh no!').classes('font-bold')
+                        ui.label('Oh no!').classes('font-bold text-large')
                         ui.label(create_result['message'])
                         ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
                         ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
@@ -215,177 +215,174 @@ async def new_asset():
                       multi_line=True)
 
     with theme.frame('Create an Asset'):
-        buy_costs = new_asset_dict['buy_costs']
-        sell_prices = new_asset_dict['sell_prices']
-
-        with ui.column().classes("full-flex content-center w-100"):
-            # If no selected_game, open up prompt to select one
-            if not selected_game or 'name' not in selected_game:
-                with ui.row():
-                    ui.icon('warning').classes('text-3xl')
-                    ui.label('Warning: No selected game detected.').classes('text-2xl')
-                ui.label('Cannot create asset with no game selected.')
-                ui.label('Please select a game from \'View Games\'.')
-                with ui.link(target = '/selectgames'):
-                    ui.button('Find Game File')
-            else:
-                # Name the source game
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label('Source Game: ').classes('font-bold')
+        # If no selected_game, open up prompt to select one
+        if not selected_game or 'name' not in selected_game:
+            with ui.row():
+                ui.icon('warning').classes('text-3xl')
+                ui.label('Warning: No selected game detected.').classes('text-2xl text-center')
+            ui.label('Cannot create asset with no game selected.').classes('text-center')
+            ui.label('Please select a game from \'View Games\'.').classes('text-center')
+            with ui.link(target = '/selectgames'):
+                ui.button('Find Game File')
+        else:
+            # Name the source game
+            with ui.row().classes():
+                with ui.column().classes():
+                    with ui.row():
+                        ui.label('Source Game: ').classes('text-lg')
                         ui.icon('info')
-                        source_game = ui.label(f'{selected_game['name']}')
-                        source_game.bind_text(new_asset_dict, 'source')
-                        new_asset_dict['source'] = selected_game['name']
-                    
-                # Is this a Default or Custom Asset?
-                # If Custom, pick associated Save
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label("Is this for a default asset?").classes('font-semibold')
-                        is_default = ui.toggle({True:'Default', False:'Custom'})
-                        is_default.classes('bg-blue-600')
-                            
-                # Input name for the asset.
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label('Enter a name for the new asset: ').classes('font-bold')
-                        name_input = ui.input(label='Asset Name', placeholder='50 character limit',
-                                    on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-                        name_input.props('clearable')
-                        name_input.validation={"Too short!": enable.is_too_short} 
-                        name_input.bind_value(new_asset_dict, 'name')
-                        name_chars_left = ui.label()
-
-                # Input category for the asset
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label('Enter a category for the new asset: ').classes('font-bold')
-                        category_input = ui.input(label='Category', placeholder='50 character limit',
-                                    on_change=lambda e: category_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
-                        category_input.props('clearable')
-                        category_input.validation={"Too short!": enable.is_too_short} 
-                        category_chars_left = ui.label()
-                        category_input.bind_value(new_asset_dict, 'category')
-
-                # Input description for the asset.
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label('Enter a description for the new asset:').classes('font-bold')
-                        description = ui.textarea(label='Asset Description', placeholder='type here',
-                                        on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
-                        description.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
-                        # this handles the validation of the field.
-                        desc_chars_left = ui.label()
-                        description.bind_value(new_asset_dict, 'description')
-
-                # Asset Type
-                with ui.row().classes('items-center justify-start space-x-4'): 
-                    with ui.column().classes('items-start'):
-                        ui.label("Asset Type").classes('font-bold')
-                        asset_type_input = ui.input(label='Asset Type', placeholder='type here',
-                                            on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
-                        asset_type_chars_left = ui.label()
-                        asset_type_input.bind_value(new_asset_dict, 'asset_type')
-
-                # Attributes
-                with ui.row().classes('items-center justify-start space-x-4'): 
-                    with ui.column().classes('items-start'):
-                        ui.label("Do you want to add an attribute to your asset?").classes('font-bold')
-                        ui.button(
-                            "Add Attribute", 
-                                  icon="create", 
-                                  on_click=lambda: add_attribute()
-                                  )
-                        ui.label("Attributes added: ")
-                        attributes_display = render_all_attributes(user_confirm, new_asset_dict)
-
-                # Add Buy Costs
-                with ui.row().classes('items-left justify-start space-x-4'): 
-                    with ui.column().classes('items-start'):
-                        ui.label("Do you want to add a Buy Cost to your asset?").classes('font-bold')
-                        has_buy_costs = ui.switch("Yes")
-                        has_buy_costs.props('color="positive"')
-                        with ui.column().bind_visibility_from(has_buy_costs, 'value'):
-                            # Add Buy Costs
-                            ui.label('You can add more than one buy cost to the asset.')
-                            new_buy_cost = ui.button(
-                                "Add Buy Cost",
-                                icon="create",
-                                on_click=add_buy_cost
-                            )
-                            ui.label("Buy Costs added: ").bind_visibility_from(has_buy_costs, 'value')
-                            counter_display = render_all_buy_costs()
-                            counter_display.bind_visibility_from(has_buy_costs,'value')
-                    
-                # Add Sell Prices
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label("Do you want to add a Sell Price to your asset?").classes('font-bold')
-                        has_sell_prices = ui.switch("Yes")
-                        has_sell_prices.props('color="positive"')
-                        # display based on above
-                        with ui.column().bind_visibility_from(has_sell_prices, 'value'):
-                            ui.label("You can add more than one sell price to the asset.")
-                            new_sell_cost = ui.button(
-                                "Add Sell Cost",
-                                icon="create",
-                                on_click=add_sell_price
-                            )
-                            # TODO: Add way to see already added sell costs
-                            # ui.label('Sell Prices Added:')
-                            ui.label("Sell Prices added: ").bind_visibility_from(has_sell_prices, 'value')
-                            counter_display = render_all_sell_prices()
-                            counter_display.bind_visibility_from(has_sell_prices,'value')
-
-                # Add any extra special text to the asset.
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label('Enter any special text for the new asset:').classes('font-bold')
-                        special = ui.textarea(label='Special Text', placeholder='type here',
-                                            on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
-                        special.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
-                        special.bind_value(new_asset_dict, 'special')
-                        special_chars_left = ui.label()
+                    source_game = ui.label(f'{selected_game['name']}').classes()
+                    source_game.bind_text(new_asset_dict, 'source')
+                    new_asset_dict['source'] = selected_game['name']
                 
-                # effects
-                """
-                with ui.column().classes('items-start'):
-                    ui.label("Sorry, this feature hasnt been implemented yet!")
-                    # If loaded_game.effects[] == empty: "Please add effects to the game 
-                    # before trying to add them to assets."
-                """
-        
-                # Icon selection
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label("Select an image you want to use as an icon:").classes('font-bold')
-
-                        async def choose_icon():
-                            icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-                            for file in icon_files:
-                                asset_icon = file
-                            new_asset_dict['icon'] = asset_icon
+            # Is this a Default or Custom Asset?
+            # If Custom, pick associated Save
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label("Is this for a default asset?").classes('text-lg')
+                    is_default = ui.toggle({True:'Default', False:'Custom'})
+                    is_default.props('color="secondary"')
                         
-                        ui.button('choose file', on_click=choose_icon)
+            # Input name for the asset.
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label('Enter a name for the new asset: ').classes('text-lg')
+                    name_input = ui.input(label='Asset Name', placeholder='50 character limit',
+                                on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+                    name_input.props('clearable')
+                    name_input.validation={"Too short!": enable.is_too_short} 
+                    name_input.bind_value(new_asset_dict, 'name')
+                    name_chars_left = ui.label()
 
-                # image
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label("Select an image you want to associate with the asset:").classes('font-bold')
-                        async def choose_image():
-                            image_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
-                            for file in image_files:
-                                asset_image = file
-                            new_asset_dict['image'] = asset_image
+            # Input category for the asset
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label('Enter a category for the new asset: ').classes('text-lg')
+                    category_input = ui.input(label='Category', placeholder='50 character limit',
+                                on_change=lambda e: category_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
+                    category_input.props('clearable')
+                    category_input.validation={"Too short!": enable.is_too_short} 
+                    category_chars_left = ui.label()
+                    category_input.bind_value(new_asset_dict, 'category')
 
-                        ui.button('choose file', on_click=choose_image)
+            # Input description for the asset.
+            with ui.row().classes():
+                with ui.column().classes('w-full max-w-screen-md'):
+                    ui.label('Enter a description for the new asset:').classes('text-lg')
+                    description = ui.textarea(label='Asset Description', placeholder='type here',
+                                    on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
+                    description.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded w-full')
+                    # this handles the validation of the field.
+                    desc_chars_left = ui.label()
+                    description.bind_value(new_asset_dict, 'description')
 
-                # submit
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
-                        ui.label("Done?")
-                        ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
+            # Asset Type
+            with ui.row().classes(): 
+                with ui.column().classes():
+                    ui.label("Asset Type").classes('text-lg')
+                    asset_type_input = ui.input(label='Asset Type', placeholder='type here',
+                                        on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
+                    asset_type_chars_left = ui.label()
+                    asset_type_input.bind_value(new_asset_dict, 'asset_type')
+
+            # Attributes
+            with ui.row().classes(): 
+                with ui.column().classes():
+                    ui.label("Do you want to add an attribute to your asset?").classes('text-lg')
+                    ui.button(
+                        "Add Attribute", 
+                                icon="create", 
+                                on_click=lambda: add_attribute()
+                                )
+                    ui.label("Attributes added: ")
+                    attributes_display = render_all_attributes(user_confirm, new_asset_dict)
+
+            # Add Buy Costs
+            with ui.row().classes(): 
+                with ui.column().classes():
+                    ui.label("Do you want to add a Buy Cost to your asset?").classes('text-lg')
+                    has_buy_costs = ui.switch("Yes")
+                    has_buy_costs.props('color="positive"')
+                    with ui.column().bind_visibility_from(has_buy_costs, 'value'):
+                        # Add Buy Costs
+                        ui.label('You can add more than one buy cost to the asset.')
+                        new_buy_cost = ui.button(
+                            "Add Buy Cost",
+                            icon="create",
+                            on_click=add_buy_cost
+                        )
+                        ui.label("Buy Costs added: ").bind_visibility_from(has_buy_costs, 'value')
+                        counter_display = render_all_buy_costs()
+                        counter_display.bind_visibility_from(has_buy_costs,'value')
+                
+            # Add Sell Prices
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label("Do you want to add a Sell Price to your asset?").classes('text-lg')
+                    has_sell_prices = ui.switch("Yes")
+                    has_sell_prices.props('color="positive"')
+                    # display based on above
+                    with ui.column().bind_visibility_from(has_sell_prices, 'value'):
+                        ui.label("You can add more than one sell price to the asset.")
+                        new_sell_cost = ui.button(
+                            "Add Sell Cost",
+                            icon="create",
+                            on_click=add_sell_price
+                        )
+                        # TODO: Add way to see already added sell costs
+                        # ui.label('Sell Prices Added:')
+                        ui.label("Sell Prices added: ").bind_visibility_from(has_sell_prices, 'value')
+                        counter_display = render_all_sell_prices()
+                        counter_display.bind_visibility_from(has_sell_prices,'value')
+
+            # Add any extra special text to the asset.
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label('Enter any special text for the new asset:').classes('text-lg')
+                    special = ui.textarea(label='Special Text', placeholder='type here',
+                                        on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
+                    special.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
+                    special.bind_value(new_asset_dict, 'special')
+                    special_chars_left = ui.label()
+            
+            # effects
+            """
+            with ui.column().classes():
+                ui.label("Sorry, this feature hasnt been implemented yet!")
+                # If loaded_game.effects[] == empty: "Please add effects to the game 
+                # before trying to add them to assets."
+            """
+    
+            # Icon selection
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label("Select an image you want to use as an icon:").classes('text-lg')
+
+                    async def choose_icon():
+                        icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                        for file in icon_files:
+                            asset_icon = file
+                        new_asset_dict['icon'] = asset_icon
+                    
+                    ui.button('choose file', on_click=choose_icon)
+
+            # image
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label("Select an image you want to associate with the asset:").classes('text-lg')
+                    async def choose_image():
+                        image_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
+                        for file in image_files:
+                            asset_image = file
+                        new_asset_dict['image'] = asset_image
+
+                    ui.button('choose file', on_click=choose_image)
+
+            # submit
+            with ui.row().classes():
+                with ui.column().classes():
+                    ui.label("Done?")
+                    ui.button("Submit", on_click=lambda: create_asset_json(is_default.value))
 
 # Loads the page
 @ui.refreshable
