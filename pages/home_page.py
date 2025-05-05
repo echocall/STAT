@@ -15,9 +15,9 @@ async def content() -> None:
     # Store as nested dictionary
     app.storage.user["config"] = structured_data
 
-    ui.label("Welcome to STAT!").classes('text-2xl text-center')
-    ui.label("The Snazzy Tabletop Assistant Tracker").classes('text-center text-lg')
-    ui.label('Do you want to add a new game to STAT or work with a preexisting game?').classes('text-center text-lg')
+    ui.label("Welcome to STAT!").classes('text-center text-lg')
+    ui.label("The Snazzy Tabletop Assistant Tracker").classes('text-center')
+    ui.label('Do you want to add a new game to STAT or work with a preexisting game?').classes('text-center')
     with ui.row().classes('space-x-4 justify-center'):
         with ui.link(target='/creategame'):
             ui.button("Create New Game", icon="create").props('size=medium').classes('flex-grow')

@@ -19,7 +19,6 @@ def frame(navigation_title: str):
     <style>
         * {
             font-family: 'Barlow', sans-serif;
-            color: #F8B55F;
         }
 
         /* Base font size */
@@ -51,6 +50,18 @@ def frame(navigation_title: str):
         a {
             color: inherit;
             text-decoration: none;
+        }
+                     
+        
+        .txt-inherit-accent,
+        .q-header,
+        .q-footer,
+        .menu,
+        .title,
+        header *,
+        footer *,
+        .accent-text {
+            color: var(--q-accent);
         }
                      
         /* Base tooltip font size */
@@ -94,14 +105,14 @@ def frame(navigation_title: str):
               negative='#b73333',
               light='#998adb',
               dark='#3D365C',
-              dark_page='#23242f ')
+              dark_page='#23242f')
     
-    with ui.header().classes('items-center justify-center w-full'):
+    with ui.header().classes('items-center justify-center w-full txt-inherit-accent'):
         with ui.row().classes('w-full justify-between'):
-            with ui.link(target='/').classes('text-amber-300'):
-                ui.label('STAT').classes('font-bold text-xl').props('color="accent"')
-            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color="secondary"').classes('scale-100')
-            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color="secondary"').classes('scale-100')
+            with ui.link(target='/').classes():
+                ui.label('STAT').classes('font-bold text-xl').props('color=accent')
+            ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color=secondary').classes('scale-100')
+            ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color=secondary').classes('scale-100')
             ui.label(navigation_title).classes('font-bold text-2xl text-center flex-grow')
 
             def handle_switch():
@@ -133,7 +144,7 @@ def frame(navigation_title: str):
     with ui.row().classes('w-full h-full justify-center items-start'):
         with ui.column().classes('w-full max-w-screen-md items-stretch'):
             yield
-    with ui.footer().props(f' color=#d5c7ba'):
+    with ui.footer().props('color=accent'):
         # Selected Game
         if not selected_game:
             ui.label("Selected Game: None")
