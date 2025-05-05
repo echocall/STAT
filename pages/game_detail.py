@@ -17,7 +17,7 @@ async def content() -> None:
             for file in files:
                 edited_game['image'] = file
 
-        with ui.column().classes("flex content-center w-100"):
+        with ui.column().classes():
             with ui.row():
                 with ui.link(target='/selectgames'):
                     btn_select = ui.button('Select Game')  
@@ -42,23 +42,23 @@ async def content() -> None:
                     ui.button('Find Game File')
             else:
                 # Toggle for editing or not
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                         toggle_edit = ui.switch('Do you want to edit?').props('color="green"')
                         
                 
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                     # ICON
                         game_icon = ui.image(f'{selected_game['icon']}')
                         ui.button("Reload Icon", on_click=game_icon.force_reload)
                             
 
                 # Section for rest of the data
-                # with ui.row().classes('items-center justify-start space-x-4'):
+                # with ui.row().classes():
                     # NAME
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                         # DISPLAY section
                         lbl_game_name = ui.label("Current Name :").classes('font-bold')
                         game_name = ui.label(f"{selected_game['name']}")
@@ -79,8 +79,8 @@ async def content() -> None:
                         name_edit.bind_visibility_from(toggle_edit, 'value')
 
                 # DESCRIPTION
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                         # DISPLAY section
                         lbl_descript = ui.label("Description: ").classes('font-bold')
                         lbl_description = ui.label(f"{selected_game['description']}").classes('break-normal')
@@ -90,14 +90,14 @@ async def content() -> None:
                             
                         # EDIT section
                         descript_edit=ui.textarea(placeholder=f"{selected_game['description']}")
-                        descript_edit.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
+                        descript_edit.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded w-full')
                         descript_edit.props('clearable')
                         descript_edit.bind_value(edited_game, 'description')
                         descript_edit.bind_visibility_from(toggle_edit, 'value')
             
                 # Counters in editable format
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                         lbl_counters = ui.label("Default Counters:").classes('font-bold')
 
                 # View lists of actors of the selected game
@@ -121,8 +121,8 @@ async def content() -> None:
                     # Turn Type
                 
                 # DISPLAY
-                with ui.row().classes('items-center justify-start space-x-4'):
-                    with ui.column().classes('items-start'):
+                with ui.row().classes():
+                    with ui.column().classes():
                         game_image = ui.image(f'{selected_game['image']}')
                         with ui.button("Reload Image", on_click=game_image.force_reload):
                             ui.tooltip("This attempts to reload the associated image.")
