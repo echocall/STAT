@@ -16,7 +16,6 @@ async def create_game():
     paths = config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
-    template_paths = paths.get("templatefilepath", "Not Set")
 
     str_games_path = root_path + games_path
 
@@ -26,12 +25,12 @@ async def create_game():
                 'has_events': False, 'default_events':[],
                 'has_effects': False, 'default_effects':[],
                 'icon':'', 'has_turns':False,
-                'turn_type':'', 'start_turn':0
+                'turn_type':'', 'start_turn':0, 'image':''
                 }
 
     # Render the counters.
     @ui.refreshable
-    def render_all_counters(confirm, new_game_dict) -> ui.element:
+    def render_all_counters(user_confirm, new_game_dict) -> ui.element:
         with ui.row().classes('gap-2') as counter_display_case:
             for counter, value in new_game_dict['counters'].items():
                 with ui.row().classes('items-center gap-2'):
@@ -41,25 +40,9 @@ async def create_game():
                     # Add delete button
                     ui.button(icon='delete', color='red', 
                             on_click=lambda c=counter:  
-                            confirm.show(f'Are you sure you want to delete {c}?', 
+                           user_confirm.show(f'Are you sure you want to delete {c}?', 
                                         lambda: delete_counter(new_game_dict, c))).props('flat dense')
         return counter_display_case
-
-    # Render the actors.
-    @ui.refreshable
-    def render_all_actors(confirm, new_game_dict) -> ui.element:
-        with ui.row().classes('gap-2') as actor_display_case:
-            for value in new_game_dict.get('default_actors',[]):
-                with ui.row().classes('items-center gap-2'):
-                    ui.label(str(value)).classes('text-sm font-medium')
-
-                    # Add delete button
-                    ui.button(icon='delete', color='red', 
-                        on_click=lambda v = value:
-                        confirm.show(f'Are you sure you want to delete {v}?', 
-                                    lambda: delete_actor(new_game_dict, v))
-                                    ).props('flat dense')
-        return actor_display_case
 
     # get the new Counter from New Counter Dialog
     async def add_counter():
@@ -74,7 +57,31 @@ async def create_game():
                       type='warning',
                       position='top',
                       multi_line=True)
- 
+     
+    # Delete a counter.
+    def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
+        """Deletes the counter from the passed in game_dict's counter dictionary."""
+        if counter_name in new_game_dict['counters']:
+            del new_game_dict['counters'][counter_name]
+            render_all_counters.refresh()
+
+
+    # Render the actors.
+    @ui.refreshable
+    def render_all_actors(user_confirm, new_game_dict) -> ui.element:
+        with ui.row().classes('gap-2') as actor_display_case:
+            for value in new_game_dict.get('default_actors',[]):
+                with ui.row().classes('items-center gap-2'):
+                    ui.label(str(value)).classes('text-sm font-medium')
+
+                    # Add delete button
+                    ui.button(icon='delete', color='red', 
+                        on_click=lambda v = value:
+                        user_confirm.show(f'Are you sure you want to delete {v}?', 
+                                    lambda: delete_actor(new_game_dict, v))
+                                    ).props('flat dense')
+        return actor_display_case
+
     # adding an actor
     async def add_actor():
         result = await new_string_dialog('Actor')
@@ -88,29 +95,27 @@ async def create_game():
                       type='warning',
                       psoition='top',
                       multi_line=True)
-    
-    # Delete a counter.
-    def delete_counter(new_game_dict: dict, counter_name: str) -> ui.element:
-        if counter_name in new_game_dict['counters']:
-            del new_game_dict['counters'][counter_name]
-            render_all_counters.refresh()
 
     # Delete an actor.
     def delete_actor(new_game_dict: dict, actor_name: str) -> ui.element:
+        """Deletes the counter from the passed in game_dict's actor list."""
         if actor_name in new_game_dict['default_actors']:
             target_index = new_game_dict['default_actors'].index(actor_name)
             del new_game_dict['default_actors'][target_index]
             render_all_actors.refresh()
 
     async def create_game_json():
+        """Checks that the name hasn't been used for a game already. 
+        Sends the name of the config file, the new_game_dict,
+          and the game_name_result['file'] to new_game_gui in gamehandler."""
         matches_template = False
         game_name_result = {}
         create_game_result = False
         # Creating the game
         try:
             # Ensure the game matches the template
-            matches_template = check_template_bool(new_game_dict, template_paths)
-            if matches_template:
+            matches_template = check_game_template_bool(new_game_dict)
+            if matches_template['result']:
                 # Check if a game with that name already exists
                 new_game_name = new_game_dict['name']
 
@@ -186,7 +191,7 @@ async def create_game():
             ui.label("""Upon successful completion the forms should empty themselves 
                     and you should see 'selected game' in the bottom left update with name of the new game.""")
             
-            confirm = UserConfirm()
+            user_confirm = UserConfirm()
             
             # Name of the Game
             with ui.row().classes('items-center justify-start space-x-4'):
@@ -228,7 +233,7 @@ async def create_game():
                         )
                         new_counter_btn.bind_visibility_from(has_counters, 'value')
                         ui.label("Counters added: ").bind_visibility_from(has_counters, 'value')
-                        counter_display = render_all_counters(confirm, new_game_dict)
+                        counter_display = render_all_counters(user_confirm, new_game_dict)
                         counter_display.bind_visibility_from(has_counters,'value')
              
             # Creating Actors
@@ -241,13 +246,13 @@ async def create_game():
                     has_actors.bind_value(new_game_dict, 'has_actors')
 
                     create_actors = ui.button(
-                        'Create Actors', 
+                        'Add Actor', 
                         icon="create", 
                         on_click=add_actor
                     )
                     create_actors.bind_visibility_from(has_actors, 'value')
                     ui.label("Actors added: ").bind_visibility_from(has_actors, 'value')
-                    actors_display = render_all_actors(confirm, new_game_dict)
+                    actors_display = render_all_actors(user_confirm, new_game_dict)
                     actors_display.bind_visibility_from(has_actors,'value')
 
             
@@ -268,11 +273,12 @@ async def create_game():
                         ui.label("Do the turns increase or decrease as you play?")
                         turn_type = ui.radio({'Increasing':'Increasing', 'Decreasing':'Decreasing'}).props('inline left-label')
                         ui.label("What turn or round number does your game start on?")
-                        start_turn = ui.number("Enter a whole number.")
                         turn_type.bind_value(
                             new_game_dict, 
                             'turn_type')
-                        start_turn.bind_value(new_game_dict, 'start_turn')
+                        start_turn = ui.number("Enter a whole number.",
+                                               on_change=lambda e: new_game_dict.__setitem__('start_turn', int(e.value) if e.value is not None else 0))
+                        
 
             # Submit button.
             with ui.row():

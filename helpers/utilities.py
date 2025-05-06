@@ -37,6 +37,7 @@ def format_str_for_filename(string: str) -> str:
 
 # Returns a result dictionary    
 def format_str_for_filename_super(string: str) -> dict:
+    """Returns a result dict of 'result' and 'string'. """
     # TODO: Upgrade this to use regex to strip unwanted characters.
     result_dict = {'result': False, 'string':""}
     error_message = ""
@@ -105,11 +106,11 @@ def list_compare(initialList: list, secondList: list) -> dict:
             result["missing_values"] = missing_objects
             return(result)
     else:
-        error_message = "Both lists are empty."
+        error_message = "In list compare: both lists are empty."
         print(error_message)
 
 def dict_key_compare(initialDict: dict, secondDict: dict) -> dict:
-    result = { "match": False, "message": "", "missing_values": []}
+    result = { "result": False, "message": "", "missing_values": []}
     mismatch_found = False
     try:
         for key in secondDict.keys():
@@ -121,7 +122,7 @@ def dict_key_compare(initialDict: dict, secondDict: dict) -> dict:
         result['message'] =  "Could not compare the dictionaries."
     
     if mismatch_found == False:
-        result["match"] = True
+        result["result"] = True
     
     return result
 

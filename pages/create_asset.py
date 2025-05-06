@@ -157,8 +157,8 @@ async def new_asset():
         create_result = {}
         try:
             # Ensure the asset matches the template
-            matches_template = check_template_bool(new_asset_dict, str_templates_path)
-            if matches_template['match']:
+            matches_template = check_asset_template_bool(new_asset_dict)
+            if matches_template['result']:
                 # check for duplicates
                 asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
 
@@ -180,7 +180,7 @@ async def new_asset():
                 except:
                     # failed to create the asset
                     with ui.dialog() as fail_create, ui.card():
-                        ui.label('Oh no!').classes('font-bold text-large')
+                        ui.label('Oh no!').classes('text-lg')
                         ui.label(create_result['message'])
                         ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
                         ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
@@ -195,21 +195,24 @@ async def new_asset():
                             multi_line=True)
 
         except FileNotFoundError as e:
-            ui.notify("""Error: could not save. STAT cound not find the file. Please check the file paths in config.txt are correct.""",
+            ui.notify("""Error: could not save. STAT cound not find the file.
+                       Please check the file paths in config.txt are correct.""",
                       position='top',
                       type='negative',
                       multi_line=True)
 
         except PermissionError as e:
             print(traceback.format_exc())
-            ui.notify("Error: Could not save. STAT does not have permission to write to the folder in those locations. Please check the file paths in config.txt are correct.",
+            ui.notify("""Error: Could not save. STAT does not have permission to write to the folder in those locations.
+                       Please check the file paths in config.txt are correct.""",
                       position='top',
                       type='negative',
                       multi_line=True)
 
         except Exception as e:
             print(traceback.format_exc())
-            ui.notify("""Error: Could not save. An unexpected error has occured. Please check application logs for more information.""",
+            ui.notify("""Error: Could not save. An unexpected error has occured. 
+                      Please check application logs for more information.""",
                       position='top',
                       type='negative',
                       multi_line=True)
@@ -228,9 +231,9 @@ async def new_asset():
             # Name the source game
             with ui.row().classes():
                 with ui.column().classes():
-                    with ui.row():
-                        ui.label('Source Game: ').classes('text-lg')
+                    with ui.row().classes('items-center'):
                         ui.icon('info')
+                        ui.label('Source Game: ').classes('font-medium')
                     source_game = ui.label(f'{selected_game['name']}').classes()
                     source_game.bind_text(new_asset_dict, 'source')
                     new_asset_dict['source'] = selected_game['name']
@@ -239,14 +242,14 @@ async def new_asset():
             # If Custom, pick associated Save
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label("Is this for a default asset?").classes('text-lg')
+                    ui.label("Is this for a default asset?").classes('font-medium')
                     is_default = ui.toggle({True:'Default', False:'Custom'})
                     is_default.props('color="secondary"')
                         
             # Input name for the asset.
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label('Enter a name for the new asset: ').classes('text-lg')
+                    ui.label('Enter a name for the new asset: ').classes('font-medium')
                     name_input = ui.input(label='Asset Name', placeholder='50 character limit',
                                 on_change=lambda e: name_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                     name_input.props('clearable')
@@ -257,7 +260,7 @@ async def new_asset():
             # Input category for the asset
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label('Enter a category for the new asset: ').classes('text-lg')
+                    ui.label('Enter a category for the new asset: ').classes('font-medium')
                     category_input = ui.input(label='Category', placeholder='50 character limit',
                                 on_change=lambda e: category_chars_left.set_text(str(len(e.value)) + ' of 50 characters used.'))
                     category_input.props('clearable')
@@ -268,7 +271,7 @@ async def new_asset():
             # Input description for the asset.
             with ui.row().classes():
                 with ui.column().classes('w-full max-w-screen-md'):
-                    ui.label('Enter a description for the new asset:').classes('text-lg')
+                    ui.label('Enter a description for the new asset:').classes('font-medium')
                     description = ui.textarea(label='Asset Description', placeholder='type here',
                                     on_change=lambda f: desc_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                     description.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded w-full')
@@ -279,7 +282,7 @@ async def new_asset():
             # Asset Type
             with ui.row().classes(): 
                 with ui.column().classes():
-                    ui.label("Asset Type").classes('text-lg')
+                    ui.label("Asset Type").classes('font-medium')
                     asset_type_input = ui.input(label='Asset Type', placeholder='type here',
                                         on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
                     asset_type_chars_left = ui.label()
@@ -288,7 +291,7 @@ async def new_asset():
             # Attributes
             with ui.row().classes(): 
                 with ui.column().classes():
-                    ui.label("Do you want to add an attribute to your asset?").classes('text-lg')
+                    ui.label("Do you want to add an attribute to your asset?").classes('font-medium')
                     ui.button(
                         "Add Attribute", 
                                 icon="create", 
@@ -300,7 +303,7 @@ async def new_asset():
             # Add Buy Costs
             with ui.row().classes(): 
                 with ui.column().classes():
-                    ui.label("Do you want to add a Buy Cost to your asset?").classes('text-lg')
+                    ui.label("Do you want to add a Buy Cost to your asset?").classes('font-medium')
                     has_buy_costs = ui.switch("Yes")
                     has_buy_costs.props('color="positive"')
                     with ui.column().bind_visibility_from(has_buy_costs, 'value'):
@@ -318,7 +321,7 @@ async def new_asset():
             # Add Sell Prices
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label("Do you want to add a Sell Price to your asset?").classes('text-lg')
+                    ui.label("Do you want to add a Sell Price to your asset?").classes('font-medium')
                     has_sell_prices = ui.switch("Yes")
                     has_sell_prices.props('color="positive"')
                     # display based on above
@@ -338,25 +341,19 @@ async def new_asset():
             # Add any extra special text to the asset.
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label('Enter any special text for the new asset:').classes('text-lg')
+                    ui.label('Enter any special text for the new asset:').classes('font-medium')
                     special = ui.textarea(label='Special Text', placeholder='type here',
                                         on_change=lambda f: special_chars_left.set_text(str(len(f.value)) + ' characters used.')).props('clearable')
                     special.classes('hover:border-solid border-dotted hover:border-4 border-l-4 border-orange-500 rounded')
                     special.bind_value(new_asset_dict, 'special')
                     special_chars_left = ui.label()
             
-            # effects
-            """
-            with ui.column().classes():
-                ui.label("Sorry, this feature hasnt been implemented yet!")
-                # If loaded_game.effects[] == empty: "Please add effects to the game 
-                # before trying to add them to assets."
-            """
+            # Effects have their own pages.
     
             # Icon selection
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label("Select an image you want to use as an icon:").classes('text-lg')
+                    ui.label("Select an image you want to use as an icon:").classes('font-medium')
 
                     async def choose_icon():
                         icon_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
@@ -364,12 +361,12 @@ async def new_asset():
                             asset_icon = file
                         new_asset_dict['icon'] = asset_icon
                     
-                    ui.button('choose file', on_click=choose_icon)
+                    ui.button('Choose file', on_click=choose_icon)
 
-            # image
+            # IMAGE
             with ui.row().classes():
                 with ui.column().classes():
-                    ui.label("Select an image you want to associate with the asset:").classes('text-lg')
+                    ui.label("Select an image you want to associate with the asset:").classes('font-medium')
                     async def choose_image():
                         image_files = await app.native.main_window.create_file_dialog(allow_multiple=True)
                         for file in image_files:

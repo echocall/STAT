@@ -89,11 +89,15 @@ def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> di
 
 # return a result_dict hopefully with the game in 'json'     
 def get_game(file_path: str) -> dict:
+    """Get a single game dictionary as part of a result_dict.
+     Forwards result_dict: {'result':bool, 'message':str, 'json':dict} """
     get_game_result = single_json_getter_fullpath(file_path, 'game')
     return get_game_result
 
-# TODO: check get_game part of this for using new filepaths
 def get_games(directory_path: str) -> dict:
+    """Fetch all the games and package into a
+      dictionary of {'game_name':{game_dict}} and put into
+        the 'games' field of a result_dict. """
     game_names_result = get_games_names(directory_path)
     game_names = []
     get_games_result = {'result': False, 'message': 'Something went wrong...', 'games': {}}
@@ -123,13 +127,14 @@ def get_games_names(directory_path: str) -> dict:
     finally:
         return game_name_result
 
-def check_template_bool(game: dict, template_path: str) -> bool:
-    """"Takes a game dict and template path and checks if the game dict matches the template."""
+def check_game_template_bool(game_dict: dict) -> bool:
+    """"Takes a game dict and template path and checks if the game dict matches the template.
+    Only needs the game_dict to be checked."""
     error_message = ''
-    result = False
+    result = {}
     try:
-        game_template = get_template_json("game", template_path)
-        result = dict_key_compare(game_template, game)
+        game_template = get_template_json("game")
+        result = dict_key_compare(game_template, game_dict)
         return result
     except Exception:
         print(traceback.format_exc())
@@ -187,22 +192,6 @@ def counter_explanation():
             player starts with."""
     print(counter_info)
 
-# TODO: more try catches
-def define_turns(game_name: str) -> dict:
-    turns = {"turn_type" : "", "start_turn" : 0 }
-    prompt = "Pick how " + game_name + " increments through turns."
-    type_result = ""
-
-    # define the type of turn
-    type_result = list_to_menu(prompt, ["Increasing","Decreasing"])
-    if type_result == "cancel":
-       print("TODO: handle a cancel from list_to_menu")
-    else:
-        turns["turn_type"] = "Decreasing"
-        turns["start_turn"] = okay_user_int(0, "Enter what turn number your save should start at: ")
-
-    return turns
-
 # create the folders for a new game.
 def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_path: str) -> bool:
     folder_created = False
@@ -237,49 +226,68 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
     
     return result
 
-# TODO: test
+
 # updates the game's json
-def update_game(game_dict: dict, game_file_path: str, template_path: str):
+def update_game(game_dict: dict):
     """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
+    config = get_config_as_dict('config.txt')
+    
+
+    paths = config.get("Paths", {})
+    root_path = paths.get("osrootpath", "Not Set")
+    games_path = paths.get("gamespath", "")
+    game_name = ''
+
     template_result = {}
     format_result = {}
-    write_result = {}
-    # check the template is okay
+    write_result = {'result':False, 'message':''}
+    
+    # check against the template
+    # Currently bugged so removed for now.
+    """
     try:
-        template_result['result'] = check_template_bool(game_dict, template_path)
+        template_result = check_game_template_bool(game_dict)['result]']
+        
     except:
         template_result['result'] = False
         template_result['message'] = 'Given object did not match game template.'
-  
-    # it matches the template!
-    if template_result['result']:
-        # try formatting the game name for a string
-        try:
-            format_result = format_str_for_filename_super(game_dict['name'])
-        except:
-            format_result['result'] = False
-            format_result['message'] = 'Formatting name for game update failed.'
+    """
 
-        # it formatted the name!
-        if format_result['result']:
-            # try writing to the json_file
-            try:
-                write_result = overwrite_json_file(game_dict, game_file_path, format_result['string'])
-            except:
-                write_result['success'] = False
-                write_result['message'] = 'Overwriting to game json failed.'
-            # successfully wrote!
-            if write_result['success']:
-                return write_result
-            # did not successfully write
-            else:
-                return write_result
-        # did not formate name
+    # it matches the template!
+   # if template_result['result']:
+        # try formatting the game name for a string
+    try:
+        format_result = format_str_for_filename_super(game_dict['name'])
+    except:
+        format_result['result'] = False
+        format_result['message'] = 'Formatting name for game update failed.'
+
+    # it formatted the name!
+    if format_result['result']:
+        # Create the game path.
+        str_game_path = root_path + games_path + '\\' + format_result['string'] + '\\' + format_result['string'] + '.json'
+
+        # try writing to the json_file
+        try:
+            write_result = overwrite_json_file(game_dict, str_game_path, format_result['string'])
+        except:
+            write_result['result'] = False
+            write_result['message'] = 'Overwriting to game json failed.'
+        # successfully wrote!
+        if write_result or write_result['result']:
+            write_result['result'] = True
+            write_result['message'] = 'Successfully wrote to the file!'
+        # did not successfully write
         else:
-            return format_result
-    # did not get a match on the template
+            write_result['message'] = 'Did not successfully update file.'
+    # did not format name
     else:
-        return template_result
+        write_result['message'] = 'Formatting the name failed!'
+    # did not get a match on the template
+    #else:
+    #    write_result['message'] = 'Failed at matching the template.'
+    
+    return write_result
 
 
 # delete a game and its files
