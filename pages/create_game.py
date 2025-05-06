@@ -16,7 +16,6 @@ async def create_game():
     paths = config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
-    template_paths = paths.get("templatefilepath", "Not Set")
 
     str_games_path = root_path + games_path
 

@@ -55,12 +55,25 @@ async def dashboard():
             default_assets_path = paths.get("defaultassetspath", "Not Set")
             custom_assets_path = paths.get("customassetspath", "Not Set")
             str_games_path = root_path + games_path
-            str_saves_path =  str_games_path + '\\' +  selected_game['name'] + '\\' +  saves_path
-            str_assets_path = str_games_path + '\\' +  selected_game['name'] + assets_path
-            str_default_assets_path = str_games_path + '\\' +  selected_game['name'] + default_assets_path
-            str_custom_assets_path = str_games_path + '\\' +  selected_game['name'] + custom_assets_path
+            converted_game_name = ''
+            try:
+                game_name_result = format_str_for_filename_super(selected_game['name'])
+            except Exception as e:
+                print("[Converting name] Error converting name to file friendly format:", e)
+                traceback.print_exc()
+                return game_name_result
+            file_name = game_name_result['string']
+
+            str_saves_path =  str_games_path + '\\' +  file_name + '\\' +  saves_path
+            str_assets_path = str_games_path + '\\' +  file_name + assets_path
+            str_default_assets_path = str_games_path + '\\' +  file_name + default_assets_path
+            str_custom_assets_path = str_games_path + '\\' +  file_name + custom_assets_path
 
             # Everything has loaded properly, go for it!
+            if not selected_save or 'counters' not in selected_save:
+                ui.notify("Error: No save data or missing 'counters' key.", type='negative', position="top")
+                return
+
             counters = selected_save['counters']
 
             assets = asset_handler(str_default_assets_path,

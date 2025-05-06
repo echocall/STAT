@@ -151,9 +151,52 @@ def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
         return target_json_objects
     else:
         print(error_message)
+        
+def get_default_assets_list(full_base_path: str) -> list:
+    """Returns a list of parsed default asset JSON objects from the 'default' subfolder of assets."""
+    default_assets = []
+    default_path = Path(full_base_path) 
+
+    if not default_path.exists():
+        print("[get_default_assets_list] 'default' path does not exist:", default_path)
+        return []
+
+    for json_file in default_path.glob("*.json"):
+        try:
+            with open(json_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                default_assets.append(data)
+        except Exception as e:
+            print(f"[get_default_assets_list] Failed to load {json_file.name}: {e}")
+
+    return default_assets
+
+
+def get_custom_assets_list(full_base_path: str) -> list:
+    """Returns a list of parsed custom asset JSON objects from the 'custom' subfolder of assets."""
+    custom_assets = []
+    custom_path = Path(full_base_path)
+
+    if not custom_path.exists():
+        print("[get_custom_assets_list] 'custom' path does not exist:", custom_path)
+        return []
+
+    for json_file in custom_path.glob("*.json"):
+        try:
+            with open(json_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                custom_assets.append(data)
+        except Exception as e:
+            print(f"[get_custom_assets_list] Failed to load {json_file.name}: {e}")
+
+    return custom_assets
+
 
 # takes in a full file path and object type as plural, returns list of jsons.
 def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
+    """Takes a directory path and an object type as a plural and returns a list of jsons.
+    IF using with effects, assets, or events: do NOT send in the directory path for the custom or default 
+    directories. It already handles that and returns both default and custom objects as a shared list."""
     directory_path = Path(passedDirectoryPath)
     # Path does not exist
     if not directory_path.exists():
@@ -273,6 +316,36 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
 
     return result
 
+
+def get_default_assets_names(full_base_path: str) -> list:
+    """Returns a list of default asset JSON files from the 'default' subfolder of assets."""
+    default_assets = []
+    default_path = Path(full_base_path)
+
+    if not default_path.exists():
+        print("[get_default_assets_list] 'default' path does not exist:", default_path)
+        return []
+
+    for json_file in default_path.glob("*.json"):
+        default_assets.append(json_file)
+
+    return default_assets
+
+
+def get_custom_assets_names(full_base_path: str) -> list:
+    """Returns a list of custom asset JSON files from the 'custom' subfolder of assets."""
+    custom_assets = []
+    custom_path = Path(full_base_path)
+
+    if not custom_path.exists():
+        print("[get_custom_assets_list] 'custom' path does not exist:", custom_path)
+        return []
+
+    for json_file in custom_path.glob("*.json"):
+        custom_assets.append(json_file)
+
+    return custom_assets
+
 # get json template as dict, returns template dict
 def get_template_json(template_type: str) -> dict:
     """Takes the Template type, and return the template dict.
@@ -321,7 +394,7 @@ def get_template_json(template_type: str) -> dict:
 # gets the config files as a nested dictionary
 def get_config_as_dict(configfilename: str) -> dict:
     # getting config information
-    config_data = load_config('config.txt')
+    config_data = load_config(configfilename)
     structured_data = {}
     # Create organized nested structure for config.
     for key in config_data:
@@ -333,11 +406,9 @@ def get_config_as_dict(configfilename: str) -> dict:
 
 
 # UPDATE
-# TODO: test
 def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -> dict:
     """
-    Overwrites or creates a JSON file in the specified directory.
-    Args:
+    Overwrites or creates a JSON file at the file path.
         data (dict): The dictionary to write to the JSON file.
         directory_path (str): The directory where the file is located.
         file_name (str): The name of the file (without extension).
@@ -351,11 +422,6 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
         json_obj = json.dumps(data, indent=4)
 
         target_file_path = Path(str_target_file_path)
-
-        # Check if the file exists
-        if target_file_path.exists():
-            # Add confirmation logic (e.g., user confirmation)
-            print(f"File {target_file_path} already exists. Overwriting...")
 
         # Write the JSON data to the file
         with open(target_file_path, "w", encoding="utf-8") as f:

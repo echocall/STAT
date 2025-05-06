@@ -14,8 +14,21 @@ def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom:
     converted_assets = []
     handler_result = {"missing_default": bool, "missing_assets": [], "merged_assets": []}
 
+    print()
+    print("Pringing inside asset_handler.")
+
+    print("pringing full_default_assets_path:")
+    print(full_default_assets_path)
+    print("Pringing full_custom_assets_path:")
+    print(full_custom_assets_path)
+    print()
     # Check that we have all the default assets.
-    default_result = default_assets_fetch(full_default_assets_path, defaultAssets)
+    try:
+        default_result = default_assets_fetch(full_default_assets_path, defaultAssets)
+    except Exception as e:
+        print("[asset_handler] Error fetching default assets:", e)
+        traceback.print_exc()
+        return handler_result
 
     # process that result
     if default_result["match"] == True:
@@ -27,15 +40,33 @@ def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom:
 
     # customs exist! Handle them. >:V
     if (hasCustom == True):
-        custom_assets = custom_asset_fetch(full_custom_assets_path)
+        try:
+            custom_assets = custom_asset_fetch(full_custom_assets_path)
+            print(custom_assets)
+        except Exception as e:
+            print("[asset_handler] Error fetching custom assets:", e)
+            traceback.print_exc()
+            return handler_result
         # Customs exist, we need to check for overrides and merge the results.
-        conflict_check = list_compare(default_result["retrieved_names"], custom_assets["custom_names"])
+        try:
+            conflict_check = list_compare(
+                default_result.get("retrieved_names", []),
+                custom_assets.get("custom_names", [])
+            )
+            merged_assets = merge_assets(
+                default_result.get("retrieved_list", []),
+                custom_assets.get("custom_list", []),
+                conflict_check
+            )
+        except Exception as e:
+            print("[asset_handler] Error comparing or merging assets:", e)
+            traceback.print_exc()
+            return handler_result
+
+
         merged_assets = merge_assets(default_result["retrieved_list"], custom_assets["custom_list"], conflict_check)
     else:
         merged_assets = default_result["retrieved_list"]
-
-    # turns them into MyAsset objects
-    # converted_assets = dict_to_objects(merged_assets)
 
     # build the result from our handler.
     handler_result = handler_result_builder(missing_default, "missing_assets", missing_assets, "converted_assets", converted_assets)
@@ -47,9 +78,9 @@ def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom:
 def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
     retrieved_assets = []
     result = {}
-
+    
     # call multi_json_getter with the filePath to reurn the default assets in the folder.
-    retrieved_assets = multi_file_getter(defaultFilePath, "assets")
+    retrieved_assets = get_default_assets_list(defaultFilePath)
     # get the names of the retrieved assets
     retrieved_names = filter_list_value_with_set(retrieved_assets, "name")
     # compare the names of the returned files with the list from the game.json
@@ -68,10 +99,11 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
 # Retrieve any custom assets
 def custom_asset_fetch(full_custom_assets_path: str) -> dict:
     custom_assets = {"custom_list": {}, "custom_names": []}
-    custom_assets["customs_list"] = multi_file_getter(full_custom_assets_path, "assets")
+    custom_assets["custom_list"] = get_custom_assets_list(full_custom_assets_path)
     # custom_assets["custom_list"] = multi_json_getter(customFilePath, "assets")
     if len(custom_assets["custom_list"]) > 0:
         custom_assets["custom_names"] = filter_list_value_with_set(custom_assets["custom_list"], 'name')
+        print(custom_assets)
     return custom_assets
 
 # retrieve a single asset

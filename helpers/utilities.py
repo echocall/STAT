@@ -106,7 +106,7 @@ def list_compare(initialList: list, secondList: list) -> dict:
             result["missing_values"] = missing_objects
             return(result)
     else:
-        error_message = "Both lists are empty."
+        error_message = "In list compare: both lists are empty."
         print(error_message)
 
 def dict_key_compare(initialDict: dict, secondDict: dict) -> dict:

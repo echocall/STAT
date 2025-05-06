@@ -274,7 +274,8 @@ def update_game(game_dict: dict):
             write_result['result'] = False
             write_result['message'] = 'Overwriting to game json failed.'
         # successfully wrote!
-        if write_result['result']:
+        if write_result or write_result['result']:
+            write_result['result'] = True
             write_result['message'] = 'Successfully wrote to the file!'
         # did not successfully write
         else:
