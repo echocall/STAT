@@ -122,7 +122,7 @@ def frame(navigation_title: str):
                     with open('static/config.txt', 'w') as configfile:
                         config.write(configfile)
                     dark.enable()
-                    ui.notify("Please close the application and reopen it to see this change take effect.",
+                    ui.notify("You picked dark mode! Please restart the application to see this change take effect.",
                               position='top',
                               type='Positive')
                 else:
@@ -132,7 +132,7 @@ def frame(navigation_title: str):
                     with open('static/config.txt', 'w') as configfile:
                         config.write(configfile)
                     dark.disable()
-                    ui.notify("Please close the application and reopen it to see this change take effect.",
+                    ui.notify("You picked light mode! Please restart the application to see this change take effect.",
                               position='top',
                               type='Positive')
 

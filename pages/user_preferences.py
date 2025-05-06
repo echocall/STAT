@@ -3,8 +3,8 @@ from nicegui import app,ui
 import configparser
 import traceback
 
-@ui.page('/preferences')
-async def prefrences():
+@ui.page('/userpreferences')
+async def userprefrences():
     def handle_font_toggle(e):
         """Handles writing user preference for the font to the config.txt file."""
         config = configparser.ConfigParser()
@@ -21,5 +21,6 @@ async def prefrences():
         config = configparser.ConfigParser()
         config.read('static/config.txt')
         default_font = config['Preferences'].get('font', 'ShantellSans')
-        font_switch = ui.switch('Use Noto Serif font', on_change=handle_font_toggle)
+        font_switch = ui.switch('Use Noto Serif font or ShantellSans?', on_change=handle_font_toggle)
         font_switch.value = (default_font == 'NotoSerif')
+

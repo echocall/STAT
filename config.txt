@@ -21,7 +21,7 @@ customeventspath = \events\custom
 imagespath = \images
 
 [Toggles]
-firstsetup = False
+firstsetup = True
 showwelcome = True
 showexplanations = True
 customroot = False

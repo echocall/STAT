@@ -14,7 +14,8 @@ import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
-from fastapi import Depends 
+from helpers.configcreator import set_paths, write_config
+
 from nicegui import ui, app
 
 from pages import *
@@ -26,6 +27,12 @@ import configparser
 # Load configuration
 config = configparser.ConfigParser()
 config.read('static/config.txt')
+
+if config['Toggles'].getboolean('firstsetup'):
+    # Initialize config on startup
+    set_paths()
+    write_config()
+    config['Toggles']['showwelcome'] = 'False'
 
 @ui.page('/')
 async def index_page() -> None:
