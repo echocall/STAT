@@ -19,6 +19,9 @@ async def content() -> None:
         ui.label('By default STAT will try to find a location to save its files. You can check what location it could reach by looking in config.txt').classes('font-medium break-normal')
         ui.label('This is still a work in progress so we ask that you bear with us for this first release.').classes('font-medium break-normal')        
         ui.space()
+        ui.label('View the ReadMe on github for more help.').classes('font-medium break-normal')
+        with ui.link(target="https://github.com/echocall/STAT"):
+             ui.button("Github")
         with ui.column():
                 with ui.row():
                      ui.label("Do you prefer light mode or dark mode?")
