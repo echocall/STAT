@@ -4,7 +4,7 @@ import configparser
 
 def light_switch() -> None:
     config = configparser.ConfigParser()
-    config.read('config.txt')
+    config.read('static/config.txt')
 
     dark = ui.dark_mode()
 
@@ -22,8 +22,8 @@ def light_switch() -> None:
             print('Enabling Dark Mode') 
             config['Preferences']['darkMode'] = 'True'
             # save updated config
-            with open('config.txt', 'w') as configfile:
-                config.write(configfile)
+            with open('static/config.txt', 'w') as configfile:
+                config.write(config.txt)
             dark.enable()
             ui.notify("Please close the application and reopen it to see this change take effect.",
                         position='top',
@@ -32,8 +32,8 @@ def light_switch() -> None:
             print('Enabling Light Mode')
             config['Preferences']['darkMode'] = 'False'
             # save updated config
-            with open('config.txt', 'w') as configfile:
-                config.write(configfile)
+            with open('static/config.txt', 'w') as configfile:
+                config.write(config.txt)
             dark.disable()
             ui.notify("Please close the application and reopen it to see this change take effect.",
                         position='top',

@@ -22,7 +22,7 @@ imagespath = \images
 
 [Toggles]
 firstsetup = False
-showwelcome = False
+showwelcome = True
 showexplanations = True
 customroot = False
 

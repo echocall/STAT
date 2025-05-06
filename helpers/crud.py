@@ -350,7 +350,7 @@ def get_custom_assets_names(full_base_path: str) -> list:
 def get_template_json(template_type: str) -> dict:
     """Takes the Template type, and return the template dict.
     Handles calculating the template path itself."""
-    configfilename = 'config.txt'
+    configfilename = 'static/config.txt'
     # Store as nested dictionary
     config = get_config_as_dict(configfilename)
     # Get the paths

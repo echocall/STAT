@@ -6,7 +6,7 @@ from pathlib import Path
 from nicegui import app,ui
 
 config = configparser.ConfigParser()
-config.read('config.txt')
+config.read('static/config.txt')
 
 # DONT REMOVE THIS.
 dark = ui.dark_mode()
@@ -119,7 +119,7 @@ def frame(navigation_title: str):
                     print('Enabling Dark Mode') 
                     config['Preferences']['darkMode'] = 'True'
                     # save updated config
-                    with open('config.txt', 'w') as configfile:
+                    with open('static/config.txt', 'w') as configfile:
                         config.write(configfile)
                     dark.enable()
                     ui.notify("Please close the application and reopen it to see this change take effect.",
@@ -129,7 +129,7 @@ def frame(navigation_title: str):
                     print('Enabling Light Mode')
                     config['Preferences']['darkMode'] = 'False'
                     # save updated config
-                    with open('config.txt', 'w') as configfile:
+                    with open('static/config.txt', 'w') as configfile:
                         config.write(configfile)
                     dark.disable()
                     ui.notify("Please close the application and reopen it to see this change take effect.",

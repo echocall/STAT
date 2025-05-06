@@ -2,7 +2,7 @@ from elements.message import message
 import configparser
 
 config = configparser.ConfigParser()
-config.read('config.txt')
+config.read('static/config.txt')
 
 from nicegui import ui
 
@@ -20,6 +20,6 @@ async def content() -> None:
 
         def set_show_welcome(value):
             config['Toggles']['showwelcome'] = str(value)
-            with open('config.txt', 'w') as configfile:
+            with open('static/config.txt', 'w') as configfile:
                 config.write(configfile)
             

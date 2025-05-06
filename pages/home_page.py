@@ -5,7 +5,7 @@ from nicegui import app, ui
 
 @ui.page('/')
 async def content() -> None:
-    config_data = load_config('config.txt')
+    config_data = load_config('static/config.txt')
     structured_data = {}
     
     # Create organized nested structure for config.

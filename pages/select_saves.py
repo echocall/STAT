@@ -11,7 +11,7 @@ async def view_saves():
         # File path for save data
         selected_game = app.storage.user.get("selected_game", {})
         # Store config as nested dictionary
-        config = get_config_as_dict('config.txt')
+        config = get_config_as_dict('static/config.txt')
         # Get the paths
         paths = config.get("Paths",{})
         root_path = paths.get("osrootpath")

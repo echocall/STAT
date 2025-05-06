@@ -230,7 +230,7 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 # updates the game's json
 def update_game(game_dict: dict):
     """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
-    config = get_config_as_dict('config.txt')
+    config = get_config_as_dict('static/config.txt')
     
 
     paths = config.get("Paths", {})

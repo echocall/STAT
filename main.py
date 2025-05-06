@@ -25,7 +25,7 @@ import configparser
 
 # Load configuration
 config = configparser.ConfigParser()
-config.read('config.txt')
+config.read('static/config.txt')
 
 @ui.page('/')
 async def index_page() -> None:
@@ -33,7 +33,7 @@ async def index_page() -> None:
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'
         # save updated config
-        with open('config.txt', 'w') as configfile:
+        with open('static/config.txt', 'w') as configfile:
             config.write(configfile)
         with theme.frame('Welcome'):
             await welcome.content()

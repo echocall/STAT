@@ -66,7 +66,7 @@ def create_save():
                         new_save_dict['actors'] = selected_game['default_actors']
                         new_save_dict['current_turn'] = selected_game['start_turn']
                         try:
-                            create_save_result = new_save_gui('config.txt', selected_game['name'], new_save_dict)
+                            create_save_result = new_save_gui('static/config.txt', selected_game['name'], new_save_dict)
                             if create_save_result['result']:
                                 ui.notify("Save created! You can now use to the dashboard.",
                                         position='top',

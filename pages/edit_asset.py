@@ -15,7 +15,7 @@ async def content() -> None:
         
         # PATHS PATHS PATHS
         # Store as nested dictionary
-        config = get_config_as_dict('config.txt')
+        config = get_config_as_dict('static/config.txt')
         # Get the paths
         paths = config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
