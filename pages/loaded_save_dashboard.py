@@ -16,6 +16,16 @@ async def dashboard():
         config = app.storage.user.get("config", {})
         paths = config.get("Paths",{})
 
+        
+        def load_from_storage(target:str):
+            target_dict = {}
+            try:
+                target_dict = app.storage.user.get(target, {})
+            except:
+                ui.notify(f"Could not load {target} from app.storage.user!",type='negative',position="top",)
+            
+            return target_dict
+
         # Getting assets sorted.
         selected_game = {}
         selected_save = {}
@@ -27,22 +37,234 @@ async def dashboard():
 
         user_confirm = UserConfirm()
 
+        def buy_asset(asset: dict, counters: dict, owned_assets: dict):
+            """
+            Buy an asset:
+            - Subtract its `buy_costs` from the appropriate counters.
+            - Add or increment it in the `owned_assets` dictionary.
+            """
+            # Deduct buy costs
+            for cost in asset.get('buy_costs', []):
+                cost_name = cost['name']
+                cost_amount = cost['amount']
+                if cost_name in counters:
+                    counters[cost_name] -= cost_amount
+                else:
+                    ui.notify(f"Warning: Cost counter '{cost_name}' not found.",
+                              position = 'top',
+                              type='warning',
+                              mulit_line=True)
+
+            # Update owned assets
+            name = asset['name']
+            if name in owned_assets:
+                owned_assets[name]['quantity'] += 1
+            else:
+                new_asset = asset.copy()
+                new_asset['quantity'] = 1
+                owned_assets[name] = new_asset
+
+            # Refresh UI/state
+            refresh_counters_and_assets()
+
+        def sell_asset(asset: dict, counters: dict, owned_assets: dict):
+            """
+            Sell an asset:
+            - Add its `sell_prices` to the appropriate counters.
+            - Decrease its quantity in `owned_assets`, and remove if quantity reaches 0.
+            """
+            # Add sell prices
+            for price in asset.get('sell_prices', []):
+                price_name = price['name']
+                price_amount = price['amount']
+                if price_name in counters:
+                    counters[price_name] += price_amount
+                else:
+                    print(f"Warning: Sell price counter '{price_name}' not found.")
+
+            # Update owned assets
+            name = asset['name']
+            if name in owned_assets:
+                owned_assets[name]['quantity'] -= 1
+                if owned_assets[name]['quantity'] <= 0:
+                    del owned_assets[name]
+            else:
+                print(f"Warning: Tried to sell unowned asset '{name}'.")
+
+            # Refresh UI/state
+            # refresh_counters_and_assets()
+
+        # TODO
+        def save_current_session():
+            game_name = selected_save['game_name']
+            save_name = selected_save['save_name']
+
+            # Format names for safe filenames
+            game_fmt = format_str_for_filename_super(game_name)
+            save_fmt = format_str_for_filename_super(save_name)
+
+            if not game_fmt['result'] or not save_fmt['result']:
+                print("Error: Could not format game or save name for filename.")
+                return
+
+            # Construct full save file path
+            full_save_path = f"{root_path}{games_path}\\{game_fmt['string']}{saves_path}\\{save_fmt['string']}.json"
+
+            # Save the current selected_save dict to file
+            result = overwrite_json_file(selected_save, str_target_file_path=full_save_path, file_name='')
+
+            if result['success']:
+                print("Save successful.")
+            else:
+                print(f"Save failed: {result['message']}")
+
+
+        # Function to increase the amount of a counter.
+        def counter_add(counters: dict, current_counter: str, current_amount: str, amount: int):
+            initial_amount = current_amount
+            counter_name = current_counter.split(":")
+            counter_name = counter_name[0]
+
+            try:
+                new_value = initial_amount + amount
+                counters[counter_name] = int(new_value)
+                app.storage.user['selected_save']['counters'] = counters
+            except:
+                ui.notify("Error: could not add to the counter!", type='negative', position="top",)
+
+            # refresh the element on the page.
+            render_counter_bar.refresh()
+            
+        def counter_sub(counters: dict, current_counter: str, current_amount: str, amount: int):
+            initial_amount = current_amount
+            counter_name = current_counter.split(":")
+            counter_name = counter_name[0]
+
+            try:
+                new_value = initial_amount - amount
+                counters[counter_name] = int(new_value)
+                app.storage.user['selected_save']['counters'] = counters
+            except:
+                ui.notify("Error: could not remove from the counter!",type='negative', position="top",)
+
+            # refresh the element on the page.
+            render_counter_bar.refresh()
+
+
+        # used to create the individual cards.
+        @ui.refreshable
+        async def render_asset_cards(asset) -> ui.element:
+            with ui.card().style('width: 100%; max-width: 350px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;'):
+                with ui.card_section().classes('flex-grow'):
+                    with ui.row():
+                        ui.label('Name: ').classes('font-bold')
+                        ui.label().bind_text_from(asset, 'name')
+
+                    with ui.row():
+                        ui.label('Source: ').classes('font-bold')
+                        ui.label().bind_text_from(asset, 'source')
+
+                    buy_cost_label = ui.label("Buy Costs").classes('font-bold')
+                    with buy_cost_label:
+                        for name, value in asset['buy_costs'].items():
+                            with ui.row():
+                                ui.label(f'{name}: ').classes('font-normal')
+                                ui.label(f'{value}').classes('font-normal')
+
+                    sell_price_label = ui.label("Sell Prices").classes('font-bold')
+                    with sell_price_label:
+                        with ui.row():
+                            for name, value in asset['sell_prices'].items():
+                                ui.label(f'{name}: ').classes('font-normal')
+                                ui.label(f'{value}').classes('font-normal')
+
+                with ui.card_actions().classes("w-full justify-end mt-auto"):
+                    with ui.row().classes("w-full justify-around"):
+                        ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round').tooltip('Select Asset')
+                        ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round').tooltip('Add Asset')
+                        ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round').tooltip('Buy Asset')
+                        ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round').tooltip('Sell Asset')
+        @ui.refreshable
+        # used to create the individual cards.
+        async def render_owned_asset_cards(asset, owned_asset_data) -> ui.element:
+            with ui.card().style('width: 100%; max-width: 350px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;'):
+                with ui.card_section().classes('flex-grow'):
+                    with ui.row():
+                        ui.label('Name: ').classes('font-bold')
+                        ui.label().bind_text_from(asset, 'name')
+
+                    with ui.row():
+                        ui.label('Number owned: ').classes('font-bold')
+                        ui.label(str(owned_asset_data.get(asset['name'], 0))).classes('font-normal')
+                    
+                    with ui.row():
+                        ui.label("Buy Costs").classes('font-bold')
+                        for name, value in asset['buy_costs'].items():
+                            with ui.row():
+                                ui.label(f'{name}: ').classes('font-normal')
+                                ui.label(f'{value}').classes('font-normal')
+
+                    with ui.row():
+                        ui.label('Sell Prices: ').classes('font-bold')
+                        for name, value in asset['sell_prices'].items():
+                            ui.label(f'{name}: {value}').classes('font-normal')
+
+                with ui.card_actions().classes("w-full justify-end mt-auto"):
+                    with ui.row().classes("w-full justify-around"):
+                        ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round').tooltip('Select Asset')
+                        ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round').tooltip('Add Asset')
+                        ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round').tooltip('Buy Asset')
+                        ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round').tooltip('Sell Asset')
+
+        # gets the assets as a dictionary
+        async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
+            for asset in assets:
+                assets_as_dict[asset['name']] = asset
+        
+            return assets_as_dict
+
+        # Calling the view_asset dialog box
+        async def view_asset_details(asset: dict):
+            app.storage.user['selected_asset'] = asset
+            # TODO: Solve this reloading the page and messing with tabs, etc
+            ui.navigate.reload()
+            # viewed_asset = asset_detail_dialog()
+
+        # Render the counters.
+        @ui.refreshable
+        async def render_counter_bar(counters: dict, counter: str) -> ui.element:
+            current_counter = ui.label(f'{counter}:').classes('text-sm')
+
+            # Work around for showing Current Counter amount without being able to fiddle with it.
+            temp_current_amount = counters[counter]
+            current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
+
+            # Amount to change
+            amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
+            # Buttons! :)
+            with ui.row().classes('items-center justify-items-center align-middle'):
+                btn_add = ui.button(icon='add', on_click=lambda: counter_add(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='green')
+                btn_add.props('round dense size=sm')
+                btn_sub = ui.button(icon='remove',
+                                    on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange')
+                btn_sub.props('round dense size=sm')
+
         # No game or save selected
         if not selected_game or 'name' not in selected_game:
             with ui.row():
-                ui.icon('warning').classes('text-3xl')
-                ui.label('Warning: No selected game detected.').classes('text-2xl')
-            ui.label('Cannot view a save file for a game with no game or save selected.')
-            ui.label('Please select a game from \'View Games\'.')
-            ui.label('Then select a save from \'View Saves\'.')
+                ui.icon('warning').classes('text-3xl text-center')
+                ui.label('Warning: No selected game detected.').classes('text-2xl text-center')
+            ui.label('Cannot view a save file for a game with no game or save selected.').classes('text-center')
+            ui.label('Please select a game from \'View Games\'.').classes('text-center')
+            ui.label('Then select a save from \'View Saves\'.').classes('text-center')
             with ui.link(target = '/selectgames'):
                 ui.button('Find Game File')
         elif not selected_save or 'name' not in selected_save:
             with ui.row():
-                ui.icon('warning').classes('text-3xl')
-                ui.label('Warning: No selected save detected.').classes('text-2xl')
-            ui.label('Cannot view a save file for a game with no  save selected.')
-            ui.label('Please select a game from \'View Saves\'.')
+                ui.icon('warning').classes('text-3xl text-center')
+                ui.label('Warning: No selected save detected.').classes('text-2xl text-center')
+            ui.label('Cannot view a save file for a game with no  save selected.').classes('text-center')
+            ui.label('Please select a game from \'View Saves\'.').classes('text-center')
             with ui.link(target = '/selectsaves'):
                 ui.button('Find Save File')
         # We have a selected_game and a selected_save
@@ -145,7 +367,7 @@ async def dashboard():
                 ui.separator()
                 with ui.tab_panel(main_tab):
                     with ui.row().classes('basis-full justify-start space-x-4 full-flex'):
-                        ui.label("Here's a summary of whats going on!")
+                        ui.label("Here's a summary of whats going on!").classes('text-center')
 
 
                 # The Used Assets Tab
@@ -154,10 +376,10 @@ async def dashboard():
                         asset_container_owned = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container_owned:
                             with ui.column().classes('items-center'):
-                                with ui.row().classes("w-100 items-start items-center"):
+                                with ui.row().classes("items-start"):
                                     CategoryLabel(owned_category)
                                 # Creates cards for each asset
-                                with ui.row().classes("w-100 items-start"):
+                                with ui.row().classes("items-start"):
                                     for owned_asset in sorted_owned_assets[owned_category]:
                                         await render_owned_asset_cards(owned_asset, selected_save['assets'])
                         ui.separator()
@@ -169,158 +391,14 @@ async def dashboard():
                         asset_container = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container:
                             with ui.column().classes('items-center'):
-                                with ui.row().classes("w-100 items-start"):
+                                with ui.row().classes("items-start"):
                                     CategoryLabel(category)
                                 # Creates cards for each asset
-                                with ui.row().classes("w-100 items-start"):
+                                with ui.row().classes("items-start"):
                                     for asset in sorted_assets[category]:
                                         await render_asset_cards(asset)
                         ui.separator()
         
             
-# Render the counters.
-@ui.refreshable
-async def render_counter_bar(counters: dict, counter: str) -> ui.element:
-    current_counter = ui.label(f'{counter}:').classes('text-sm')
 
-    # Work around for showing Current Counter amount without being able to fiddle with it.
-    temp_current_amount = counters[counter]
-    current_amount = ui.label(f'{temp_current_amount}').classes('text-sm')
 
-    # Amount to change
-    amount_to_change =  ui.number(label=f'Change {counter}: ', value=0, min=0, precision=0)
-    # Buttons! :)
-    with ui.row().classes('items-center justify-items-center align-middle'):
-        btn_add = ui.button(icon='add', on_click=lambda: counter_add(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='green')
-        btn_add.props('round dense size=sm')
-        btn_sub = ui.button(icon='remove',
-                             on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange')
-        btn_sub.props('round dense size=sm')
-
-# Function to increase the amount of a counter.
-def counter_add(counters: dict, current_counter: str, current_amount: str, amount: int):
-    initial_amount = current_amount
-    counter_name = current_counter.split(":")
-    counter_name = counter_name[0]
-
-    try:
-        new_value = initial_amount + amount
-        counters[counter_name] = int(new_value)
-        app.storage.user['selected_save']['counters'] = counters
-    except:
-       ui.notify("Error: could not add to the counter!", type='negative', position="top",)
-
-    # refresh the element on the page.
-    render_counter_bar.refresh()
-    
-def counter_sub(counters: dict, current_counter: str, current_amount: str, amount: int):
-    initial_amount = current_amount
-    counter_name = current_counter.split(":")
-    counter_name = counter_name[0]
-
-    try:
-        new_value = initial_amount - amount
-        counters[counter_name] = int(new_value)
-        app.storage.user['selected_save']['counters'] = counters
-    except:
-       ui.notify("Error: could not remove from the counter!",type='negative', position="top",)
-
-    # refresh the element on the page.
-    render_counter_bar.refresh()
-
-@ui.refreshable
-def load_from_storage(target:str):
-    target_dict = {}
-    try:
-        target_dict = app.storage.user.get(target, {})
-    except:
-        ui.notify(f"Could not load {target} from app.storage.user!",type='negative',position="top",)
-    
-    return target_dict
-
-# used to create the individual cards.
-async def render_asset_cards(asset) -> ui.element:
-    with ui.card().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between;'):
-        with ui.card_section().classes('flex-grow'):
-            with ui.row():
-                ui.label('Name: ').classes('font-bold')
-                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'{name}')
-            with ui.row():
-                ui.label('Source: ').classes('font-bold')
-                ui.label().bind_text_from(asset, 'source', backward=lambda source: f'{source}')
-            buy_cost_label = ui.label("Buy Costs").classes('font-bold')
-            with buy_cost_label:
-                for name, value in asset['buy_costs'].items():
-                    with ui.row():
-                        ui.label(f'{name}: ').classes('font-normal')
-                        ui.label(f'{value}').classes('font-normal')
-            sell_price_label = ui.label("Sell Costs").classes('font-bold')
-            with sell_price_label:
-                with ui.row():
-                    for name, value in asset['sell_prices'].items():
-                        ui.label(f'{name}: ').classes('font-normal')
-                        ui.label(f'{value}').classes('font-normal')
-        with ui.card_actions().classes("w-full justify-end"):
-            # TODO: fix this view details button
-            with ui.row():
-                ui.button('Select Details', on_click=lambda: view_asset_details(asset))
-                ui.button('Add Asset', on_click=lambda: ui.notify(f'TODO: Add asset to owned assets.'))
-
-# used to create the individual cards.
-async def render_owned_asset_cards(asset, assets_owned) -> ui.element:
-    amount_owned = 0
-    asset_name = asset['name']
-    if assets_owned:
-        amount_owned = assets_owned[asset_name]
-    with ui.card().style('width: 100%; max-width: 250px; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between;'):
-        with ui.card_section().classes('flex-grow'):
-            with ui.row():
-                ui.label('Name: ').classes('font-bold')
-                ui.label().bind_text_from(asset, 'name', backward=lambda name: f'{name}')
-            with ui.row():
-                ui.label('Number Owned: ').classes('font-bold')
-                ui.label().bind_text_from(amount_owned, backward=lambda source: f'{amount_owned}')
-            buy_cost_label = ui.label("Buy Costs").classes('font-bold')
-            with buy_cost_label:
-                for name, value in asset['buy_costs'].items():
-                    with ui.row():
-                        ui.label(f'{name}: ').classes('font-normal')
-                        ui.label(f'{value}').classes('font-normal')
-            sell_price_label = ui.label("Sell Costs").classes('font-bold')
-            with sell_price_label:
-                with ui.row():
-                    for name, value in asset['sell_prices'].items():
-                        ui.label(f'{name}: ').classes('font-normal')
-                        ui.label(f'{value}').classes('font-normal')
-        with ui.card_actions().classes("w-full justify-end"):
-            # TODO: fix this view details button
-            with ui.row():
-                ui.button('Select Asset', on_click=lambda: view_asset_details(asset))
-
-# gets the assets as a dictionary
-async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
-    for asset in assets:
-        assets_as_dict[asset['name']] = asset
- 
-    return assets_as_dict
-
-# Calling the view_asset dialog box
-async def view_asset_details(asset: dict):
-    app.storage.user['selected_asset'] = asset
-    # TODO: Solve this reloading the page and messing with tabs, etc
-    ui.navigate.reload()
-    # viewed_asset = asset_detail_dialog()
-
-def buy_asset(asset: dict, counters: dict):
-    g = 7+7
-    # Subtract asset's buy_costs from appropriate counters.
-        # if buy_cost['name'] exists in Counters:
-        # subtract amount specified in asset
-    # if it doesn't exist in the Owned_Assets, add it to there.
-    # Increase amount of asset in owned_assets by one.
-
-# TODO
-def save_current_session():
-    c = 3+3
-    # TODO: write from app.storage.user to .json file
-    # TODO: return result of save.
