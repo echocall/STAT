@@ -37,21 +37,29 @@ async def select_assets():
 
     def delete_asset(asset):
         """Delete the asset's .json file."""
-        for name in selected_asset_name:
-            # getting the name to be correct.
-            file_name = format_str_for_filename_super(name)['string']
-            selected_asset = {}
+        # build path to delete the file
+        name = asset.get('name')
+        asset_type = asset.get('asset_type')
+        asset_type_file = format_str_for_filename_super(asset_type)['string']
+        file_name  = format_str_for_filename_super(name)['string']
+        delete_result = False
 
-            # trying to get the specified asset
-            try:
-                selected_asset = existing_assets[file_name]
-            except:
-                alert_dialog("Problem with loading the asset.",
-                            "Please check the asset file exists.")
-            finally:
-                app.storage.user['selected_asset'] = selected_asset
-                ui.notify(f"Success! You selected {name}.", type='positive', position='top')
-                ui.navigate.reload()                
+        str_asset_file_path = str_assets_directory_path + '\\' + asset_type_file + '\\' + file_name + '.json'
+
+        # File Path
+        try:
+            delete_result = delete_asset_file(str_asset_file_path)
+        except:
+            alert_dialog("Problem with loading the asset.",
+                        "Please check the asset file exists.")
+        finally:
+            app.storage.user['selected_asset'] = selected_asset
+
+        if delete_result:
+            ui.notify(f"Success! You deleted {name}.", type='positive', position='top')
+            ui.navigate.reload()
+        else:
+            ui.notify(f"Could not delete the asset {name}.", type='positive', position='top')                
 
     # Render the cards displaying the existing assets.
     async def render_asset_cards(existing_assets: dict, asset: dict)-> ui.element:
@@ -69,7 +77,6 @@ async def select_assets():
                     ui.label("Category: ").classes('mb-0 text-sm')
                     ui.label().bind_text_from(asset, 'category', backward=lambda cat: f'{cat}').classes('mt-0')
 
-            
             # Description
             # Show first 25 characters of description with ellipsis if longer
             with ui.column().classes("gap-0.5"): 
@@ -92,7 +99,8 @@ async def select_assets():
                 with ui.button_group().classes('gap-2'):
                     ui.button('Select', on_click=lambda: select_target_asset(existing_assets, {asset['name']})) \
                         .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1')
-                    ui.button('Delete', on_click=lambda: delete_asset(asset)) \
+                    ui.button('Delete', on_click=lambda: user_confirm.show(f"""Are you sure you want to delete the asset's file?""", 
+                                        lambda: delete_asset(asset))) \
                         .classes('text-sm px-3 py-1 sm:text-xs sm:px-2 sm:py-1 bg-red-500')
 
     with theme.frame('All Assets'):
@@ -108,6 +116,11 @@ async def select_assets():
         selected_asset = app.storage.user.get("selected_asset", {})
         existing_assets = app.storage.user.get("existing_assets", {})
 
+        game_file_name = format_str_for_filename_super(selected_game.get('name'))['string']
+        
+        # Get the games_directory_path
+        str_assets_directory_path = root_path + games_path + '\\' + game_file_name + assets_path
+
         # No game selected
         if not selected_game or 'name' not in selected_game:
             with ui.row():
@@ -121,9 +134,6 @@ async def select_assets():
         
         # There IS a selected_game
         else:
-            # Get the games_directory_path
-            game_file_name = format_str_for_filename_super(selected_game.get('name'))['string']
-            str_assets_directory_path = root_path + games_path + '\\' + game_file_name + '\\' + assets_path
 
             try:
                 # getting the existing assets from the file path.

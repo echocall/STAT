@@ -243,7 +243,8 @@ async def new_asset():
             with ui.row().classes():
                 with ui.column().classes():
                     ui.label("Is this for a default asset?").classes('font-medium')
-                    is_default = ui.toggle({True:'Default', False:'Custom'})
+                    is_default = ui.toggle({'Default':'Default', 'Custom':'Custom'})
+                    is_default.bind_value(new_asset_dict, 'asset_type')
                     is_default.props('color="secondary"')
                         
             # Input name for the asset.
@@ -282,11 +283,8 @@ async def new_asset():
             # Asset Type
             with ui.row().classes(): 
                 with ui.column().classes():
-                    ui.label("Asset Type").classes('font-medium')
-                    asset_type_input = ui.input(label='Asset Type', placeholder='type here',
-                                        on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
-                    asset_type_chars_left = ui.label()
-                    asset_type_input.bind_value(new_asset_dict, 'asset_type')
+                    lbl_asset_type = ui.label("Asset Type").classes('font-medium')
+                    lbl_asset_type.bind_text(new_asset_dict, 'asset_type')
 
             # Attributes
             with ui.row().classes(): 

@@ -5,7 +5,6 @@ import traceback
 import os
 import shutil
 import datetime
-from handlers.confighandler import config
 from nicegui import app
 
 # CREATE
@@ -447,8 +446,8 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
 def log_debug(message: str):
     """Appends a debug message to the debug log file."""
     # Define root path for logs
-    config = get_config_as_dict(config.txt)
-    paths = config.get("Paths", {})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
     osrootpath = Path(root_path)  # Replace with your real root path
     debug_log_path = os.path.join(osrootpath, 'debug.log')
