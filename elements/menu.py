@@ -91,9 +91,10 @@ def menu() -> None:
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):  
                     with ui.link(target='/createasset'):
                         ui.menu_item('Create Asset')
+                    with ui.link(target='/selectassets'):
+                        ui.menu_item('View Assets')
                     ui.menu_item('View Asset')
-                    with ui.link(target='/editasset'):
-                        ui.menu_item('Edit Asset')
+                    ui.menu_item('Edit Asset')
                         
             # EFFECTS
             with ui.menu_item('Effects Menu', auto_close=False):

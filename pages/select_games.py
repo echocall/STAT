@@ -61,7 +61,7 @@ async def select_games():
             # Show first 25 characters of description with ellipsis if longer
             desc = game.get('description') or ''
             short_desc = (desc[:50] + '...') if len(desc) > 50 else desc
-            ui.label(short_desc).classes('text-sm text-gray-300 mt-0')
+            ui.label(short_desc).classes('text-sm mt-0')
 
             # Spacer to push buttons to the bottom
             ui.element('div').classes('flex-grow')
@@ -80,13 +80,13 @@ async def select_games():
         games_path = paths.get("gamespath", "Not Set")
         user_confirm = UserConfirm()
 
-        
         selected_game = app.storage.user.get("selected_game", {})
         existing_games = app.storage.user.get("existing_games", {})
 
         # Get the games_directory_path
+        str_games_directory_path = root_path + games_path
+
         try:
-            str_games_directory_path = root_path + games_path
             # getting the existing games from the file path.
             get_games_result = get_games(str_games_directory_path)
             if get_games_result['result']:
@@ -112,9 +112,10 @@ async def select_games():
         with ui.row().classes('w-full justify-center items-start gap-8'):
             btn_create = ui.button('Create Game', on_click=lambda: ui.navigate.to("/creategame"))
             btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game))
-            btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
+            btn_detail.bind_enabled_from(bool(app.storage.user['existing_games']))
             btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves(selected_game))
-            btn_saves.bind_enabled_from(bool(app.storage.user["existing_games"]))
+            btn_saves.bind_enabled_from(bool(existing_games))
+
         # Displaying the games.
         game_card_container = ui.row().classes("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4")
         with game_card_container:

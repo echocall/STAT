@@ -381,12 +381,16 @@ async def dashboard():
                 ui.separator()
                 with ui.tab_panel(main_tab):
                     with ui.row().classes('basis-full justify-start space-x-4 full-flex'):
-                        ui.label("Here's a summary of whats going on!")
+                        with ui.column():
+                            ui.label("Main Tab").classes('text-2xl')
+                            ui.label("Under Construction: Future home of the player's action log.").classes('text-pretty text-Orange-500')
+                            ui.label("Future home of Effect and Event tracker").classes('text-pretty')
+                            ui.label("Check out the other tabs for now.").classes('text-pretty')
 
 
                 # The Owned Assets Tab
                 with ui.tab_panel(assets_tab):
-                    ui.label("Owned Assets")
+                    ui.label("Owned Assets").classes('text-2xl')
                     for owned_category in sorted_owned_assets:
                         asset_container_owned = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container_owned:
@@ -401,7 +405,7 @@ async def dashboard():
 
                 # All Assets Tab
                 with ui.tab_panel(all_assets_tab):
-                    ui.label("All Assets")
+                    ui.label("All Assets").classes('text-2xl')
                     # Creates each asset_container
                     for category in sorted_assets:
                         asset_container = ui.row().classes('basis-full justify-start space-x-4 full-flex')

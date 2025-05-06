@@ -213,7 +213,11 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
             if subdir.is_dir():
                 json_files = list(subdir.glob("*.json"))
                 for json_file in json_files:
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # If we are looking for assets, effect, or events
     elif objectType.lower() in {"assets", "effects", "events"}:
         # Look in 'default' and 'custom' inside passed-in directory
@@ -221,13 +225,21 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
             category_path = directory_path / category
             if category_path.exists():
                 for json_file in category_path.glob("*.json"):
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # If we are looking for saves
     elif objectType.lower() in {"saves"}:
         for subdir in directory_path.iterdir():
             if subdir.is_dir():
                 for json_file in directory_path.glob("*.json"):
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # Getting images.
     elif objectType.lower() == "images":
         allowed_extensions = {".png", ".bmp", ".gif", ".jpeg"}
@@ -239,7 +251,11 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
     else:
         # Default: scan all .json files recursively
         for json_file in directory_path.rglob("*.json"):
-            target_json_objects.append(json_file)
+            with json_file.open('r', encoding='utf-8') as f:
+                try:
+                    target_json_objects.append(json.load(f))
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding {json_file}: {e}")
 
     return target_json_objects
 
