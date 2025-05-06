@@ -1,39 +1,6 @@
-import configparser
+
 import json
 from pathlib import Path
-import os
-import sys
-
-def resource_path(relative_path: str) -> str:
-    """ Get absolute path to resource, works for dev and PyInstaller """
-    try:
-        # Pyinstaller sets that.
-        base_path = sys._MEIPASS
-    except AttributeError:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
-
-def load_config(config_file: str) -> dict:
-    configParser = configparser.ConfigParser()
-    configParser.read(config_file)
-
-    config_dict = {}
-    for section in configParser.sections():
-        config_dict[section] = dict(configParser[section])
-    return config_dict
-
-def get_config_as_dict(configfilename: str) -> dict:
-    config_path = resource_path(configfilename)
-    if not os.path.exists(config_path):
-        create_default_config(configfilename)
-    return load_config(config_path)
-
-def save_config(config_dict: dict, configfilename: str):
-    config = configparser.ConfigParser()
-    for section, entries in config_dict.items():
-        config[section] = entries
-    with open(resource_path(configfilename), 'w') as configfile:
-        config.write(configfile)
 
 def format_str_for_filename(string: str) -> str:
     # TODO: Upgrade this to use regex to strip unwanted characters.
