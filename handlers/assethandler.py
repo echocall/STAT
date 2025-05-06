@@ -1,6 +1,7 @@
 from helpers.crud import *
 from helpers.utilities import *
 from classes.MyAsset import *
+from handlers.confighandler import config
 
 # Retrieves all assets associated with a game/save
 def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom: bool,
@@ -127,7 +128,7 @@ def asset_loader(asset_objects: dict):
     # prep the types for being seen
 
 # create new asset from the gui
-def new_asset_gui( is_default: bool, configfilename: str,
+def new_asset_gui( is_default: bool,
     new_asset: dict, game_dict: dict, save_dict: dict
 ) -> dict:
     write_result = {'result': False, 'message': '', 'debug': []}
@@ -136,7 +137,6 @@ def new_asset_gui( is_default: bool, configfilename: str,
         write_result['debug'].append({'game_name_result': game_name_result})
         game_name = game_name_result['string']
 
-        config = get_config_as_dict(configfilename)
         paths = config.get("Paths", {})
         root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")

@@ -33,7 +33,7 @@ def get_saves(saves_directory_path: str) -> dict:
         return {}
 
 # for creating a new save from the gui
-def new_save_gui(configfilename: str, game_name: str, new_save_dict: dict) -> dict:
+def new_save_gui(game_name: str, new_save_dict: dict) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
     create_result = {'result': False, 'message': '', 'dict':{}}
     try:
@@ -48,7 +48,6 @@ def new_save_gui(configfilename: str, game_name: str, new_save_dict: dict) -> di
         save_format_result = format_str_for_filename_super(new_save_dict['name'])
         
         # Load config and paths
-        config = get_config_as_dict(configfilename)
         paths = config.get("Paths", {})
         root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")

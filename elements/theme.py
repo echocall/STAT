@@ -1,12 +1,10 @@
 from contextlib import contextmanager
 from elements.menu import menu
 import helpers.font_picker as font_picker
-import configparser
+from handlers.confighandler import config, config_path, write_config
 from pathlib import Path
 from nicegui import app,ui
 
-config = configparser.ConfigParser()
-config.read('static/config.txt')
 
 # DONT REMOVE THIS.
 dark = ui.dark_mode()
@@ -117,27 +115,25 @@ def frame(navigation_title: str):
             def handle_switch():
                 if light_switch.value:
                     print('Enabling Dark Mode') 
-                    config['Preferences']['darkMode'] = 'True'
+                    config['Preferences']['darkmode'] = 'True'
                     # save updated config
-                    with open('static/config.txt', 'w') as configfile:
-                        config.write(configfile)
+                    write_config()
                     dark.enable()
                     ui.notify("You picked dark mode! Please restart the application to see this change take effect.",
                               position='top',
                               type='Positive')
                 else:
                     print('Enabling Light Mode')
-                    config['Preferences']['darkMode'] = 'False'
+                    config['Preferences']['darkmode'] = 'False'
                     # save updated config
-                    with open('static/config.txt', 'w') as configfile:
-                        config.write(configfile)
+                    write_config()
                     dark.disable()
                     ui.notify("You picked light mode! Please restart the application to see this change take effect.",
                               position='top',
                               type='Positive')
 
             light_switch = ui.switch("Dark Mode", on_change=handle_switch)
-            light_switch.bind_value_from(config['Preferences'].getboolean('darkMode'))
+            light_switch.bind_value_from(config['Preferences']['darkmode'])
 
             menu()
     with ui.row().classes('w-full h-full justify-center items-start'):

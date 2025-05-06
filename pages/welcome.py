@@ -1,9 +1,6 @@
-import configparser
+from handlers.confighandler import config, write_config
 import elements.theme as theme
 from nicegui import ui
-
-config = configparser.ConfigParser()
-config.read('static/config.txt')
 
 @ui.page('/welcome')
 async def content() -> None:
@@ -50,5 +47,4 @@ async def content() -> None:
 
     def set_show_welcome(value):
         config['Toggles']['showwelcome'] = str(value)
-        with open('static/config.txt', 'w') as configfile:
-            config.write(configfile)
+        write_config()

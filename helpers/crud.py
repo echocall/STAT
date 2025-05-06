@@ -6,6 +6,7 @@ import traceback
 import os
 import shutil
 import datetime
+from handlers.confighandler import config
 
 # CREATE
 def create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict:
@@ -350,9 +351,6 @@ def get_custom_assets_names(full_base_path: str) -> list:
 def get_template_json(template_type: str) -> dict:
     """Takes the Template type, and return the template dict.
     Handles calculating the template path itself."""
-    configfilename = 'static/config.txt'
-    # Store as nested dictionary
-    config = get_config_as_dict(configfilename)
     # Get the paths
     paths = config.get("Paths",{})
     rootpath = paths.get('osrootpath', "Not Set")
@@ -390,20 +388,6 @@ def get_template_json(template_type: str) -> dict:
         print(f"An unexpected error occurred while getting game names. See terminal for more.")
         print(f"{e}\n{traceback.format_exc()}")
         return template
-
-# gets the config files as a nested dictionary
-def get_config_as_dict(configfilename: str) -> dict:
-    # getting config information
-    config_data = load_config(configfilename)
-    structured_data = {}
-    # Create organized nested structure for config.
-    for key in config_data:
-        structured_data[key] = config_data[key]
-
-    # Store as nested dictionary
-    config = structured_data
-    return config
-
 
 # UPDATE
 def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -> dict:

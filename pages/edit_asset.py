@@ -4,6 +4,7 @@ from handlers.assethandler import *
 from classes.Enable import *
 from helpers.utilities import *
 from helpers.crud import *
+from handlers.confighandler import config
 
 enable = Enable()
 
@@ -14,8 +15,6 @@ async def content() -> None:
         selected_asset = app.storage.user.get("selected_asset", {})
         
         # PATHS PATHS PATHS
-        # Store as nested dictionary
-        config = get_config_as_dict('static/config.txt')
         # Get the paths
         paths = config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")

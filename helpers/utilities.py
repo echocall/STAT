@@ -1,27 +1,39 @@
 import configparser
 import json
 from pathlib import Path
+import os
+import sys
 
-# load file paths from config.txt
-# Reworked from utilities -> stat_initializer
-def load_config(config_file: str):
-    # Reading from config file
+def resource_path(relative_path: str) -> str:
+    """ Get absolute path to resource, works for dev and PyInstaller """
+    try:
+        # Pyinstaller sets that.
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def load_config(config_file: str) -> dict:
     configParser = configparser.ConfigParser()
-    configFilePath = config_file
-    configParser.sections()
-    configParser.read(configFilePath)
+    configParser.read(config_file)
 
     config_dict = {}
-    # We want to preserve the sections for organization later
-    for Section in configParser.sections():
-        temp_dict = {}
-        # Create a temporary diction that gets added to the Sectiond ictionary
-        for key, value in configParser[Section].items():
-            temp_dict.update({key:value})
-        config_dict[Section] = temp_dict
-
-    # Return the organized dictionary
+    for section in configParser.sections():
+        config_dict[section] = dict(configParser[section])
     return config_dict
+
+def get_config_as_dict(configfilename: str) -> dict:
+    config_path = resource_path(configfilename)
+    if not os.path.exists(config_path):
+        create_default_config(configfilename)
+    return load_config(config_path)
+
+def save_config(config_dict: dict, configfilename: str):
+    config = configparser.ConfigParser()
+    for section, entries in config_dict.items():
+        config[section] = entries
+    with open(resource_path(configfilename), 'w') as configfile:
+        config.write(configfile)
 
 def format_str_for_filename(string: str) -> str:
     # TODO: Upgrade this to use regex to strip unwanted characters.

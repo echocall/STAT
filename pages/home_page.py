@@ -1,20 +1,9 @@
 import elements.theme as theme
-from helpers.utilities import load_config
 
 from nicegui import app, ui
 
 @ui.page('/')
 async def content() -> None:
-    config_data = load_config('static/config.txt')
-    structured_data = {}
-    
-    # Create organized nested structure for config.
-    for key in config_data:
-        structured_data[key] = config_data[key]
-
-    # Store as nested dictionary
-    app.storage.user["config"] = structured_data
-
     ui.label("Welcome to STAT!").classes('text-center accent-text text-lg')
     ui.label("The Snazzy Tabletop Assistant Tracker").classes('text-center accent-text')
     ui.label('Do you want to add a new game to STAT or work with a preexisting game?').classes('text-center')

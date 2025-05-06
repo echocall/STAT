@@ -171,7 +171,7 @@ async def new_asset():
                                 multi_line=True)
                 # attempt to create asset here.
                 try:
-                    create_result = new_asset_gui(is_default, 'static/config.txt', new_asset_dict, selected_game, selected_save)
+                    create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save)
                     if create_result['result']:
                         ui.notify("Congrats! Asset created!", 
                                     type='positive', 

@@ -5,16 +5,16 @@ import classes.MyGame as mg
 import traceback
 from pathlib import Path
 import os, shutil
+from handlers.confighandler import config
 
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
      
-def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> dict:
+def new_game_gui(new_game_dict: dict, file_name: str) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
     file_name = ""
     try:
         # Load configuration
-        config = get_config_as_dict(configfilename)
         paths = config.get("Paths", {})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "")
@@ -72,10 +72,9 @@ def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> di
             write_result['dict'] = new_game_dict
         else:
             write_result['string'] = 'Failed to write game to file.'
-    except Exception:
-        error_info = traceback.format_exc()
-        write_result['string'] = "Unhandled exception occurred."
-        write_result['debug'].append({'exception': error_info})
+    except Exception as e:
+        write_result['string'] = str(e)
+        write_result['debug'].append("Error in new_game_gui")
 
     # Save debug info to log file
     try:
@@ -231,9 +230,6 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 # updates the game's json
 def update_game(game_dict: dict):
     """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
-    config = get_config_as_dict('static/config.txt')
-    
-
     paths = config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "")

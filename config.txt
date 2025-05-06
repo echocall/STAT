@@ -6,8 +6,8 @@ font = ShantellSans
 osrootpath = C:\Users\strip\AppData\Local\STAT
 defaultrootpath = C:\Users\strip\AppData\Local\STAT
 customosrootpath = 
-templatespath = \statassets\templates
-gamespath = \statassets\games
+templatespath = C:\Users\strip\AppData\Local\STAT\STAT\statassets\templates
+gamespath = C:\Users\strip\AppData\Local\STAT\STAT\statassets\games
 savespath = \saves
 assetspath = \assets
 defaultassetspath = \assets\default
@@ -21,8 +21,8 @@ customeventspath = \events\custom
 imagespath = \images
 
 [Toggles]
-firstsetup = True
-showwelcome = True
+firstsetup = False
+showwelcome = False
 showexplanations = True
 customroot = False
 
