@@ -25,3 +25,6 @@ pages/__pycache__/view_saves.cpython-312.pyc
 /pages/__pycache__
 /__pycache__
 *.pyc
+/build
+/test_venv
+STAT.spec
