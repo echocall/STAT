@@ -86,10 +86,15 @@ async def view_saves():
                     ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
                     return
                 
+                with ui.column().classes('items-center w-full gap-4 p-6 max-w-5xl'):
+                    ui.label("When you selected a save the Selected Save in the bottom left corner will update.")
+                    ui.label("Select a save to load:")
+
                 with ui.link(target='/createsave'):
                     ui.button("Create New Save")
+                with ui.link(target='/loadeddash'):
+                    ui.button("Go to Dashboard")
 
-                ui.label("Select a save to load:").classes('h-4')
             
                 save_card_container = ui.row().classes("full flex items-center")
                 with save_card_container:

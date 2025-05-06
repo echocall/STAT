@@ -1,42 +1,54 @@
 import configparser
+import elements.theme as theme
+from nicegui import ui
 
 config = configparser.ConfigParser()
 config.read('static/config.txt')
 
-from nicegui import ui
-
 @ui.page('/welcome')
 async def content() -> None:
-    with ui.element():
-        ui.label('Welcome to STAT: the Snazzy Tabletop Assistant Tracker!').classes('font-medium')
-        ui.label('The program is meant to be a tool to help you keep track of your progress in whatever table top game you choose!').classes('font-medium break-normal')
-        ui.label('With some creative thinking you can model a variety of games and resources.').classes('font-medium break-normal')
-        ui.space()
-        ui.label('The title of the game in the top left corner will take you back to the homepage.').classes('font-medium break-normal')
-        ui.label("You'll be able to see what your currently selected game, save, and asset are in the bottom right corner of the screen. When you click on 'view details' this is what tells STAT what you want to look at.").classes('font-medium break-normal')
-        ui.space()
-        ui.label('You can return here by clicking on the link under the "Settings" menu, or altering the config.txt file.').classes('font-medium break-normal')
-        ui.label('By default STAT will try to find a location to save its files. You can check what location it could reach by looking in config.txt').classes('font-medium break-normal')
-        ui.label('This is still a work in progress so we ask that you bear with us for this first release.').classes('font-medium break-normal')        
-        ui.space()
-        ui.label('View the ReadMe on github for more help.').classes('font-medium break-normal')
-        with ui.link(target="https://github.com/echocall/STAT"):
-             ui.button("Github")
-        with ui.column():
-                with ui.row():
-                     ui.label("Do you prefer light mode or dark mode?")
-                     ui.label("You can change this in the top left corner next to the menus.")
+    with theme.frame('Welcome'):
+        with ui.column().classes('items-center w-full gap-4 p-6 max-w-5xl'):
+            ui.label('Welcome to STAT: the Snazzy Tabletop Assistant Tracker!').classes('text-2xl font-bold accent-text text-center')
+            ui.label('The program is meant to be a tool to help you keep track of your progress in whatever tabletop game you choose!').classes('font-medium text-center')
+            ui.label('With some creative thinking you can model a variety of games and resources.').classes('font-medium text-center')
 
-                    
-        with ui.column():
-            with ui.row():
-                ui.label("Do you want to see this welcome next time you log in?").props('font-medium break-normal')
-                show_welcome = ui.switch(value=config['Toggles'].getboolean('showwelcome'), on_change=lambda e: set_show_welcome(e.value))
+            ui.separator()
 
-        def set_show_welcome(value):
-            config['Toggles']['showwelcome'] = str(value)
-            with open('static/config.txt', 'w') as configfile:
-                config.write(configfile)
-            
-        with ui.link(target='/'):
-            ui.button("I'm ready to begin!")
+            with ui.row().classes('w-full justify-center items-start gap-8'):
+                with ui.column().classes('gap-2 w-full'):
+                    ui.label('The title of the game in the top left corner will take you back to the homepage.').classes('font-medium')
+                    ui.label("You’ll be able to see your selected game, save, and asset in the bottom right.").classes('font-medium')
+                    ui.label("Clicking 'view details' shows what you're focused on.").classes('font-medium')
+
+                with ui.column().classes('gap-2 w-full'):
+                    ui.label('Return here via the "Settings" menu or `config.txt`.').classes('font-medium')
+                    ui.label('STAT tries to find a default save location — check `config.txt`.').classes('font-medium')
+                    ui.label('This is a work in progress — thanks for your patience!').classes('font-medium')
+
+            ui.separator()
+
+            ui.label('View the ReadMe on GitHub for more help.').classes('font-medium')
+            with ui.link(target="https://github.com/echocall/STAT"):
+                ui.button("GitHub")
+
+            ui.separator()
+
+            with ui.row().classes('w-full justify-center items-start gap-8'):
+                with ui.column().classes('gap-2 w-full'):
+                    ui.label("Do you prefer light mode or dark mode?").classes('font-medium')
+                    ui.label("You can change this in the top left corner next to the menus.").classes('font-medium')
+
+                with ui.column().classes('gap-2 w-full'):
+                    ui.label("Show this welcome page next time?").classes('font-medium')
+                    show_welcome = ui.switch(value=config['Toggles'].getboolean('showwelcome'),
+                                             on_change=lambda e: set_show_welcome(e.value))
+
+            ui.space()
+            with ui.link(target='/'):
+                ui.button("I'm ready to begin!").classes('text-lg')
+
+    def set_show_welcome(value):
+        config['Toggles']['showwelcome'] = str(value)
+        with open('static/config.txt', 'w') as configfile:
+            config.write(configfile)

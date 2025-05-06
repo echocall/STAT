@@ -122,7 +122,7 @@ def menu() -> None:
             ui.menu_item('Help',
                          lambda: ui.notify('Under construction! Thank you for your patience.', position='top', type='Warning'))
             with ui.link(target='/welcome'):
-                ui.menu_items('Welcome Page')
+                ui.menu_item('Welcome Page')
             with ui.menu_item('About', auto_close=False):
                 ui.tooltip("""STAT by Pam Pepper. Released under the MIT license. Alpha""")
             ui.separator()

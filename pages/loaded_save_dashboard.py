@@ -44,28 +44,25 @@ async def dashboard():
             - Add or increment it in the `owned_assets` dictionary.
             """
             # Deduct buy costs
-            for cost in asset.get('buy_costs', []):
-                cost_name = cost['name']
-                cost_amount = cost['amount']
+            for cost_name, cost_amount in asset.get('buy_costs', {}).items():
                 if cost_name in counters:
-                    counters[cost_name] -= cost_amount
+                    temp_current_amount = counters[cost_name]
+                    counter_sub(counters, cost_name, str(temp_current_amount), cost_amount )
                 else:
                     ui.notify(f"Warning: Cost counter '{cost_name}' not found.",
                               position = 'top',
                               type='warning',
                               mulit_line=True)
+            render_owned_asset_cards.refresh()
 
             # Update owned assets
             name = asset['name']
             if name in owned_assets:
-                owned_assets[name]['quantity'] += 1
+                selected_save[assets][name] += 1
             else:
                 new_asset = asset.copy()
                 new_asset['quantity'] = 1
                 owned_assets[name] = new_asset
-
-            # Refresh UI/state
-            refresh_counters_and_assets()
 
         def sell_asset(asset: dict, counters: dict, owned_assets: dict):
             """
@@ -74,28 +71,31 @@ async def dashboard():
             - Decrease its quantity in `owned_assets`, and remove if quantity reaches 0.
             """
             # Add sell prices
-            for price in asset.get('sell_prices', []):
-                price_name = price['name']
-                price_amount = price['amount']
+            for price_name, price_amount in asset.get('sell_prices', []).items():
                 if price_name in counters:
-                    counters[price_name] += price_amount
+                    temp_current_amount = counters[price_name]
+                    counter_add(counters, price_name, str(temp_current_amount), price_amount )
+                    # counters[price_name] += price_amount
                 else:
                     print(f"Warning: Sell price counter '{price_name}' not found.")
+            render_owned_asset_cards.refresh()
+                
 
             # Update owned assets
             name = asset['name']
             if name in owned_assets:
-                owned_assets[name]['quantity'] -= 1
-                if owned_assets[name]['quantity'] <= 0:
-                    del owned_assets[name]
+                selected_save[assets][name] -= 1
+                # if owned_assets[name]['quantity'] <= 0:
+                #     del owned_assets[name]
             else:
                 print(f"Warning: Tried to sell unowned asset '{name}'.")
+            render_owned_asset_cards.refresh()
 
             # Refresh UI/state
             # refresh_counters_and_assets()
-
-        # TODO
+       
         def save_current_session():
+            """Saves the current state of the selected_save to the save's .json file."""
             game_name = selected_game['name']
             save_name = selected_save['name']
 
@@ -117,10 +117,14 @@ async def dashboard():
                 ui.notify("Save successful!", position='top', type='positive')
             else:
                 print(f"Save failed: {result['message']}")
-
+                ui.notify(f"Save failed!: {message}",
+                          position='top',
+                          type='negative',
+                          mulit_line=True)
 
         # Function to increase the amount of a counter.
         def counter_add(counters: dict, current_counter: str, current_amount: str, amount: int):
+            """ Change the amount of a counter with the passed in fields. 'Adds' the amount of the amount argument."""
             initial_amount = current_amount
             counter_name = current_counter.split(":")
             counter_name = counter_name[0]
@@ -136,6 +140,7 @@ async def dashboard():
             render_counter_bar.refresh()
             
         def counter_sub(counters: dict, current_counter: str, current_amount: str, amount: int):
+            """ Change the amount of a counter with the passed in fields. 'Subtracts' the amount of the amount argument."""
             initial_amount = current_amount
             counter_name = current_counter.split(":")
             counter_name = counter_name[0]
@@ -149,7 +154,6 @@ async def dashboard():
 
             # refresh the element on the page.
             render_counter_bar.refresh()
-
 
         # used to create the individual cards.
         @ui.refreshable
@@ -188,6 +192,7 @@ async def dashboard():
                             ui.tooltip('Buy Asset').classes('bg-grey-10 text-white')
                         with ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round'):
                             ui.tooltip('Sell Asset').classes('bg-grey-10 text-white')
+       
         @ui.refreshable
         # used to create the individual cards.
         async def render_owned_asset_cards(asset, owned_asset_data) -> ui.element:
@@ -219,9 +224,9 @@ async def dashboard():
                             ui.tooltip('Select Asset').classes('bg-grey-10 text-white')
                         with ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round'):
                                 ui.tooltip('Add Asset').classes('bg-grey-10 text-white')
-                        with ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round'):
+                        with ui.button(icon='shopping_cart', on_click=lambda: buy_asset(asset, counters, owned_asset_data)).props('round'):
                             ui.tooltip('Buy Asset').classes('bg-grey-10 text-white')
-                        with ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round'):
+                        with ui.button(icon='sell', on_click=lambda: sell_asset(asset, counters, owned_asset_data)).props('round'):
                             ui.tooltip('Sell Asset').classes('bg-grey-10 text-white')
 
         # gets the assets as a dictionary
@@ -377,11 +382,12 @@ async def dashboard():
                 ui.separator()
                 with ui.tab_panel(main_tab):
                     with ui.row().classes('basis-full justify-start space-x-4 full-flex'):
-                        ui.label("Here's a summary of whats going on!").classes('text-center')
+                        ui.label("Here's a summary of whats going on!")
 
 
-                # The Used Assets Tab
+                # The Owned Assets Tab
                 with ui.tab_panel(assets_tab):
+                    ui.label("Owned Assets")
                     for owned_category in sorted_owned_assets:
                         asset_container_owned = ui.row().classes('basis-full justify-start space-x-4 full-flex')
                         with asset_container_owned:
@@ -396,6 +402,7 @@ async def dashboard():
 
                 # All Assets Tab
                 with ui.tab_panel(all_assets_tab):
+                    ui.label("All Assets")
                     # Creates each asset_container
                     for category in sorted_assets:
                         asset_container = ui.row().classes('basis-full justify-start space-x-4 full-flex')

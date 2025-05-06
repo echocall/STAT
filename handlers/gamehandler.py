@@ -32,9 +32,10 @@ def new_game_gui(configfilename: str, new_game_dict: dict, file_name: str) -> di
         file_name = game_name_result['string']
 
         # Assemble full directory paths
+        games_directory_path = Path(root_path + games_path)
         game_base_path = Path(root_path + games_path) / file_name
         game_file_path = game_base_path / f"{file_name}.json"
-        debug_log_path = game_base_path / f"{file_name}_debug.log"
+        debug_log_path = games_directory_path / f"{file_name}_debug.log"
 
         image_dir = game_base_path / images_path.strip("\\")
         saves_dir = game_base_path / saves_path.strip("\\")

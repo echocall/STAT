@@ -141,7 +141,7 @@ def frame(navigation_title: str):
 
             menu()
     with ui.row().classes('w-full h-full justify-center items-start'):
-        with ui.column().classes('w-full items-stretch'):
+        with ui.column().classes('w-full items-stretch items-center'):
             yield
     with ui.footer().props('color=accent'):
         # Selected Game

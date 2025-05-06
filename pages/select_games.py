@@ -100,13 +100,16 @@ async def select_games():
                       type='negative',
                       multi_line=True)
 
-    with ui.column():
-        ui.label("Select a game to get started!").classes('text-xl text-center')
-        ui.label("Please note that selecting a game will unload your currently selected save.").classes('text-center')
-        ui.label("Make sure to save your data before doing this!").classes('text-center')
+    with ui.row():
+        with ui.column().classes('items-center w-full gap-4 pt-3 max-w-5xl'):
+            ui.label("Select a game to get started!").classes('text-xl text-center accent-text')
+            ui.label("Once you selecte a save it will update the 'Selected Game' in the bottom left of your screen and you may seen yoru screen flash.")
+            ui.label("Please note that selecting a game will unload your currently selected save.")
+            ui.label("Make sure to save your data before doing this!")
 
         # Buttons!!!
-        with ui.row():
+        with ui.row().classes('w-full justify-center items-start gap-8'):
+            btn_create = ui.button('Create Game', on_click=lambda: ui.navigate.to("/creategame"))
             btn_detail = ui.button('View Detail', on_click=lambda: game_view_details(selected_game))
             btn_detail.bind_enabled_from(bool(app.storage.user["existing_games"]))
             btn_saves = ui.button('View Saves', on_click=lambda: view_game_saves(selected_game))
