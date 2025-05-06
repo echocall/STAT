@@ -96,25 +96,25 @@ async def dashboard():
 
         # TODO
         def save_current_session():
-            game_name = selected_save['game_name']
-            save_name = selected_save['save_name']
+            game_name = selected_game['name']
+            save_name = selected_save['name']
 
             # Format names for safe filenames
-            game_fmt = format_str_for_filename_super(game_name)
-            save_fmt = format_str_for_filename_super(save_name)
+            game_formatted = format_str_for_filename_super(game_name)
+            save_formatted = format_str_for_filename_super(save_name)
 
-            if not game_fmt['result'] or not save_fmt['result']:
+            if not game_formatted['result'] or not save_formatted['result']:
                 print("Error: Could not format game or save name for filename.")
                 return
 
             # Construct full save file path
-            full_save_path = f"{root_path}{games_path}\\{game_fmt['string']}{saves_path}\\{save_fmt['string']}.json"
+            full_save_path = f"{root_path}{games_path}\\{game_formatted['string']}{saves_path}\\{save_formatted['string']}.json"
 
             # Save the current selected_save dict to file
             result = overwrite_json_file(selected_save, str_target_file_path=full_save_path, file_name='')
 
             if result['success']:
-                print("Save successful.")
+                ui.notify("Save successful!", position='top', type='positive')
             else:
                 print(f"Save failed: {result['message']}")
 
@@ -180,10 +180,14 @@ async def dashboard():
 
                 with ui.card_actions().classes("w-full justify-end mt-auto"):
                     with ui.row().classes("w-full justify-around"):
-                        ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round').tooltip('Select Asset')
-                        ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round').tooltip('Add Asset')
-                        ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round').tooltip('Buy Asset')
-                        ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round').tooltip('Sell Asset')
+                        with ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round'):
+                            ui.tooltip('Select Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round'):
+                                ui.tooltip('Add Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round'):
+                            ui.tooltip('Buy Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round'):
+                            ui.tooltip('Sell Asset').classes('bg-grey-10 text-white')
         @ui.refreshable
         # used to create the individual cards.
         async def render_owned_asset_cards(asset, owned_asset_data) -> ui.element:
@@ -211,10 +215,14 @@ async def dashboard():
 
                 with ui.card_actions().classes("w-full justify-end mt-auto"):
                     with ui.row().classes("w-full justify-around"):
-                        ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round').tooltip('Select Asset')
-                        ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round').tooltip('Add Asset')
-                        ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round').tooltip('Buy Asset')
-                        ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round').tooltip('Sell Asset')
+                        with ui.button(icon='visibility', on_click=lambda: view_asset_details(asset)).props('round'):
+                            ui.tooltip('Select Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='add', on_click=lambda: ui.notify('TODO: Add asset')).props('round'):
+                                ui.tooltip('Add Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='shopping_cart', on_click=lambda: ui.notify('TODO: Buy asset')).props('round'):
+                            ui.tooltip('Buy Asset').classes('bg-grey-10 text-white')
+                        with ui.button(icon='sell', on_click=lambda: ui.notify('TODO: Sell asset')).props('round'):
+                            ui.tooltip('Sell Asset').classes('bg-grey-10 text-white')
 
         # gets the assets as a dictionary
         async def assets_to_dictionary(assets: list, assets_as_dict: dict) -> dict:
@@ -347,6 +355,8 @@ async def dashboard():
                         ui.label(current_turn)
                 with ui.column():
                     ui.button(icon='update', on_click=lambda: ui.notify('TODO: implement advancing turns')).props("round")
+                with ui.column():
+                    ui.button(icon='save', on_click=lambda: save_current_session())
                 ui.space()
 
             ui.separator()
