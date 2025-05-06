@@ -13,9 +13,8 @@ import traceback
 @ui.page('/loadeddash')
 async def dashboard():
     with theme.frame('Dashboard'):
-        config = app.storage.user.get("config", {})
-        paths = config.get("Paths",{})
-
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         
         def load_from_storage(target:str):
             target_dict = {}

@@ -5,7 +5,6 @@ from handlers.confighandler import config, config_path, write_config
 from pathlib import Path
 from nicegui import app,ui
 
-
 # DONT REMOVE THIS.
 dark = ui.dark_mode()
 

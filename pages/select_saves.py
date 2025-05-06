@@ -3,7 +3,6 @@ import elements.theme as theme
 from nicegui import app, ui
 from handlers.savehandler import *
 import traceback
-from handlers.confighandler import config
 
 # call the function to pull in that info of the saves.
 @ui.page('/selectsaves/')
@@ -12,7 +11,8 @@ async def view_saves():
         # File path for save data
         selected_game = app.storage.user.get("selected_game", {})
         # Get the paths
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath")
         games_path = paths.get("gamespath", "Not Set")
         saves_path = paths.get("savespath", "Not Set")

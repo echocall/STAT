@@ -3,6 +3,7 @@ from pathlib import Path
 from platform import system
 import os
 import sys
+from nicegui import app
 
 # Helper for PyInstaller compatibility
 def resource_path(relative_path: str) -> Path:
@@ -12,12 +13,11 @@ def resource_path(relative_path: str) -> Path:
         base_path = Path(".").resolve()
     return base_path / relative_path
 
-# Config setup
+# Global config path and config object 
 config_path = resource_path("config.txt")
 config = configparser.ConfigParser()
-# Preserve case for keys
+# preserve case
 config.optionxform = str  
-config.read(config_path)
 
 def write_config():
     with config_path.open("w") as f:
@@ -45,12 +45,13 @@ def set_paths():
             "customroot": "False"
         }
 
-    # Always (re)set root paths
-    defaultrootpath = get_default_install_path("STAT")
-    config["Paths"]["defaultrootpath"] = str(defaultrootpath)
-    config["Paths"]["osrootpath"] = str(defaultrootpath)
-    config["Paths"]["gamespath"] = str(defaultrootpath / "STAT" / "statassets" / "games")
-    config["Paths"]["templatespath"] = str(defaultrootpath / "STAT" / "statassets" / "templates")
+   # Only reset root paths if user hasn't set a custom one
+    if config["Toggles"].get("customroot", "False") != "True":
+        defaultrootpath = get_default_install_path("STAT")
+        config["Paths"]["defaultrootpath"] = str(defaultrootpath)
+        config["Paths"]["osrootpath"] = str(defaultrootpath)
+        config["Paths"]["gamespath"] = "/statassets/games"
+        config["Paths"]["templatespath"] = "/statassets/templates"
 
     # Write config if it was just created or modified
     write_config()
@@ -140,6 +141,8 @@ def create_default_config(configfilename: str):
     with open(resource_path(configfilename), 'w') as configfile:
         config.write(configfile)
 
+
+config.read(config_path)
 
 # Export these
 __all__ = ["set_paths", "write_config", "config", "config_path", "load_config", "save_config", "create_default_config" ]

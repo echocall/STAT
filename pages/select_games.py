@@ -74,12 +74,13 @@ async def select_games():
 
     with theme.frame('All Games'):
         # File path for game data
-        config = app.storage.user.get("config", {})
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "Not Set")
         user_confirm = UserConfirm()
 
+        
         selected_game = app.storage.user.get("selected_game", {})
         existing_games = app.storage.user.get("existing_games", {})
 

@@ -12,8 +12,8 @@ enable = Enable()
 @ui.page('/creategame')
 async def create_game():
     # File path for game data
-    config = app.storage.user.get("config", {})
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
 

@@ -19,8 +19,8 @@ async def new_asset():
 
     user_confirm = UserConfirm()
 
-    config = app.storage.user.get("config", {})
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     templates_paths = paths.get("templatefilepath", "Not Set")
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")

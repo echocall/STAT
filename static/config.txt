@@ -1,5 +1,5 @@
 [Preferences]
-darkmode = True
+darkmode = False
 font = NotoSerif
 
 [Paths]

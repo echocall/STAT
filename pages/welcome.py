@@ -1,9 +1,23 @@
 from handlers.confighandler import config, write_config
+from handlers.confighandler import config_path, load_config
 import elements.theme as theme
-from nicegui import ui
+from nicegui import ui, app
+
 
 @ui.page('/welcome')
 async def content() -> None:
+    #For converting config into dict
+    config_data = load_config(config_path)
+
+    structured_data = {}
+    
+    # Create organized nested structure for config.
+    for key in config_data:
+        structured_data[key] = config_data[key]
+
+    # Store as nested dictionary
+    app.storage.user["config"] = structured_data
+
     with theme.frame('Welcome'):
         with ui.column().classes('items-center w-full gap-4 p-6 max-w-5xl'):
             ui.label('Welcome to STAT: the Snazzy Tabletop Assistant Tracker!').classes('text-2xl font-bold accent-text text-center')

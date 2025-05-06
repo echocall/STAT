@@ -9,8 +9,8 @@ enable = Enable()
 @ui.page('/createsave')
 def create_save():
     # File path for game data
-    config = app.storage.user.get("config", {})
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
     saves_path = paths.get("savespath", "Not Set")

@@ -1,4 +1,3 @@
-
 import json
 from pathlib import Path
 from helpers.utilities import *
@@ -7,6 +6,7 @@ import os
 import shutil
 import datetime
 from handlers.confighandler import config
+from nicegui import app
 
 # CREATE
 def create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict:
@@ -352,7 +352,8 @@ def get_template_json(template_type: str) -> dict:
     """Takes the Template type, and return the template dict.
     Handles calculating the template path itself."""
     # Get the paths
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     rootpath = paths.get('osrootpath', "Not Set")
     targetted_path = paths.get('templatespath', "Not Set")
     str_directory_path = rootpath + targetted_path

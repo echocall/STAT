@@ -4,7 +4,6 @@ from handlers.assethandler import *
 from classes.Enable import *
 from helpers.utilities import *
 from helpers.crud import *
-from handlers.confighandler import config
 
 enable = Enable()
 
@@ -16,7 +15,8 @@ async def content() -> None:
         
         # PATHS PATHS PATHS
         # Get the paths
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "Not Set")
         assets_path = paths.get("assetspath", "Not Set")

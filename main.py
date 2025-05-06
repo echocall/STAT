@@ -15,7 +15,7 @@ import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
-from handlers.confighandler import set_paths, write_config, create_default_config
+from handlers.confighandler import config_path, config, create_default_config, set_paths, write_config
 
 from nicegui import ui, app
 
@@ -25,10 +25,11 @@ from helpers.utilities import *
 
 # Run this only if config doesn't exist or needs first-time setup
 if not config_path.exists() or config['Toggles'].getboolean('firstsetup'):
+    print(config_path)
     create_default_config()
+    set_paths()
     config['Toggles']['firstsetup'] = 'False'
-    write_config()
-
+    # write_config()
 
 if config['Toggles'].getboolean('firstsetup'):
     # Initialize config on startup
