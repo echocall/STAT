@@ -13,8 +13,20 @@ def game_handler(is_game_loaded: bool) -> object:
 def new_game_gui(new_game_dict: dict, file_name: str) -> dict:
     write_result = {'result': False, 'string': '', 'dict': {}, 'debug': []}
     file_name = ""
+    debug_log_path = Path("fallback_debug_path.log")  # fallback if path fails
+
     try:
-        # Load configuration
+        # Ensure config is loaded
+        if not config.sections():
+            if config_path.exists():
+                config.read(config_path)
+                write_result['debug'].append("Config reloaded from file.")
+            else:
+                create_default_config("config.txt")
+                config.read(config_path)
+                write_result['debug'].append("Config recreated and loaded.")
+
+         # Load configuration
         paths = config.get("Paths", {})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "")
@@ -71,10 +83,10 @@ def new_game_gui(new_game_dict: dict, file_name: str) -> dict:
             write_result['string'] = 'Successfully wrote game to file.'
             write_result['dict'] = new_game_dict
         else:
-            write_result['string'] = 'Failed to write game to file.'
+            write_result['string'] = f'Failed to write game to file at path: {game_file_path}'
     except Exception as e:
         write_result['string'] = str(e)
-        write_result['debug'].append("Error in new_game_gui")
+        write_result['debug'].append({'error': str(e), 'note': 'Error in new_game_gui'})
 
     # Save debug info to log file
     try:

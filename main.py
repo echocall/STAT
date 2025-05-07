@@ -53,5 +53,5 @@ async def index_page() -> None:
    # Dark mode
     dark_mode_on = config['Preferences'].getboolean('darkmode')
 
-ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False,
+ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
         storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode'))
