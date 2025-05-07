@@ -19,8 +19,7 @@ The user can view all the assets for a game, and delet an asset.
 ### INSTALL INSTRUCTIONS ####
 - Unzip the distrubution folder and run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
-- What is important is keeping the file structure for those files intact, especially config.txt
-- STAT will try to create the config file if it does not find one.
+  - What is important is keeping the file structure for those files intact, especially config.txt
 - The zip folder for the templates has been included.
 - You can check the config.txt to find where STAT has tried to find the best paths for it to write to.
 - It tries to detect what operating system you're on, and then pick the most common available path.
