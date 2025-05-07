@@ -3,11 +3,11 @@
 
 The purpose of this app is to provide a useful tool for keeping track of various numbers, counters, items, and so on that accumulate while playing a game. Especiall for a longer running game that the player may have to pause and continue on various days.
 
-Built with Python backend and NiceGUI for the front end, it provides a visual way of looking at the data that will eventually be nicer and easier to look at than a bunch of notes scrawled in a notepad. It aims to eventually help automate some of those tedious tasks like updating how much money the player has when they buy and sell an item in the game, keeping track of what effects ore events might be going on at any particular time, and other such functionality. It will also eventually automatically create and update a log file with the player's actions during a session of play so they can later look back at it.
+Built with Python backend and NiceGUI for the front end, it provides a visual way of looking at the data that will eventually be nicer and easier to look at than a bunch of notes scrawled in a notepad. It aims to eventually help automate some of those tedious tasks like updating how much money the player has when they buy and sell an item in the game, keeping track of what effects or events might be going on at any particular time, and other such functionality. It will also eventually automatically create and update a log file with the player's actions during a session of play so they can later look back at it.
 
 Currently the user can create a Game file which will hold the default values and information they set. 
 The user can use the View Game, or game_details page to view a game in more detail and edit it.
- - The user can save those changes to teh game file.
+ - The user can save those changes to the game file.
  - The user can also decide to delete the entire directory that game lives in from the details page.
    - This keeps lost heads from running around.
 The user can also create a Save file for that game that will use the values in the game as the basis for its own creation.
