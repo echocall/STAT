@@ -449,10 +449,12 @@ def log_debug(message: str):
     user_config = app.storage.user.get("config", {})
     paths = user_config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
-    osrootpath = Path(root_path)  # Replace with your real root path
-    debug_log_path = os.path.join(osrootpath, 'debug.log')
+    debug_piece = paths.get('debugpath', "Not Set")
+    str_debug_path = root_path + debug_piece
+    debug_path = Path(str_debug_path)
+    debug_log_path = os.path.join(debug_path, 'debug.log')
     try:
-        os.makedirs(osrootpath, exist_ok=True)
+        os.makedirs(debug_path, exist_ok=True)
         with open(debug_log_path, 'a') as log_file:
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             log_file.write(f'[{timestamp}] {message}\n')

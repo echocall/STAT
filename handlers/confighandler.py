@@ -117,6 +117,7 @@ def create_default_config(configfilename: str):
         "customosrootpath": "",
         "templatespath": "/statassets/templates",
         "gamespath": "/statassets/games",
+        "debugpath": "/statassets",
         "savespath": "/saves",
         "assetspath": "/assets",
         "defaultassetspath": "/assets/default",

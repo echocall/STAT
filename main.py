@@ -26,8 +26,7 @@ from helpers.utilities import *
 
 # Run this only if config doesn't exist or needs first-time setup
 if not config_path.exists() or config['Toggles'].getboolean('firstsetup'):
-    print(config_path)
-    create_default_config()
+    create_default_config('config.txt')
     set_paths()
     config['Toggles']['firstsetup'] = 'False'
     # write_config()
