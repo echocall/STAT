@@ -2,7 +2,7 @@
 from multiprocessing import freeze_support  
 freeze_support() 
 from handlers.confighandler import set_paths, write_config, config, config_path
-
+from helpers.logging import log_startup_event
 from typing import Annotated
 import pages.home_page as home_page
 import pages.select_games as select_games
@@ -24,25 +24,49 @@ from pages import *
 import elements.theme as theme
 from helpers.utilities import *
 
-# Run this only if config doesn't exist or needs first-time setup
-if not config_path.exists() or config['Toggles'].getboolean('firstsetup'):
-    create_default_config('config.txt')
-    set_paths()
-    config['Toggles']['firstsetup'] = 'False'
-    # write_config()
 
-if config['Toggles'].getboolean('firstsetup'):
-    # Initialize config on startup
-    set_paths()
-    write_config()
-    config['Toggles']['showwelcome'] = 'False'
 
 @ui.page('/')
 async def index_page() -> None:
+    # Run this only if config doesn't exist or needs first-time setup
+    if not config_path.exists():
+        log_startup_event("No config file found. Creating default config.")
+        create_default_config('config.txt')
+        set_paths()
+        config['Toggles']['firstsetup'] = 'False'
+        config['Toggles']['showwelcome'] = 'True'
+        write_config()
+        log_startup_event("Default config created and paths set.")
+        ui.notify("No config.txt file was created so we made a default one for you! It should be in the same file as your stat.exe.",
+                  position='top',
+                  posiition='warning')
+
+    elif config['Toggles'].getboolean('firstsetup'):
+        log_startup_event("First setup toggle detected. Running initial config setup.")
+        set_paths()
+        config['Toggles']['firstsetup'] = 'False'
+        config['Toggles']['showwelcome'] = 'True'
+        write_config()
+        log_startup_event("Initial config setup completed.")
+    else:
+        log_startup_event("Config loaded normally.")
+
     # Show Welcome or Home Page
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'
         write_config()
+
+        #For converting config into dict
+        config_data = load_config(config_path)
+
+        structured_data = {}
+        
+        # Create organized nested structure for config.
+        for key in config_data:
+            structured_data[key] = config_data[key]
+
+        # Store as nested dictionary
+        app.storage.user["config"] = structured_data
 
         with theme.frame('Welcome'):
             await welcome.content()
@@ -54,4 +78,4 @@ async def index_page() -> None:
     dark_mode_on = config['Preferences'].getboolean('darkmode')
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
-        storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode'))
+        storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode', fallback=False))

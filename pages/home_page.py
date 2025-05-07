@@ -3,17 +3,7 @@ from nicegui import app, ui
 
 @ui.page('/')
 async def content() -> None:
-    #For converting config into dict
-    config_data = load_config(config_path)
-
-    structured_data = {}
     
-    # Create organized nested structure for config.
-    for key in config_data:
-        structured_data[key] = config_data[key]
-
-    # Store as nested dictionary
-    app.storage.user["config"] = structured_data
 
     ui.label("Welcome to STAT!").classes('text-center accent-text text-lg')
     ui.label("The Snazzy Tabletop Assistant Tracker").classes('text-center')
