@@ -19,6 +19,8 @@ def create_save():
 
     str_games_path = root_path + games_path
 
+
+
     new_save_dict = {'name': '','base_game': '', 'create_date':'', 
                      'date_last_save': '','description': '', 
                      'asset_customs': False,'actor_customs': False,
