@@ -107,7 +107,7 @@ def create_default_config(configfilename: str):
     default_root = get_default_install_path("STAT")
 
     config["Preferences"] = {
-        "darkmode": "True",
+        "darkmode": "False",
         "font": "NotoSerif"
     }
 
@@ -132,8 +132,8 @@ def create_default_config(configfilename: str):
     }
 
     config["Toggles"] = {
-        "firstsetup": "False",
-        "showwelcome": "False",
+        "firstsetup": "True",
+        "showwelcome": "True",
         "showexplanations": "True",
         "customroot": "False"
     }

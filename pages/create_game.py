@@ -6,6 +6,7 @@ from handlers.gamehandler import *
 from elements.UserConfirm import *
 from nicegui import app,ui
 import traceback
+from handlers.confighandler import config, config_path, load_config, create_default_config
 
 enable = Enable()
 
@@ -111,6 +112,7 @@ async def create_game():
         matches_template = False
         game_name_result = {}
         create_game_result = False
+        
         # Creating the game
         try:
             # Ensure the game matches the template
@@ -134,8 +136,7 @@ async def create_game():
                             ui.navigate.reload()
                             
                         else:
-                            ui.notify(f"""Game file could not be created. Please check file permissions.
-                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                            ui.notify(f"""File Write Failed: {create_game_result['string']} """,
                                         type='negative',
                                         position='top',
                                         multi_line = True,)
@@ -143,7 +144,7 @@ async def create_game():
                         print(traceback.format_exc())
                         ui.notify(f"""Game file could not be created.
                                         Please check file permissions.
-                                        More information can be found in the debug log in the folder where STAT was trying to create the game.""",
+                                        {create_game_result['string']}""",
                                         type='negative',
                                         position='top',
                                         multi_line = True)

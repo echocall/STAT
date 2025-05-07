@@ -422,6 +422,7 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
         json_obj = json.dumps(data, indent=4)
 
         target_file_path = Path(str_target_file_path)
+        print(target_file_path)
 
         # Write the JSON data to the file
         with open(target_file_path, "w", encoding="utf-8") as f:
