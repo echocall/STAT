@@ -26,18 +26,9 @@ from helpers.utilities import *
 
 
 @ui.page('/')
-async def index_page() -> None:
+def index_page() -> None:
     # Run this only if config doesn't exist or needs first-time setup
-    if not config_path.exists():
-        log_startup_event("No config file found. Creating default config.")
-        create_default_config('config.txt')
-        set_paths()
-        config['Toggles']['firstsetup'] = 'False'
-        config['Toggles']['showwelcome'] = 'True'
-        write_config()
-        log_startup_event("Default config created and paths set.")
-
-    elif config['Toggles'].getboolean('firstsetup'):
+    if config['Toggles'].getboolean('firstsetup'):
         log_startup_event("First setup toggle detected. Running initial config setup.")
         set_paths()
         config['Toggles']['firstsetup'] = 'False'
