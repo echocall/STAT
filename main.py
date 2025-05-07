@@ -1,11 +1,13 @@
 # macOS packaging support
-from multiprocessing import freeze_support  # noqa
-freeze_support()  # noqa#!/usr/bin/env python3
+from multiprocessing import freeze_support  
+freeze_support() 
+from handlers.confighandler import set_paths, write_config, config, config_path
 
 from typing import Annotated
 import pages.home_page as home_page
 import pages.select_games as select_games
 import pages.select_saves as select_saves
+import pages.select_assets as select_assets
 import pages.create_game as create_game
 import pages.create_asset as create_asset
 import pages.create_save as create_save
@@ -14,38 +16,42 @@ import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.game_detail as game_detail
 import pages.edit_asset as edit_asset
 import pages.welcome as welcome
-from fastapi import Depends 
+from handlers.confighandler import config_path, config, create_default_config, set_paths, write_config
+
 from nicegui import ui, app
 
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *
-import configparser
 
+# Run this only if config doesn't exist or needs first-time setup
+if not config_path.exists() or config['Toggles'].getboolean('firstsetup'):
+    create_default_config('config.txt')
+    set_paths()
+    config['Toggles']['firstsetup'] = 'False'
+    # write_config()
 
-# Load configuration
-config = configparser.ConfigParser()
-config.read('config.txt')
+if config['Toggles'].getboolean('firstsetup'):
+    # Initialize config on startup
+    set_paths()
+    write_config()
+    config['Toggles']['showwelcome'] = 'False'
 
 @ui.page('/')
 async def index_page() -> None:
     # Show Welcome or Home Page
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'
-        # save updated config
-        with open('config.txt', 'w') as configfile:
-            config.write(configfile)
+        write_config()
+
         with theme.frame('Welcome'):
             await welcome.content()
     else:
         with theme.frame('Home Page'):
             await home_page.content()
    
-    # Dark mode
-    if config['Preferences'].getboolean('darkMode'):
-        dark_mode_on = True
-    else:
-        dark_mode_on = False
+   # Dark mode
+    dark_mode_on = config['Preferences'].getboolean('darkmode')
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False,
-        storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkMode'))
+        storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode'))

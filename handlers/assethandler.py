@@ -1,6 +1,7 @@
 from helpers.crud import *
 from helpers.utilities import *
 from classes.MyAsset import *
+from handlers.confighandler import config
 
 # Retrieves all assets associated with a game/save
 def asset_handler(full_default_assets_path: str, defaultAssets: list, hasCustom: bool,
@@ -70,7 +71,7 @@ def default_assets_fetch(defaultFilePath: str, defaultAssets: list)-> dict:
     retrieved_assets = []
     result = {}
     
-    # call multi_json_getter with the filePath to reurn the default assets in the folder.
+    # call multi_file_getter with the filePath to reurn the default assets in the folder.
     retrieved_assets = get_default_assets_list(defaultFilePath)
     # get the names of the retrieved assets
     retrieved_names = filter_list_value_with_set(retrieved_assets, "name")
@@ -110,6 +111,56 @@ def single_asset_fetch(full_asset_path: str, file_name: str) -> dict:
 
     return result
 
+def get_assets(directory_path: str) -> dict:
+    """Fetch all the assets and package into a
+      dictionary of {'asset_name':{asset_dict}} and put into
+        the 'assets' field of a result_dict. """
+    get_assets_result = {'result': False, 'message': '', 'assets': {}}
+    fetched_assets_list = []
+    asset_names = []
+    all_assets = {}
+
+    try:
+        asset_names_result = get_assets_names(directory_path)
+    except Exception:
+        print("Error getting the names of all the assets for the game!")
+        get_assets_result['message'] = "Error getting the names of all the assets for the game!"
+
+    try:
+        fetched_assets_list = multi_file_getter(directory_path, 'assets')
+    except Exception:
+        print("Error occutred trying to fetch all assets in get assets!")
+        get_assets_result['message'] = "Error occutred trying to fetch all assets in get assets!"
+
+    try:
+        # If we got asset_names back
+        if asset_names_result:
+            asset_names = asset_names_result['list']
+
+            # Create a dict with the name from asset_names, and the json from fetched_assets_list
+            for name, json in zip(asset_names, fetched_assets_list):
+                all_assets[name] = json
+
+            get_assets_result['result'] = True
+            get_assets_result['message'] = 'Success returning assets!'
+            get_assets_result['assets'] = all_assets
+        else:
+            get_assets_result['message'] = "Unable to get the names of the games. Please check the paths in config.txt"
+    except Exception:
+        get_assets_result['message'] = 'Error matching the asset names and asset dicts in get_assets! Please check the paths in config.txt'
+
+    return get_assets_result
+
+def get_assets_names(directory_path: str) -> dict:
+    """Return a result_dict with a 'list' of names."""
+    asset_name_result = {}
+    try:
+        asset_name_result = multi_file_names_getter(directory_path, "assets" )
+    except Exception as e:
+            # TODO: Handle this error better as a program
+            print(f"An unexpected error occurred while getting asset names in get_assets_names.")
+    finally:
+        return asset_name_result
 
 # Handle merging custom assets & default assets
 # returns list of asset objects
@@ -127,7 +178,7 @@ def asset_loader(asset_objects: dict):
     # prep the types for being seen
 
 # create new asset from the gui
-def new_asset_gui( is_default: bool, configfilename: str,
+def new_asset_gui( is_default: bool,
     new_asset: dict, game_dict: dict, save_dict: dict
 ) -> dict:
     write_result = {'result': False, 'message': '', 'debug': []}
@@ -136,7 +187,6 @@ def new_asset_gui( is_default: bool, configfilename: str,
         write_result['debug'].append({'game_name_result': game_name_result})
         game_name = game_name_result['string']
 
-        config = get_config_as_dict(configfilename)
         paths = config.get("Paths", {})
         root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")

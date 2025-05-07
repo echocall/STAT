@@ -91,9 +91,10 @@ def menu() -> None:
                 with ui.menu().props('anchor="top end" self="top start" auto-close'):  
                     with ui.link(target='/createasset'):
                         ui.menu_item('Create Asset')
+                    with ui.link(target='/selectassets'):
+                        ui.menu_item('View Assets')
                     ui.menu_item('View Asset')
-                    with ui.link(target='/editasset'):
-                        ui.menu_item('Edit Asset')
+                    ui.menu_item('Edit Asset')
                         
             # EFFECTS
             with ui.menu_item('Effects Menu', auto_close=False):
@@ -117,11 +118,14 @@ def menu() -> None:
     # Settings menu
     with ui.button(icon='settings').classes('scale-100').props('color=secondary'):
         with ui.menu() as settings_menu:
-            ui.menu_item('Settings', lambda: ui.notify('Preferences'))
-            ui.menu_item('Preferences', lambda: ui.notify('Preferences'))
+            ui.menu_item('Settings', lambda: ui.notify('Under construction! Thank you for your patience.', position='top', type='Warning'))
+            ui.menu_item('Preferences', lambda: ui.notify('Under Construction! Thank you for your patience.', position='top', type='Warning'))
             ui.menu_item('Help',
-                         lambda: ui.notify('Selected item 3'), auto_close=False)
-            ui.menu_item('About', auto_close=False)
+                         lambda: ui.notify('Under construction! Thank you for your patience.', position='top', type='Warning'))
+            with ui.link(target='/welcome'):
+                ui.menu_item('Welcome Page')
+            with ui.menu_item('About', auto_close=False):
+                ui.tooltip("""STAT by Pam Pepper. Released under the MIT license. Alpha""")
             ui.separator()
             ui.menu_item('Close', settings_menu.close)
             ui.separator()

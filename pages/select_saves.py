@@ -10,10 +10,9 @@ async def view_saves():
     with theme.frame('View Saves'):
         # File path for save data
         selected_game = app.storage.user.get("selected_game", {})
-        # Store config as nested dictionary
-        config = get_config_as_dict('config.txt')
         # Get the paths
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath")
         games_path = paths.get("gamespath", "Not Set")
         saves_path = paths.get("savespath", "Not Set")
@@ -86,10 +85,15 @@ async def view_saves():
                     ui.notify(f"Error loading saves: {str(e)}", type='negative', position="top",)
                     return
                 
+                with ui.column().classes('items-center w-full gap-4 p-6 max-w-5xl'):
+                    ui.label("When you selected a save the Selected Save in the bottom left corner will update.")
+                    ui.label("Select a save to load:")
+
                 with ui.link(target='/createsave'):
                     ui.button("Create New Save")
+                with ui.link(target='/loadeddash'):
+                    ui.button("Go to Dashboard")
 
-                ui.label("Select a save to load:").classes('h-4')
             
                 save_card_container = ui.row().classes("full flex items-center")
                 with save_card_container:

@@ -14,10 +14,9 @@ async def content() -> None:
         selected_asset = app.storage.user.get("selected_asset", {})
         
         # PATHS PATHS PATHS
-        # Store as nested dictionary
-        config = get_config_as_dict('config.txt')
         # Get the paths
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "Not Set")
         assets_path = paths.get("assetspath", "Not Set")

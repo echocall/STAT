@@ -124,8 +124,8 @@ async def content() -> None:
         selected_game = app.storage.user.get("selected_game", {})
         edited_game = selected_game
         
-        config = app.storage.user.get("config", {})
-        paths = config.get("Paths",{})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths",{})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "Not Set")
 
@@ -154,7 +154,7 @@ async def content() -> None:
                 
                 # TODO: Implement functionality, tooltips, and user confirm
                 btn_delete = ui.button('Delete Game Directory', color='red',
-                                        on_click=lambda: user_confirm.show(f"""Are you sure you want to delete the game and its files? 
+                                        on_click=lambda: user_confirm.show(f"""Are you sure you want to delete the game and its files? \
                                                                              This will delete all files associated with the game and the game itself.""", 
                                         lambda: delete_game_directory_wrapper(str_directory_path)))
                 with btn_delete:

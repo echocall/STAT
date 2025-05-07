@@ -1,5 +1,5 @@
 [Preferences]
-darkmode = True
+darkmode = False
 font = NotoSerif
 
 [Paths]
@@ -8,6 +8,7 @@ defaultrootpath = C:\Users\strip\AppData\Local\STAT
 customosrootpath = 
 templatespath = \statassets\templates
 gamespath = \statassets\games
+debugpath = \statassets
 savespath = \saves
 assetspath = \assets
 defaultassetspath = \assets\default
@@ -22,6 +23,7 @@ imagespath = \images
 
 [Toggles]
 firstsetup = False
-showwelcome = False
+showwelcome = True
 showexplanations = True
 customroot = False
+

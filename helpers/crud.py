@@ -1,4 +1,3 @@
-
 import json
 from pathlib import Path
 from helpers.utilities import *
@@ -6,6 +5,7 @@ import traceback
 import os
 import shutil
 import datetime
+from nicegui import app
 
 # CREATE
 def create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict:
@@ -212,7 +212,11 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
             if subdir.is_dir():
                 json_files = list(subdir.glob("*.json"))
                 for json_file in json_files:
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # If we are looking for assets, effect, or events
     elif objectType.lower() in {"assets", "effects", "events"}:
         # Look in 'default' and 'custom' inside passed-in directory
@@ -220,13 +224,21 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
             category_path = directory_path / category
             if category_path.exists():
                 for json_file in category_path.glob("*.json"):
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # If we are looking for saves
     elif objectType.lower() in {"saves"}:
         for subdir in directory_path.iterdir():
             if subdir.is_dir():
                 for json_file in directory_path.glob("*.json"):
-                    target_json_objects.append(json_file)
+                    with json_file.open('r', encoding='utf-8') as f:
+                        try:
+                            target_json_objects.append(json.load(f))
+                        except json.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
     # Getting images.
     elif objectType.lower() == "images":
         allowed_extensions = {".png", ".bmp", ".gif", ".jpeg"}
@@ -238,7 +250,11 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
     else:
         # Default: scan all .json files recursively
         for json_file in directory_path.rglob("*.json"):
-            target_json_objects.append(json_file)
+            with json_file.open('r', encoding='utf-8') as f:
+                try:
+                    target_json_objects.append(json.load(f))
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding {json_file}: {e}")
 
     return target_json_objects
 
@@ -350,11 +366,9 @@ def get_custom_assets_names(full_base_path: str) -> list:
 def get_template_json(template_type: str) -> dict:
     """Takes the Template type, and return the template dict.
     Handles calculating the template path itself."""
-    configfilename = 'config.txt'
-    # Store as nested dictionary
-    config = get_config_as_dict(configfilename)
     # Get the paths
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     rootpath = paths.get('osrootpath', "Not Set")
     targetted_path = paths.get('templatespath', "Not Set")
     str_directory_path = rootpath + targetted_path
@@ -390,20 +404,6 @@ def get_template_json(template_type: str) -> dict:
         print(f"An unexpected error occurred while getting game names. See terminal for more.")
         print(f"{e}\n{traceback.format_exc()}")
         return template
-
-# gets the config files as a nested dictionary
-def get_config_as_dict(configfilename: str) -> dict:
-    # getting config information
-    config_data = load_config(configfilename)
-    structured_data = {}
-    # Create organized nested structure for config.
-    for key in config_data:
-        structured_data[key] = config_data[key]
-
-    # Store as nested dictionary
-    config = structured_data
-    return config
-
 
 # UPDATE
 def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -> dict:
@@ -446,13 +446,15 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
 def log_debug(message: str):
     """Appends a debug message to the debug log file."""
     # Define root path for logs
-    config = get_config_as_dict(config.txt)
-    paths = config.get("Paths", {})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
-    osrootpath = Path(root_path)  # Replace with your real root path
-    debug_log_path = os.path.join(osrootpath, 'debug.log')
+    debug_piece = paths.get('debugpath', "Not Set")
+    str_debug_path = root_path + debug_piece
+    debug_path = Path(str_debug_path)
+    debug_log_path = os.path.join(debug_path, 'debug.log')
     try:
-        os.makedirs(osrootpath, exist_ok=True)
+        os.makedirs(debug_path, exist_ok=True)
         with open(debug_log_path, 'a') as log_file:
             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             log_file.write(f'[{timestamp}] {message}\n')

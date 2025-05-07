@@ -19,8 +19,8 @@ async def new_asset():
 
     user_confirm = UserConfirm()
 
-    config = app.storage.user.get("config", {})
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     templates_paths = paths.get("templatefilepath", "Not Set")
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
@@ -171,7 +171,7 @@ async def new_asset():
                                 multi_line=True)
                 # attempt to create asset here.
                 try:
-                    create_result = new_asset_gui(is_default, 'config.txt', new_asset_dict, selected_game, selected_save)
+                    create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save)
                     if create_result['result']:
                         ui.notify("Congrats! Asset created!", 
                                     type='positive', 
@@ -243,7 +243,8 @@ async def new_asset():
             with ui.row().classes():
                 with ui.column().classes():
                     ui.label("Is this for a default asset?").classes('font-medium')
-                    is_default = ui.toggle({True:'Default', False:'Custom'})
+                    is_default = ui.toggle({'Default':'Default', 'Custom':'Custom'})
+                    is_default.bind_value(new_asset_dict, 'asset_type')
                     is_default.props('color="secondary"')
                         
             # Input name for the asset.
@@ -282,11 +283,8 @@ async def new_asset():
             # Asset Type
             with ui.row().classes(): 
                 with ui.column().classes():
-                    ui.label("Asset Type").classes('font-medium')
-                    asset_type_input = ui.input(label='Asset Type', placeholder='type here',
-                                        on_change=lambda f: asset_type_chars_left.set_text(str(len(f.value)) + ' used.')).props('clearable')
-                    asset_type_chars_left = ui.label()
-                    asset_type_input.bind_value(new_asset_dict, 'asset_type')
+                    lbl_asset_type = ui.label("Asset Type").classes('font-medium')
+                    lbl_asset_type.bind_text(new_asset_dict, 'asset_type')
 
             # Attributes
             with ui.row().classes(): 

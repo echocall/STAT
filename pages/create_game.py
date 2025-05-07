@@ -12,8 +12,8 @@ enable = Enable()
 @ui.page('/creategame')
 async def create_game():
     # File path for game data
-    config = app.storage.user.get("config", {})
-    paths = config.get("Paths",{})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths",{})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "Not Set")
 
@@ -122,7 +122,7 @@ async def create_game():
                 game_name_result = get_new_game_name(new_game_name, str_games_path)
                 if not "_Placeholder" in game_name_result['name']:
                     try:
-                        create_game_result = new_game_gui('config.txt', new_game_dict, game_name_result['file'])
+                        create_game_result = new_game_gui( new_game_dict, game_name_result['file'])
                         if create_game_result['result']:
                             app.storage.user['selected_game'] = create_game_result['dict']
                             ui.notify(f"""Success! You've created the game {new_game_dict['name']}!

@@ -1,10 +1,9 @@
-import configparser
+from handlers.confighandler import config, config_path, write_config
 from nicegui import ui
 
 def apply_font():
-    config = configparser.ConfigParser()
-    config.read('./static/config.txt')
-    font_choice = config['Preferences'].get('font')
+
+    font_choice = config['Preferences']['font']
 
     if font_choice == 'ShantellSans':
         font_family = 'Shantell Sans'
