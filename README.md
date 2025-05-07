@@ -19,12 +19,13 @@ The user can view all the assets for a game, and delet an asset.
 ### INSTALL INSTRUCTIONS ####
 - Fork the repository and open it in github
 - In the console use "pip install -r requirements.txt" to install the requirements.
-- 
-
-- Run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
+- Then in the console use: .\test_venv\scripts\activate.ps1  to enter the virtual test environment.
+- Use python3 main.py in the console to run the application.
+- Run the program for the first time. It WILL probably crash.
+  - This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
-- What is important is keeping the file structure for those files intact, especially config.txt
-- STAT will try to create the config file if it does not find one.
+  - What is important is keeping the file structure for those files intact, especially config.txt
+  - - STAT will try to create the config file if it does not find one.
 - The zip folder for the templates has been included.
 - You can check the config.txt to find where STAT has tried to find the best paths for it to write to.
 - It tries to detect what operating system you're on, and then pick the most common available path.
