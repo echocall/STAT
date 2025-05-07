@@ -17,9 +17,14 @@ The user can view all the assets for a game, and delet an asset.
 
 
 ### INSTALL INSTRUCTIONS ####
-- Fork the repository and open it in github
-- In the console use "pip install -r requirements.txt" to install the requirements.
-- 
+In order to run STAT via Visual Studio Code:
+ - Fork the branch and open in VSC
+ - type 'pip install -r requirements.text' into the console.
+   - this will download the exact environment requirements needed to run the program, the same as I had at the time of creating the requirements.txt
+ - At that point you should be able to paste: .\test_venv\scripts\activate.ps1 into console to go into the virtual test environment. You should see (test_venv) pop up in front of your file path in Visual Studio Code.
+ - type python3 main.py to run the program.
+
+More information on requirements can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/txt"
 
 - Run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
@@ -53,10 +58,7 @@ STAT
         └── template_asset.json
         └── template_effect.json
 
-If you need to run STAT from the python menu, fork the repository into the directory of your choice.
-I've included a requirements.txt file that will enable you to install all the requirements into your python environment with "pip install -r requirements.txt" to get all the exact version of what I used.
 
-More information can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/
 
 
 ### STAT ###
