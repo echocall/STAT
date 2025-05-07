@@ -21,13 +21,13 @@ The user can view all the assets for a game, and delet an asset.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
 - What is important is keeping the file structure for those files intact, especially config.txt
 - STAT will try to create the config file if it does not find one.
+- The zip folder for the templates has been included.
+- You can check the config.txt to find where STAT has tried to find the best paths for it to write to.
+- It tries to detect what operating system you're on, and then pick the most common available path.
 
 STAT
-└── static
-│   ├── config.txt
-│   ├── fonts
-│   │    └── font_family
-│   │           └── font.ttw
+├── config.txt
+│   
 └── statassets
     ├── games
     │   └── <game_name>
