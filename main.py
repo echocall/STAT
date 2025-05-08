@@ -1,6 +1,7 @@
 # macOS packaging support
 from multiprocessing import freeze_support  
 freeze_support() 
+import sys
 from handlers.confighandler import config_path, config, create_default_config, set_paths, write_config, load_config
 from helpers.logging import log_startup_event
 from typing import Annotated
@@ -15,9 +16,7 @@ import pages.create_effect as create_effect
 import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.detail_game as detail_game
 import pages.welcome as welcome
-
 from nicegui import ui, app
-
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *
