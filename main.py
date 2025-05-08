@@ -14,7 +14,6 @@ import pages.create_save as create_save
 import pages.create_effect as create_effect
 import pages.loaded_save_dashboard as loaded_save_dashboard
 import pages.detail_game as detail_game
-import pages.detail_asset as detail_asset
 import pages.welcome as welcome
 
 from nicegui import ui, app
