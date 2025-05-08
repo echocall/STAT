@@ -19,7 +19,7 @@ The user can view all the assets for a game, and delet an asset.
 ### INSTALL INSTRUCTIONS ####
 In order to run STAT via Visual Studio Code:
  - Fork the branch and open in VSC
- - type 'pip install -r requirements.text' into the console.
+ - type 'pip install -r requirements.txt' into the console.
    - this will download the exact environment requirements needed to run the program, the same as I had at the time of creating the requirements.txt
  - At that point you should be able to paste: .\test_venv\scripts\activate.ps1 into console to go into the virtual test environment. You should see (test_venv) pop up in front of your file path in Visual Studio Code.
  - type python3 main.py to run the program.
