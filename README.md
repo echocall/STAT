@@ -26,6 +26,9 @@ In order to run STAT via Visual Studio Code:
 
 More information on requirements can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/txt"
 
+# Note, you will need to change the Root file path in the config.txt in order for the program to work.
+# The confighandler has been pulled due to bad behavior and a messed up pull request.
+
 - Run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
   - What is important is keeping the file structure for those files intact, especially config.txt
