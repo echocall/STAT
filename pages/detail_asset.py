@@ -13,6 +13,8 @@ async def new_asset():
     selected_asset = app.storage.user.get("selected_asset", {})
 
     with theme.frame('View Asset'):
+        ui.label("Sorry! This page isn't ready yet, please return later.").classes('text-xl')
+
         with ui.column().classes("flex content-center w-100"):
             if not selected_game or 'name' not in selected_game:
                 with ui.row():
@@ -20,8 +22,19 @@ async def new_asset():
                     ui.label('Warning: No selected game detected.').classes('text-2xl')
                 ui.label('Cannot create asset with no game selected.')
                 ui.label('Please select a game from \'Select Games\'.')
+                ui.label('Then select an asset!')
                 with ui.link(target = '/selectgames'):
                     ui.button('Find Game File')
+            elif selected_asset or 'name' not in selected_asset:
+                with ui.row():
+                    ui.icon('warning').classes('text-3xl')
+                    ui.label('Warning: No selected asset detected.').classes('text-2xl')
+                ui.label('Cannot create asset with no asset selected.')
+                ui.label('Please select a asset from \'Select Assets\'.')
+                with ui.link(target = '/selectassets'):
+                    ui.button('Find Game File')
+            elif selected_asset or 'name' not in selected_asset:
+
             else:
                 # Name the source game
                 with ui.row().classes('items-center justify-start space-x-4'):

@@ -13,8 +13,9 @@ import pages.create_asset as create_asset
 import pages.create_save as create_save
 import pages.create_effect as create_effect
 import pages.loaded_save_dashboard as loaded_save_dashboard
-import pages.game_detail as game_detail
-import pages.edit_asset as edit_asset
+import pages.detail_game as detail_game
+
+import pages.detail_asset as detail_asset
 import pages.welcome as welcome
 
 from nicegui import ui, app
@@ -22,13 +23,24 @@ from nicegui import ui, app
 from pages import *
 import elements.theme as theme
 from helpers.utilities import *
+import configparser
 
 
 
 @ui.page('/')
 async def index_page() -> None:
     #For converting config into dict
-    config_data = load_config(config_path)
+    # Helper for PyInstaller compatibility
+    def resource_path(relative_path: str) -> Path:
+        try:
+            base_path = Path(sys._MEIPASS)
+        except AttributeError:
+            base_path = Path(".").resolve()
+        return base_path / relative_path
+
+    # Global config path and config object 
+    config_data = resource_path("config.txt")
+    config = configparser.ConfigParser()
 
     structured_data = {}
     

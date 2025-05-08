@@ -15,7 +15,10 @@ async def select_assets():
                     position='top',
                     type='warning')
         else:
-            ui.navigate.to(f"/viewasset/")
+            # ui.navigate.to(f"/viewasset/{selected_asset['name']}")
+            ui.notify("Sorry, this feature isn't ready yet!",
+                      position = 'top',
+                      type = 'warning')
 
     def select_target_asset(existing_assets: dict, selected_asset_name: str):
         """Load the selected asset into storage and refresh the page."""
