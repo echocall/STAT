@@ -27,8 +27,8 @@ import configparser
 
 @ui.page('/')
 async def index_page() -> None:
-    #For converting config into dict
-    # Helper for PyInstaller compatibility
+    # Global config path and config object 
+    configParser = configparser.ConfigParser() 
     def resource_path(relative_path: str) -> Path:
         try:
             base_path = Path(sys._MEIPASS)
@@ -37,8 +37,11 @@ async def index_page() -> None:
         return base_path / relative_path
 
     # Global config path and config object 
-    config_data = configparser.ConfigParser()
+    config_path = resource_path("config.txt")
 
+    config_data = configParser.read(config_path)
+
+    # For converting config into dict
     structured_data = {}
     
     # Create organized nested structure for config.
