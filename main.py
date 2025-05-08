@@ -27,18 +27,8 @@ import configparser
 @ui.page('/')
 async def index_page() -> None:
     # Global config path and config object 
-    configParser = configparser.ConfigParser() 
-    def resource_path(relative_path: str) -> Path:
-        try:
-            base_path = Path(sys._MEIPASS)
-        except AttributeError:
-            base_path = Path(".").resolve()
-        return base_path / relative_path
-
-    # Global config path and config object 
-    config_path = resource_path("config.txt")
-
-    config_data = configParser.read(config_path)
+    # Load configuration
+    config_data = load_config('config.txt')
 
     # For converting config into dict
     structured_data = {}

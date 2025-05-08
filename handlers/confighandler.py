@@ -79,13 +79,23 @@ def get_default_install_path(app_name) -> Path:
         fallback_path.mkdir(parents=True, exist_ok=True)
         return fallback_path
 
-def load_config(config_file: str) -> dict:
+def load_config(config_file: str):
+    # Reading from config file
     configParser = configparser.ConfigParser()
-    configParser.read(config_file)
+    configFilePath = config_file
+    configParser.sections()
+    configParser.read(configFilePath)
 
     config_dict = {}
-    for section in configParser.sections():
-        config_dict[section] = dict(configParser[section])
+    # We want to preserve the sections for organization later
+    for Section in configParser.sections():
+        temp_dict = {}
+        # Create a temporary diction that gets added to the Sectiond ictionary
+        for key, value in configParser[Section].items():
+            temp_dict.update({key:value})
+        config_dict[Section] = temp_dict
+
+    # Return the organized dictionary
     return config_dict
 
 def get_config_as_dict(configfilename: str) -> dict:
