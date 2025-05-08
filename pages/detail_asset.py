@@ -5,7 +5,7 @@ from nicegui import app, ui
 
 enable = Enable()
 @ui.page('/viewasset/{name}')
-async def new_asset():
+async def detail_asset():
     # pulling in the information of game etc
     # load in selected_game, if there is one.
     selected_game = app.storage.user.get("selected_game", {})
