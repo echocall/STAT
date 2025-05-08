@@ -27,42 +27,22 @@ from helpers.utilities import *
 
 @ui.page('/')
 async def index_page() -> None:
-    # Run this only if config doesn't exist or needs first-time setup
-    if not config_path.exists():
-        log_startup_event("No config file found. Creating default config.")
-        create_default_config('config.txt')
-        set_paths()
-        config['Toggles']['firstsetup'] = 'False'
-        config['Toggles']['showwelcome'] = 'True'
-        write_config()
-        log_startup_event("Default config created and paths set.")
+    #For converting config into dict
+    config_data = load_config(config_path)
 
-    elif config['Toggles'].getboolean('firstsetup'):
-        log_startup_event("First setup toggle detected. Running initial config setup.")
-        set_paths()
-        config['Toggles']['firstsetup'] = 'False'
-        config['Toggles']['showwelcome'] = 'True'
-        write_config()
-        log_startup_event("Initial config setup completed.")
-    else:
-        log_startup_event("Config loaded normally.")
+    structured_data = {}
+    
+    # Create organized nested structure for config.
+    for key in config_data:
+        structured_data[key] = config_data[key]
 
+    # Store as nested dictionary
+    app.storage.user["config"] = structured_data
     # Show Welcome or Home Page
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'
         write_config()
 
-        #For converting config into dict
-        config_data = load_config(config_path)
-
-        structured_data = {}
-        
-        # Create organized nested structure for config.
-        for key in config_data:
-            structured_data[key] = config_data[key]
-
-        # Store as nested dictionary
-        app.storage.user["config"] = structured_data
 
         with theme.frame('Welcome'):
             await welcome.content()
