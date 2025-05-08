@@ -22,9 +22,7 @@ import elements.theme as theme
 from helpers.utilities import *
 import configparser
 
-# Load configuration
-config = configparser.ConfigParser()
-config.read('config.txt')
+
 
 @ui.page('/')
 async def index_page() -> None:
@@ -38,14 +36,14 @@ async def index_page() -> None:
     # Create organized nested structure for config.
     for key in config_data:
         structured_data[key] = config_data[key]
+
     # Store as nested dictionary
     app.storage.user["config"] = structured_data
-    stored_config = structured_data
-
     # Show Welcome or Home Page
-    if stored_config['Toggles'].getboolean('showwelcome'):
-        stored_config['Toggles']['showwelcome'] = 'False'
+    if config['Toggles'].getboolean('showwelcome'):
+        config['Toggles']['showwelcome'] = 'False'
         write_config()
+
 
         with theme.frame('Welcome'):
             await welcome.content()
@@ -53,6 +51,8 @@ async def index_page() -> None:
         with theme.frame('Home Page'):
             await home_page.content()
    
+   # Dark mode
+    dark_mode_on = config['Preferences'].getboolean('darkmode')
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
         storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode', fallback=False))
