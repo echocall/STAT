@@ -21,13 +21,17 @@ In order to run STAT via Visual Studio Code:
  - Fork the branch and open in VSC
  - type 'pip install -r requirements.txt' into the console.
    - this will download the exact environment requirements needed to run the program, the same as I had at the time of creating the requirements.txt
- - At that point you should be able to paste: .\test_venv\scripts\activate.ps1 into console to go into the virtual test environment. You should see (test_venv) pop up in front of your file path in Visual Studio Code.
+ - To create virtual environment named test_venv: -m venv test_venv
+ - In order to run the virtual environment from VSC type: .\test_venv\scripts\activate.ps1 
+ - From plain console: .\test_venv\scripts\activate.bat
+   - You should see (test_venv) pop up in front of your file path in Visual Studio Code.
  - type python3 main.py to run the program.
 
-More information on requirements can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/txt"
+More information on requirements.txt can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/txt
+More information about virutal environments in python can be found here: https://docs.python.org/3/library/venv.html
 
-# Note, you will need to change the Root file path in the config.txt in order for the program to work.
-# The confighandler has been pulled due to bad behavior and a messed up pull request.
+ ##### Note, you will need to change the Root file path in the config.txt in order for the program to work.
+ The confighandler has been pulled due to bad behavior and a messed up pull request.
 
 - Run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
@@ -70,10 +74,10 @@ STAT
 Session - Any time you open up STAT to play a game can be thought of as a Session. Behind the scenes STAT is build to passively keep track of what you do during a Session via the dashboard. Eventually it'll be able to log all the actions you take so you can refer to that to remind yourself of what you did and why.
 
 
-# Game # 
+#### Game 
 A game file in STAT is meant to capture what the starting conditions of a game. So if a game starts you off with 10 health, or 20 gold, you would set that in this game file as counters so every save you started afterwards would have those values. It also keeps track of Actors, Default Assets for the game (for later implementation of file parity), an icon, and a few other fields. You MUST have a Game created in order to make saves, assets, effects, or anything else in STAT.
 
-# Counters #
+#### Counters 
 The name says it. These keep track of numerical value. This can be used to keep track of health, money, or other more esoteric ideas like a wizard's spell slots. Assets will eventually interact with them through buy costs and sell prices, as will Effects and possibly Events when those are added in. The default vaules you put in your game folder will be automatically applied to any Save file you make of that game.
 
 Example: I am starting a game of Winter Bunny Gardening, a game where you play as a rabbit trying to grow enough food to get you through the winter. For my counters I want to keep track of how much Wood I have as it is a resource that allows me to build more things. I also want to keep track of the number of Shiny Stones I have as those are used as currency, and I want to keep track of the Temperature because if it gets too low I can't grow anything. I put the following default values in:
@@ -81,16 +85,16 @@ Game: Winter Bunny Gardening
 Wood: 10, Shiny Stones: 20, Temperature 78
 
 
-# Actors #
+#### Actors 
 These are saved as a list of names, and are useful when you want to have a name attached to an action that happens, or when targetting something (for the eventual logging feature) but don't need to store a lot of data about it. If I were playing D&D I could use an Actor to act as a stand in for an enemy who's stats I didn't know but I wanted to track what Effect I had applied to it.
 
 Example: For Winter Bunny Gardening we have Player as a default actor, and we'll add 'Jack Frost' and 'Merchant' to keep track of when those figures show up in our logs.
 
 
-# Assets #
+#### Assets 
 These can be objects, rooms, or whatever else that exist within the game that you can accumulate. They will have built in mechanics for handling buying and selling based on what counters you have. They can store a lot of information in the multiple text fields as well. If you need to keep track of how much of something you have, you probably want an Asset. STAT will keep track of how many of each asset you have between sessions!
 
-# Buy Costs and Sell Prices #
+#### Buy Costs and Sell Prices 
 These two are two sides of the same coin, if you'll pardon the pun. A 'Buy Cost' generally means you have to pay X amount to add One of that asset to your owned amount. A 'Sell Price' is how much you get for getting rid of one of your owned assets of a particular type. In the future I hope to implement a more flexible math system, but I need to get these implemented first!
 
 Example: For Winter Bunny Gardening I'll add a 'Field' with a Buy Cost of 20 Wood and a Sell Price of 5 Wood. This means in the future when I press the 'buy' button the application will automatically deduct 20 Wood from the appropriate counter and add '1' to my field count. When I press the 'Sell' button STAT will add 5 wood to my counter and deduct 1 Field from my tracked amount.
@@ -98,7 +102,7 @@ Example: For Winter Bunny Gardening I'll add a 'Field' with a Buy Cost of 20 Woo
 Deep Example: If I wanted to model something like Dungeons & Dragons or Pathfinder 2E as a wizard, I could use Counters to keep track of my spell slots of various levels (1st, 2nd, etcetera) and I could model my Spells as Assets so during combat I could 'buy' a spell to 'use' a Spell Slot of the appropriate type. If I wanted to use Spells at other spell levels than what I have the default asset set to, I could make it a Custom Asset.
 
 
-# Effects # 
+#### Effects 
 Once implemented these will be kept track of in a sidebar on the dashboard screen where the user will be able to easily keep visual track of them. They'll keep track of 'what' they are affecting whether that's a counter, asset, or actor, what their Source is, what they're doing, and other factors.
 Sadly they are not yet implemented besides letting you look at the 'Create Effect' menu.
 
@@ -110,7 +114,7 @@ Mage Armor  Target Type: Actor   Target: Player   Duration: 5 Turns  Type: Posit
 Cost: +5 (Armor Class)
 
 
-TODO:
+#### TODO:
  - Dashboard Functionality improvement
    - Automatic adjustment and updating of counters when buying or selling an asset
    - Moving Assets from 'All Assets' to 'Owned' asset tab more cleanly
