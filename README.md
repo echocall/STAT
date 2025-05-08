@@ -25,7 +25,8 @@ In order to run STAT via Visual Studio Code:
  - In order to run the virtual environment from VSC type: .\test_venv\scripts\activate.ps1 
  - From plain console: .\test_venv\scripts\activate.bat
    - You should see (test_venv) pop up in front of your file path in Visual Studio Code.
- - type python3 main.py to run the program.
+ - In order to runt he program you will need to add python to your windows path like so: https://realpython.com/add-python-to-path/
+ - Then you can use 'python main.py' to run the program. In my case it's 'python3 main.py' because I added 'python3' as the name for the path.
 
 More information on requirements.txt can be found here: https://www.geeksforgeeks.org/how-to-install-python-packages-with-requirements-txt/txt
 More information about virutal environments in python can be found here: https://docs.python.org/3/library/venv.html
