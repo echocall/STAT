@@ -37,8 +37,7 @@ async def index_page() -> None:
         return base_path / relative_path
 
     # Global config path and config object 
-    config_data = resource_path("config.txt")
-    config = configparser.ConfigParser()
+    config_data = configparser.ConfigParser()
 
     structured_data = {}
     
