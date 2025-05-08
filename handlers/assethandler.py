@@ -187,7 +187,8 @@ def new_asset_gui( is_default: bool,
         write_result['debug'].append({'game_name_result': game_name_result})
         game_name = game_name_result['string']
 
-        paths = config.get("Paths", {})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths", {})
         root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")
         default_assets_path = paths.get("defaultassetspath", "")

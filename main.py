@@ -38,6 +38,7 @@ async def index_page() -> None:
 
     # Store as nested dictionary
     app.storage.user["config"] = structured_data
+    print(structured_data)
     # Show Welcome or Home Page
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'

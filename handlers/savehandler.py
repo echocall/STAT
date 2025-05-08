@@ -48,7 +48,8 @@ def new_save_gui(game_name: str, new_save_dict: dict) -> dict:
         save_format_result = format_str_for_filename_super(new_save_dict['name'])
         
         # Load config and paths
-        paths = config.get("Paths", {})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths", {})
         root_path = paths.get("osrootpath", "")
         games_path = paths.get("gamespath", "")
         saves_path = paths.get("savespath", "")

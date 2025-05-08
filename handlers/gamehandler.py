@@ -5,7 +5,7 @@ import classes.MyGame as mg
 import traceback
 from pathlib import Path
 import os, shutil
-from handlers.confighandler import config
+from handlers.confighandler import *
 
 def game_handler(is_game_loaded: bool) -> object:
     print("TODO: fill game_handler in")
@@ -27,7 +27,8 @@ def new_game_gui(new_game_dict: dict, file_name: str) -> dict:
                 write_result['debug'].append("Config recreated and loaded.")
 
          # Load configuration
-        paths = config.get("Paths", {})
+        user_config = app.storage.user.get("config", {})
+        paths = user_config.get("Paths", {})
         root_path = paths.get("osrootpath", "Not Set")
         games_path = paths.get("gamespath", "")
         saves_path = paths.get("savespath", "")
@@ -242,7 +243,8 @@ def create_folders(name_dict: dict, game_path: str, datapack_path: str, saves_pa
 # updates the game's json
 def update_game(game_dict: dict):
     """Takes a game dict, a full game_file_path, and a template and attempts to update the json."""
-    paths = config.get("Paths", {})
+    user_config = app.storage.user.get("config", {})
+    paths = user_config.get("Paths", {})
     root_path = paths.get("osrootpath", "Not Set")
     games_path = paths.get("gamespath", "")
     game_name = ''
