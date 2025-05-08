@@ -2,7 +2,7 @@
 from multiprocessing import freeze_support  
 freeze_support() 
 import sys
-from handlers.confighandler import config_path, config, create_default_config, set_paths, write_config, load_config
+from handlers.confighandler import load_config, write_config
 from helpers.logging import log_startup_event
 from typing import Annotated
 import pages.home_page as home_page
@@ -23,6 +23,9 @@ from helpers.utilities import *
 import configparser
 
 
+# Load configuration
+config = configparser.ConfigParser()
+config.read('config.txt')
 
 @ui.page('/')
 async def index_page() -> None:
