@@ -193,41 +193,30 @@ def update_save(save_dict: dict, save_path: str, template_path: str) -> dict:
     template_result = {}
     format_result = {}
     write_result = {}
-    # check the template is okay
-    try:
-        template_result = check_save_template_bool(save_path, template_path)
-    except:
-        template_result['result'] = False
-        template_result['message'] = 'Given object did not match save template.'
   
-    # it matches the template!
-    if template_result['result']:
-        # try formatting the save name for a file
-        try:
-            format_result = format_str_for_filename_super(save_path['name'])
-        except:
-            format_result['message'] = 'Formatting name for save update failed.'
+    # try formatting the save name for a file
+    try:
+        format_result = format_str_for_filename_super(save_path['name'])
+    except:
+        format_result['message'] = 'Formatting name for save update failed.'
 
-        # it formatted the name!
-        if format_result['result']:
-            # try writing to the json_file
-            try:
-                write_result = overwrite_json_file(save_dict, save_path, format_result['string'])
-            except:
-                write_result['success'] = False
-                write_result['message'] = 'Overwriting to save json failed.'
-            # successfully wrote!
-            if write_result['success']:
-                return write_result
-            # did not successfully write
-            else:
-                return write_result
-        # did not formate name
+    # it formatted the name!
+    if format_result['result']:
+        # try writing to the json_file
+        try:
+            write_result = overwrite_json_file(save_dict, save_path, format_result['string'])
+        except:
+            write_result['success'] = False
+            write_result['message'] = 'Overwriting to save json failed.'
+        # successfully wrote!
+        if write_result['success']:
+            return write_result
+        # did not successfully write
         else:
-            return format_result
-    # did not get a match on the template
+            return write_result
+    # did not formate name
     else:
-        return template_result
+        return format_result
 
 # TODO:
 def save_current(old_save: dict, new_save: dict):
