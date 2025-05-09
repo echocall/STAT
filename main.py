@@ -2,7 +2,7 @@
 from multiprocessing import freeze_support  
 freeze_support() 
 import sys
-from handlers.confighandler import resource_path, load_config, write_config
+from handlers.confighandler import resource_path, load_config, write_config, create_default_config
 from helpers.logging import log_startup_event
 from typing import Annotated
 import pages.home_page as home_page
@@ -26,6 +26,12 @@ import configparser
 # Load configuration
 config = configparser.ConfigParser()
 config.read(resource_path('config.txt'))
+
+if 'Preferences' not in config:
+    print("Preferences section missing, creating default config")
+    create_default_config('config.txt')
+    config.read(resource_path('config.txt'))
+
 
 @ui.page('/')
 async def index_page() -> None:
