@@ -152,8 +152,11 @@ def create_default_config(configfilename: str):
     with open(resource_path(configfilename), 'w') as configfile:
         config.write(configfile)
 
-
-config.read(config_path)
+config_files = config.read(config_path)
+if not config_files:
+    print(f"[WARN] Failed to read config file: {config_path}")
+    create_default_config("config.txt")
+    config.read(config_path)
 
 # Export these
 __all__ = ["set_paths", "write_config", "config", "config_path", "load_config", "save_config", "create_default_config" ]

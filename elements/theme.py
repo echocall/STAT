@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from elements.menu import menu
-import helpers.font_picker as font_picker
+# import helpers.font_picker as font_picker
 from handlers.confighandler import config, config_path, write_config
 from pathlib import Path
 from nicegui import app,ui
@@ -14,7 +14,7 @@ def frame(navigation_title: str):
     selected_save = app.storage.user.get("selected_save", {})
     selected_asset = app.storage.user.get("selected_asset", {})
 
-    font_picker.apply_font()
+   # font_picker.apply_font()
 
     ui.add_head_html('''
      <style>
