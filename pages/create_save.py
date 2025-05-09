@@ -36,80 +36,70 @@ def create_save():
         create_save_result = False
         game_file_name = ''
         try:
-            # Ensure the game matches the template
-            matches_template = check_save_template_bool(new_save_dict)
+            # Convert game name to file friendly format
+            game_name_result = format_str_for_filename_super(selected_game['name'])
+            if game_name_result['result']:
+                game_file_name = game_name_result['string']
 
-            if matches_template['result']:
-                # Convert game name to file friendly format
-                game_name_result = format_str_for_filename_super(selected_game['name'])
-                if game_name_result['result']:
-                    game_file_name = game_name_result['string']
+                # Make str_save_directory_path here
+                str_save_directory_path = str_games_path + '\\' +  game_file_name +  saves_path
 
-                    # Make str_save_directory_path here
-                    str_save_directory_path = str_games_path + '\\' +  game_file_name +  saves_path
+                save_name_result = format_str_for_filename_super(new_save_dict['name'])
+                if save_name_result['result']:
+                    # Check for duplicates
+                    save_name_check = get_new_save_name(str_save_directory_path, new_save_dict['name'])
 
-                    save_name_result = format_str_for_filename_super(new_save_dict['name'])
-                    if save_name_result['result']:
-                        # Check for duplicates
-                        save_name_check = get_new_save_name(str_save_directory_path, new_save_dict['name'])
+                    if "_Placeholder" in save_name_check['name']:
+                        ui.notify(f"""Notice! An asset by the same name already exists. 
+                                Could not save asset.""",
+                                    type='warning',
+                                    position='top',
+                                    multi_line=True)
 
-                        if "_Placeholder" in save_name_check['name']:
-                            ui.notify(f"""Notice! An asset by the same name already exists. 
-                                    Could not save asset.""",
-                                        type='warning',
-                                        position='top',
-                                        multi_line=True)
-
-                        # Get the starting information from the game
-                        new_save_dict['base_game'] = selected_game['name']
-                        new_save_dict['counters'] = selected_game['counters']
-                        new_save_dict['actors'] = selected_game['default_actors']
-                        new_save_dict['current_turn'] = selected_game['start_turn']
-                        try:
-                            create_save_result = new_save_gui(selected_game['name'], new_save_dict)
-                            if create_save_result['result']:
-                                ui.notify("Save created! You can now use to the dashboard.",
-                                        position='top',
-                                        type='positive')
-                                # Pull the newly created save out of the file and use that.
-                                app.storage.user['selected_save'] = create_save_result['dict']
-                                # refresh screen to see the change
-                                ui.navigate.reload()
-                                
-                            else:
-                                ui.notify(f"""Save file could not be created. Please check file permissions. 
-                                    Check the log file in folder where the asset would be created for more details.""",
-                                        type='negative',
-                                        position="top",)
-                                raise Exception(f"""Save file could not be created. 
-                                    Check the log file in folder where the asset would be created for more details.""")
-                        except Exception as e:
-                                print(traceback.format_exc())
-                                ui.notify("Error: Failed to save save file. Please ensure file paths in config.txt are correct and STAT has write permission to the folders.",
-                                        position='top',
-                                        type='negative',
-                                        multi_line=True)
-                    # unable to format save name
-                    else:
-                        ui.notify(f"""Warning: the new save file's name could not be converted into a file-friendly format!
-                                Please try a different name.""",
-                                position='top',
-                                type='warning',
-                                multi_line=True)
-                # unable to format game name
+                    # Get the starting information from the game
+                    new_save_dict['base_game'] = selected_game['name']
+                    new_save_dict['counters'] = selected_game['counters']
+                    new_save_dict['actors'] = selected_game['default_actors']
+                    new_save_dict['current_turn'] = selected_game['start_turn']
+                    try:
+                        create_save_result = new_save_gui(selected_game['name'], new_save_dict)
+                        if create_save_result['result']:
+                            ui.notify("Save created! You can now use to the dashboard.",
+                                    position='top',
+                                    type='positive')
+                            # Pull the newly created save out of the file and use that.
+                            app.storage.user['selected_save'] = create_save_result['dict']
+                            # refresh screen to see the change
+                            ui.navigate.reload()
+                            
+                        else:
+                            ui.notify(f"""Save file could not be created. Please check file permissions. 
+                                Check the log file in folder where the asset would be created for more details.""",
+                                    type='negative',
+                                    position="top",)
+                            raise Exception(f"""Save file could not be created. 
+                                Check the log file in folder where the asset would be created for more details.""")
+                    except Exception as e:
+                            print(traceback.format_exc())
+                            ui.notify("Error: Failed to save save file. Please ensure file paths in config.txt are correct and STAT has write permission to the folders.",
+                                    position='top',
+                                    type='negative',
+                                    multi_line=True)
+                # unable to format save name
                 else:
-                    ui.notify(f"""Warning: the new game's name could not be converted into a file-friendly format!
-                            How in the codebase did you manage THAT?""",
+                    ui.notify(f"""Warning: the new save file's name could not be converted into a file-friendly format!
+                            Please try a different name.""",
                             position='top',
                             type='warning',
                             multi_line=True)
+            # unable to format game name
             else:
-                # Template mismatch
-                ui.notify("""Error: The new save dictionary does not match the expected save template! 
-                          Please check that template files are correct.""",
-                          position="top",
-                          type='negative',
-                          multi_line=True)
+                ui.notify(f"""Warning: the new game's name could not be converted into a file-friendly format!
+                        How in the codebase did you manage THAT?""",
+                        position='top',
+                        type='warning',
+                        multi_line=True)
+            
 
         except FileNotFoundError as e:
             print(traceback.format_exc())

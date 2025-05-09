@@ -156,43 +156,35 @@ async def new_asset():
         """Calls the methods in assethandler to write the asset to .json"""
         create_result = {}
         try:
-            # Ensure the asset matches the template
-            matches_template = check_asset_template_bool(new_asset_dict)
-            if matches_template['result']:
-                # check for duplicates
-                asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
+            # check for duplicates
+            asset_name = get_new_asset_name(str_assets_path, new_asset_dict['name'])
 
-                if "_Placeholder" in asset_name['name']:
-                    ui.notify(f"""Notice! An asset by the same name already exists. 
-                              Could not save asset. 
-                              Check the log file in folder where the asset would be created for more details.""",
-                                type='warning',
-                                position='top',
-                                multi_line=True)
-                # attempt to create asset here.
-                try:
-                    create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save)
-                    if create_result['result']:
-                        ui.notify("Congrats! Asset created!", 
-                                    type='positive', 
-                                    position="top")
-                        # clear page somehow
-                except:
-                    # failed to create the asset
-                    with ui.dialog() as fail_create, ui.card():
-                        ui.label('Oh no!').classes('text-lg')
-                        ui.label(create_result['message'])
-                        ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
-                        ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
-                        ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
-                        ui.button('Close', on_click=fail_create.close)
-                    fail_create.open
-            # Template Mismatch
-            else:
-                ui.notify("Error: Coule not save. The new asset dictionary does not match expected asset template. Unable to save.", 
-                          position='top', 
-                          type='negative',
+            if "_Placeholder" in asset_name['name']:
+                ui.notify(f"""Notice! An asset by the same name already exists. 
+                            Could not save asset. 
+                            Check the log file in folder where the asset would be created for more details.""",
+                            type='warning',
+                            position='top',
                             multi_line=True)
+            # attempt to create asset here.
+            try:
+                create_result = new_asset_gui(is_default, new_asset_dict, selected_game, selected_save)
+                if create_result['result']:
+                    ui.notify("Congrats! Asset created!", 
+                                type='positive', 
+                                position="top")
+                    # clear page somehow
+            except:
+                # failed to create the asset
+                with ui.dialog() as fail_create, ui.card():
+                    ui.label('Oh no!').classes('text-lg')
+                    ui.label(create_result['message'])
+                    ui.label("Please check that the necesscary folders exist, and STAT has permission to write to them.")
+                    ui.label(f'Default Asset Path:  {selected_game['default_assets']}')
+                    ui.label(f'Custom Asset Path: {selected_save['asset_customs_path']}')
+                    ui.button('Close', on_click=fail_create.close)
+                fail_create.open
+            
 
         except FileNotFoundError as e:
             ui.notify("""Error: could not save. STAT cound not find the file.
