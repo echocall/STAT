@@ -53,13 +53,9 @@ async def index_page() -> None:
     if config['Toggles'].getboolean('showwelcome'):
         config['Toggles']['showwelcome'] = 'False'
         write_config()
-
-
-        async with theme.frame('Welcome'):
-            await welcome.content()
+        await welcome.content()
     else:
-        async with theme.frame('Home Page'):
-            await home_page.content()
+        await home_page.content()
    
    # Dark mode
     # dark_mode_on = config['Preferences'].getboolean('darkmode')
