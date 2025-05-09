@@ -40,29 +40,28 @@ More information about virutal environments in python can be found here: https:/
 - Next, create the /statassets folder in the STAT folder and unzip the template files here.
   - Make sure that when you click into the unzipped template folder you see the template files.
 - Next, copy and paste the path to that folder and replace the root directory inside the config.txt file.
--  
+
 - The zip folder for the templates has been included.
 
-STAT
-├── config.txt
-│   
-└── statassets
-    ├── games
+
+/STAT
+└── /statassets
+    ├── /games
     │   └── <game_name>
     │       ├── <game_name>.json
-    │       ├── images
+    │       ├── /images
     │       │   └── <image_name>.png
-    │       ├── saves
-    │       ├── assets
+    │       ├── /saves
+    │       ├── /assets
     │       │   ├── Defaults
     │       │   └── Customs
-    │       ├── effects
+    │       ├── /effects
     │       │   ├── Defaults
     │       │   └── Customs
-    │       └── events
+    │       └── /events
     │           ├── Defaults
     │           └── Customs
-    └── templates
+    └── /templates
         └── template_game.json
         └── template_save.json
         └── template_asset.json
