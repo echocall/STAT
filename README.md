@@ -34,12 +34,14 @@ More information about virutal environments in python can be found here: https:/
  ##### Note, you will need to change the Root file path in the config.txt in order for the program to work.
  The confighandler has been pulled due to bad behavior and a messed up pull request.
 
-- Run the program for the first time. This will allow STAT to try and find where it wants to live, generally a common folder path where it has write permissions.
 - STAT itself can live anywhere, it uses hard-path files in its config.txt file to tell it where to find the folders it makes and the templates it needs.
-  - What is important is keeping the file structure for those files intact, especially config.txt
+  - What is important is keeping the file structure for those files intact, especially the templates.
+- You will need to create the basic /STAT/ folder on your device in a location where STAT has acess to write.
+- Next, create the /statassets folder in the STAT folder and unzip the template files here.
+  - Make sure that when you click into the unzipped template folder you see the template files.
+- Next, copy and paste the path to that folder and replace the root directory inside the config.txt file.
+-  
 - The zip folder for the templates has been included.
-- You can check the config.txt to find where STAT has tried to find the best paths for it to write to.
-- It tries to detect what operating system you're on, and then pick the most common available path.
 
 STAT
 ├── config.txt
