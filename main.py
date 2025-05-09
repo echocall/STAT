@@ -2,7 +2,7 @@
 from multiprocessing import freeze_support  
 freeze_support() 
 import sys
-from handlers.confighandler import load_config, write_config
+from handlers.confighandler import resource_path, load_config, write_config
 from helpers.logging import log_startup_event
 from typing import Annotated
 import pages.home_page as home_page
@@ -25,7 +25,7 @@ import configparser
 
 # Load configuration
 config = configparser.ConfigParser()
-config.read('config.txt')
+config.read(resource_path('config.txt'))
 
 @ui.page('/')
 async def index_page() -> None:
@@ -55,7 +55,7 @@ async def index_page() -> None:
             await home_page.content()
    
    # Dark mode
-    dark_mode_on = config['Preferences'].getboolean('darkmode')
+    # dark_mode_on = config['Preferences'].getboolean('darkmode')
 
 ui.run(native=True, title='Snazzy Tabletop Assistant Tracker', fullscreen=False, reload=False,
         storage_secret='teehee a secret for me', dark=config['Preferences'].getboolean('darkmode', fallback=False))
