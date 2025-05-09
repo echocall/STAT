@@ -27,6 +27,7 @@ import configparser
 config = configparser.ConfigParser()
 config.read(resource_path('config.txt'))
 
+
 if 'Preferences' not in config:
     print("Preferences section missing, creating default config")
     create_default_config('config.txt')
@@ -54,10 +55,10 @@ async def index_page() -> None:
         write_config()
 
 
-        with theme.frame('Welcome'):
+        async with theme.frame('Welcome'):
             await welcome.content()
     else:
-        with theme.frame('Home Page'):
+        async with theme.frame('Home Page'):
             await home_page.content()
    
    # Dark mode

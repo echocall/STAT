@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 from elements.menu import menu
 # import helpers.font_picker as font_picker
 from handlers.confighandler import config, config_path, write_config
@@ -8,8 +8,8 @@ from nicegui import app,ui
 # DONT REMOVE THIS.
 dark = ui.dark_mode()
 
-@contextmanager
-def frame(navigation_title: str):
+@asynccontextmanager
+async def frame(navigation_title: str):
     selected_game = app.storage.user.get("selected_game", {})
     selected_save = app.storage.user.get("selected_save", {})
     selected_asset = app.storage.user.get("selected_asset", {})
@@ -103,9 +103,9 @@ def frame(navigation_title: str):
               dark='#3D365C',
               dark_page='#23242f')
     
-    with ui.header().classes('items-center justify-center w-full txt-inherit-accent'):
-        with ui.row().classes('w-full justify-between'):
-            with ui.link(target='/').classes():
+    async with ui.header().classes('items-center justify-center w-full txt-inherit-accent'):
+        async with ui.row().classes('w-full justify-between'):
+            async with ui.link(target='/').classes():
                 ui.label('STAT').classes('font-bold text-xl').props('color=accent')
             ui.button(icon='keyboard_double_arrow_left', on_click=ui.navigate.back).props('color=secondary').classes('scale-100')
             ui.button(icon='keyboard_double_arrow_right', on_click=ui.navigate.forward).props('color=secondary').classes('scale-100')
@@ -135,10 +135,10 @@ def frame(navigation_title: str):
             light_switch.bind_value_from(config['Preferences']['darkmode'])
 
             menu()
-    with ui.row().classes('w-full h-full justify-center items-start'):
-        with ui.column().classes('w-full items-stretch items-center'):
+    async with ui.row().classes('w-full h-full justify-center items-start'):
+        async with ui.column().classes('w-full items-stretch items-center'):
             yield
-    with ui.footer().props('color=accent'):
+    async with ui.footer().props('color=accent'):
         # Selected Game
         if not selected_game:
             ui.label("Selected Game: None")
