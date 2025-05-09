@@ -115,53 +115,42 @@ async def create_game():
         
         # Creating the game
         try:
-            # Ensure the game matches the template
-            matches_template = check_game_template_bool(new_game_dict)
-            if matches_template['result']:
-                # Check if a game with that name already exists
-                new_game_name = new_game_dict['name']
+            # Check if a game with that name already exists
+            new_game_name = new_game_dict['name']
 
-                game_name_result = get_new_game_name(new_game_name, str_games_path)
-                if not "_Placeholder" in game_name_result['name']:
-                    try:
-                        create_game_result = new_game_gui( new_game_dict, game_name_result['file'])
-                        if create_game_result['result']:
-                            app.storage.user['selected_game'] = create_game_result['dict']
-                            ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
-                                    You can view it on the select games screen.""",
-                                        multi_line = True,
-                                        type='positive',
-                                        position='top')
-                            
-                            ui.navigate.reload()
-                            
-                        else:
-                            ui.notify(f"""File Write Failed: {create_game_result['string']} """,
-                                        type='negative',
-                                        position='top',
-                                        multi_line = True,)
-                    except Exception as e:
-                        print(traceback.format_exc())
-                        ui.notify(f"""Game file could not be created.
-                                        Please check file permissions.
-                                        {create_game_result['string']}""",
-                                        type='negative',
-                                        position='top',
-                                        multi_line = True)
-                else:
-                    ui.notify(f"""Notice! A game of that name already exists. Please pick a new name.""",
-                              type='warning',
-                              position='top',
-                              multi_line = True)
-                
-            # Template Mismatch
+            game_name_result = get_new_game_name(new_game_name, str_games_path)
+            if not "_Placeholder" in game_name_result['name']:
+                try:
+                    create_game_result = new_game_gui( new_game_dict, game_name_result['file'])
+                    if create_game_result['result']:
+                        app.storage.user['selected_game'] = create_game_result['dict']
+                        ui.notify(f"""Success! You've created the game {new_game_dict['name']}!
+                                You can view it on the select games screen.""",
+                                    multi_line = True,
+                                    type='positive',
+                                    position='top')
+                        
+                        ui.navigate.reload()
+                        
+                    else:
+                        ui.notify(f"""File Write Failed: {create_game_result['string']} """,
+                                    type='negative',
+                                    position='top',
+                                    multi_line = True,)
+                except Exception as e:
+                    print(traceback.format_exc())
+                    ui.notify(f"""Game file could not be created.
+                                    Please check file permissions.
+                                    {create_game_result['string']}""",
+                                    type='negative',
+                                    position='top',
+                                    multi_line = True)
             else:
-                ui.notify("""Error! The new game dictionary does not match the expected game template.
-                          Please check the template jsons and try again.""", 
-                          type='negative',
-                          position="top",
-                          multi_line = True,
-                          )
+                ui.notify(f"""Notice! A game of that name already exists. Please pick a new name.""",
+                            type='warning',
+                            position='top',
+                            multi_line = True)
+        
 
         except FileNotFoundError as e:
             print(traceback.format_exc())
