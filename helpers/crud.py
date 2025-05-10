@@ -441,7 +441,6 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
 
     return result
 
-# DELETE
 
 # Logging for file.
 def log_debug(message: str):
@@ -463,7 +462,7 @@ def log_debug(message: str):
         # As a last resort, print to console
         print(f'Failed to log message: {e}')
 
-
+# DELETE
 def delete_directory(directory_path: str):
     """Deletes a directory and all its contents."""
     try:
