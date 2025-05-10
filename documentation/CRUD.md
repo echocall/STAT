@@ -11,9 +11,13 @@ shutil
 datetime
 nicegui -> app
 
+
+
 ###Create New JSON File
 create_new_json_file(full_file_path: str, dict_to_convert: dict, include_debug: bool = False) -> dict
-Overview: Handles writing the converted dict into JSON and then writing it into the file. Should write errors to log file.
+
+####Overview
+Handles writing the converted dict into JSON and then writing it into the file. Should write errors to log file.
 
 ####Arguments
  - takes full_file_path
@@ -34,9 +38,13 @@ assethandler.py -> new_asset_gui
 gamehandler.py -> new_game_gui
 savehandler.py -> new_save_gui
 
+
+
 ###Create New Directory
 create_new_directory(passed_directory_path: str, debug_mode: bool = False) -> dict
-Overview: Handles creating a folder at the given directory path.
+
+####Overview
+Handles creating a folder at the given directory path.
 
 ####Arguments
 - passed_directory_path, required, full dictionary path as string
@@ -56,9 +64,12 @@ gamehandler.py -> create_folders (defunct)
 savehandler.py -> new_save_gui
 
 
+
 ###Single JSON Getter Fullpath
 single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict
-Overview: Uses the file path and object type to get the contents of a JSON file.
+
+####Overview
+Uses the file path and object type to get the contents of a JSON file.
 
 ####Arguments
 - passed_file_path: required, full file path as string
@@ -80,3 +91,23 @@ savehandler -> load_save
 crud -> get_template_json
 
 
+
+###Get Default Assets List
+def get_default_assets_list(passed_directory_path: str) -> list
+
+####Overview
+Returns a list of parsed default JSON objects from the 'default' subfolder of assets.
+
+####Arguments
+- passed_directory_path: required, string -> full path to Asset default folder as path.
+
+####Return
+list of python dictionaries.
+
+####Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+json: library -> handles loading the data from the file as a json object.
+
+####References
+1 reference
+assethandler -> default_assets_fetch

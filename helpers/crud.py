@@ -126,10 +126,10 @@ def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
 
         return get_json_result
 
-def get_default_assets_list(full_base_path: str) -> list:
+def get_default_assets_list(passed_directory_path: str) -> list:
     """Returns a list of parsed default asset JSON objects from the 'default' subfolder of assets."""
     default_assets = []
-    default_path = Path(full_base_path) 
+    default_path = Path(passed_directory_path) 
 
     if not default_path.exists():
         print("[get_default_assets_list] 'default' path does not exist:", default_path)
