@@ -126,36 +126,10 @@ def single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict:
 
         return get_json_result
 
-# DEFUNCT    
-# Multi-file getter: all .jsons at known filepath.
-def multi_json_getter(passedDirectoryPath: str, objectType: str) -> list:
-    error_message = ""
-    target_json_objects = []
-    str_directory_path = passedDirectoryPath
-    fetch_success = False
-
-    # casting to Path 
-    directory_path = Path(str_directory_path)
-
-    if directory_path.exists():
-        jsonslist = list(directory_path.glob('**/*.json'))
-
-        for path in jsonslist:
-            with open(path) as f:
-                target_json_objects.append(json.load(f))
-        fetch_success = True
-    else:
-        error_message = "Error getting multiple jsons: \n " + objectType + " could not be found in directory: " + str_directory_path
-
-    if(fetch_success == True):
-        return target_json_objects
-    else:
-        print(error_message)
-        
-def get_default_assets_list(full_base_path: str) -> list:
+def get_default_assets_list(passed_directory_path: str) -> list:
     """Returns a list of parsed default asset JSON objects from the 'default' subfolder of assets."""
     default_assets = []
-    default_path = Path(full_base_path) 
+    default_path = Path(passed_directory_path) 
 
     if not default_path.exists():
         print("[get_default_assets_list] 'default' path does not exist:", default_path)
@@ -171,11 +145,10 @@ def get_default_assets_list(full_base_path: str) -> list:
 
     return default_assets
 
-
-def get_custom_assets_list(full_base_path: str) -> list:
+def get_custom_assets_list(passed_directory_path: str) -> list:
     """Returns a list of parsed custom asset JSON objects from the 'custom' subfolder of assets."""
     custom_assets = []
-    custom_path = Path(full_base_path)
+    custom_path = Path(passed_directory_path)
 
     if not custom_path.exists():
         print("[get_custom_assets_list] 'custom' path does not exist:", custom_path)
@@ -190,7 +163,6 @@ def get_custom_assets_list(full_base_path: str) -> list:
             print(f"[get_custom_assets_list] Failed to load {json_file.name}: {e}")
 
     return custom_assets
-
 
 # takes in a full file path and object type as plural, returns list of jsons.
 def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
@@ -441,7 +413,6 @@ def overwrite_json_file(data: dict, str_target_file_path: str, file_name: str) -
 
     return result
 
-# DELETE
 
 # Logging for file.
 def log_debug(message: str):
@@ -463,7 +434,7 @@ def log_debug(message: str):
         # As a last resort, print to console
         print(f'Failed to log message: {e}')
 
-
+# DELETE
 def delete_directory(directory_path: str):
     """Deletes a directory and all its contents."""
     try:
