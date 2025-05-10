@@ -145,10 +145,10 @@ def get_default_assets_list(passed_directory_path: str) -> list:
 
     return default_assets
 
-def get_custom_assets_list(full_base_path: str) -> list:
+def get_custom_assets_list(passed_directory_path: str) -> list:
     """Returns a list of parsed custom asset JSON objects from the 'custom' subfolder of assets."""
     custom_assets = []
-    custom_path = Path(full_base_path)
+    custom_path = Path(passed_directory_path)
 
     if not custom_path.exists():
         print("[get_custom_assets_list] 'custom' path does not exist:", custom_path)

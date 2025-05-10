@@ -111,3 +111,28 @@ json: library -> handles loading the data from the file as a json object.
 ####References
 1 reference
 assethandler -> default_assets_fetch
+
+
+
+###Get Custom Assets List
+def get_custom_assets_list(passed_directory_path: str) -> list
+
+####Overview
+Returns a list of parsed custom asset JSON objects from the 'custom' subfolder of assets.
+
+####Arguments
+- passed_directory_path: required, string -> full path to Asset default folder as path.
+
+####Return
+list of python dictionaries.
+
+####Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+json: library -> handles loading the data from the file as a json object.
+
+####References
+1 reference
+assethandler -> custom_asset_fetch
+
+
+
