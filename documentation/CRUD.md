@@ -25,7 +25,7 @@ Overview: Handles writing the converted dict into JSON and then writing it into 
 result_dict {'result': bool, 'message': string, 'path': string of file path, 'debug': string of exception}
 
 ###Dependencies
-Path : library -> handles formatting strings into windows format
+Path: library -> handles converting the passed_directory_path into a windows path object
 convert_obj_to_json : utilities.py -> handles converting the dict into a json object.
 
 ###References
@@ -45,13 +45,38 @@ Overview: Handles creating a folder at the given directory path.
 ####Return
 {'result':bool, 'message': string, 'debug': string of exception}
 
-####Dependences
-Path : library -> handles trying to write to the folder
-Traceback: library -> for error tracking.
+####Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+traceback: library -> for error tracking.
 
 ####References
 3 references
 gamehandler.py -> new_game_gui
 gamehandler.py -> create_folders (defunct)
 savehandler.py -> new_save_gui
+
+
+###Single JSON Getter Fullpath
+single_json_getter_fullpath(passed_file_path: str, objectType: str) -> dict
+Overview: Uses the file path and object type to get the contents of a JSON file.
+
+####Arguments
+- passed_file_path: required, full file path as string
+- objectType: required, name of file category as string
+
+####Returns
+get_json_result: {'result': bool, 'message': string, 'json': dictionary}
+
+####Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+json: converting retrieved data as python JSON object.
+
+####References
+5 references
+assethandler -> single_asset_fetch
+gamehandler -> get_game
+savehandler -> get_saves
+savehandler -> load_save
+crud -> get_template_json
+
 

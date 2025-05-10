@@ -44,9 +44,9 @@ Arguments
 Return
 {'result':bool, 'message': string, 'debug': string of exception}
 
-Dependences
-Path : library -> handles trying to write to the folder
-Traceback: library -> for error tracking.
+Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+traceback: library -> for error tracking.
 
 References
 3 references
