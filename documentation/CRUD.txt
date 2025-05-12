@@ -131,3 +131,69 @@ json: library -> handles loading the data from the file as a json object.
 References
 1 reference
 assethandler -> custom_asset_fetch
+
+
+
+Multi File Getter
+def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list
+
+Overview
+Recursively looks for, and returns a list of parsed JSON objects at the directory level passed in. Uses the objectType (as a plural) to direct where to look.
+
+Current Issue
+If I ask it for 'assets' it gets me ALL assets, both default and custom, which is why 'Get Custom Assets List' and 'Get Default Assets List' were made.
+Could be more widely implemented.
+
+Arguments
+passedDirectoryPath: required, string -> Path to the directory of the sought after objectType as a string.
+objectType: required, string -> given as a plural to tell the function if it needs to look in further folders (default/asset) for assets/effects/events.
+
+Return
+A list of json objects converted into python dictionaries.
+
+Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object.
+json: library -> handles loading the data from the file as a json object.
+
+References
+1 reference
+assethandler -> get_assets
+
+
+
+Multi File Names Getter
+def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bool = False) -> dict
+
+Overview 
+Returns the file names of the objects of the targeted type.
+
+Arguments
+passedDirectoryPath: required, string -> Path to the directory of the sought after objectTypes as a string.
+objectType: required, string -> the type of the logical object given as a plural.
+debug: optional, bool -> if given, tells function to print to debug file, add debug section to result_dict.
+
+Return
+A dictionary called result in the format: 
+{ 'result': bool,
+'message': string,
+'list': [] }
+with optional list with key of 'debug'.
+
+Dependencies
+Path: library -> handles converting the passed_directory_path into a windows path object
+json: library -> handles loading the data from the file as a json object.
+traceback: library -> for more explanation of what error might have been caused.
+
+References
+8 references
+assethandler -> get_assets_names
+assethandler -> get_new_asset_name
+gamehandler -> get_games_names
+gamehandler -> get_new_game_name
+savehandler -> get_save_names
+savehandler -> get_new_save_name
+edit_asset.py -> possibly broken, retest
+edit_asset.py -> possibly broken, retest
+
+
+
