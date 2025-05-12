@@ -137,7 +137,7 @@ assethandler -> custom_asset_fetch
 
 
 ###Multi File Getter
-def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list
+def multi_file_getter(passed_directory_path: str, objectType: str) -> list
 
 ####Overview
 Recursively looks for, and returns a list of parsed JSON objects at the directory level passed in. Uses the objectType (as a plural) to direct where to look.
@@ -164,13 +164,13 @@ assethandler -> get_assets
 
 
 ###Multi File Names Getter
-def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bool = False) -> dict
+def multi_file_names_getter(passed_directory_path: str, objectType: str, debug: bool = False) -> dict
 
 ####Overview
 Returns the file names of the objects of the targeted type.
 
 ####Arguments
-passedDirectoryPath: required, string -> Path to the directory of the sought after objectTypes as a string.
+passed_directory_path: required, string -> Path to the directory of the sought after objectTypes as a string.
 objectType: required, string -> the type of the logical object given as a plural.
 debug: optional, bool -> if given, tells function to print to debug file, add debug section to result_dict.
 
@@ -182,7 +182,7 @@ A dictionary called result in the format:
 with optional list with key of 'debug'.
 
 ####Dependencies
-Path: library -> handles converting the passed_directory_path into a windows path object
+Path: library -> handles converting the passedDirectoryPath into a windows path object
 json: library -> handles loading the data from the file as a json object.
 traceback: library -> for more explanation of what error might have been caused.
 
@@ -196,6 +196,48 @@ savehandler -> get_save_names
 savehandler -> get_new_save_name
 edit_asset.py -> possibly broken, retest
 edit_asset.py -> possibly broken, retest
+
+
+
+###Get Default Assets Names
+def get_default_assets_names(full_directory_path: str) -> list
+
+####Overview
+Returns a list of the file names of default assets belonging to the game.
+
+####Arguments
+full_directory_path: required, string -> the full path to the directory.
+
+####Return
+List of file names as string.
+
+####Dependencies
+Path: library -> handles converting the full_directory_path into a windows path object.
+json: library -> handles loading the data from the file as a json object.
+
+####References
+0 References
+
+
+
+###Get Custom Assets Names
+def get_custom_assets_names(full_base_path: str) -> list
+
+####Overview
+Returns a list of the file names of custom assets belonging to the game.
+
+####Arguments
+full_directory_path: required, string -> the full path to the directory.
+
+###Return
+List of file names as string.
+
+####Dependencies
+Path: library -> handles converting the full_directory_path into a windows path object.
+json: library -> handles loading the data from the file as a json object.
+
+####References
+0 References
 
 
 

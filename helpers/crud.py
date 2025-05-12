@@ -165,11 +165,11 @@ def get_custom_assets_list(passed_directory_path: str) -> list:
     return custom_assets
 
 # takes in a full file path and object type as plural, returns list of jsons.
-def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
+def multi_file_getter(passed_directory_path: str, objectType: str) -> list:
     """Takes a directory path and an object type as a plural and returns a list of jsons.
     IF using with effects, assets, or events: do NOT send in the directory path for the custom or default 
     directories. It already handles that and returns both default and custom objects as a shared list."""
-    directory_path = Path(passedDirectoryPath)
+    directory_path = Path(passed_directory_path)
     # Path does not exist
     if not directory_path.exists():
         print(f"Incorrect Path: {objectType} directory for names not found!")
@@ -233,7 +233,7 @@ def multi_file_getter(passedDirectoryPath: str, objectType: str) -> list:
 # Get the names of the targetted object types
 # objectType = 'games' or 'assets'
 # targetpathkey = 'osrootpath' or 'gamespath' or 'assetspath'
-def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bool = False) -> dict:
+def multi_file_names_getter(passed_directory_path: str, objectType: str, debug: bool = False) -> dict:
     """Gets all the file names. Takes objectType as a plural. returns a result_dict of 'result':bool, 'message":'str', and 'list':[]"""
     result = {
         'result': False,
@@ -244,10 +244,10 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
         result['debug'] = []
 
     object_names = []
-    directory_path = Path(passedDirectoryPath)
+    directory_path = Path(passed_directory_path)
 
     if not directory_path.exists():
-        result['message'] = f"Incorrect Path: {objectType} directory not found at {passedDirectoryPath}"
+        result['message'] = f"Incorrect Path: {objectType} directory not found at {passed_directory_path}"
         return result
 
     try:
@@ -305,10 +305,10 @@ def multi_file_names_getter(passedDirectoryPath: str, objectType: str, debug: bo
     return result
 
 
-def get_default_assets_names(full_base_path: str) -> list:
+def get_default_assets_names(full_directory_path: str) -> list:
     """Returns a list of default asset JSON files from the 'default' subfolder of assets."""
     default_assets = []
-    default_path = Path(full_base_path)
+    default_path = Path(full_directory_path)
 
     if not default_path.exists():
         print("[get_default_assets_list] 'default' path does not exist:", default_path)
