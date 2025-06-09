@@ -205,7 +205,7 @@ async def content() -> None:
                     with ui.column().classes():
                         # DISPLAY section
                         lbl_game_name = ui.label("Name :").classes('text-base font-bold text-center')
-                        game_name = ui.label(f"{selected_game['name']}").classes('text-base font-bold text-center')
+                        game_name = ui.label(f"{selected_game['name']}").classes('text-base text-center')
                         lbl_game_name.bind_visibility_from(toggle_edit, 
                                                             'value', 
                                                             backward=lambda toggle_edit: not toggle_edit)
@@ -213,7 +213,7 @@ async def content() -> None:
                                                         'value', 
                                                         backward=lambda toggle_edit: not toggle_edit)
                         # EDIT section
-                        lbl_name_edit = ui.label('Due to the time-constraints please create a new game if you want to change the name.').classes('text-base font-bold break-after-all text-center')
+                        lbl_name_edit = ui.label('Please create a new game if you want to change the name.').classes('font-bold break-after-all text-center')
 
                         # lbl_name_edit.bind_visibility_from(toggle_edit, 'value')
                         # name_edit = ui.input(placeholder=f'{selected_game['name']}',

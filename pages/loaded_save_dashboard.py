@@ -55,13 +55,19 @@ async def dashboard():
             render_owned_asset_cards.refresh()
 
             # Update owned assets
-            name = asset['name']
-            if name in owned_assets:
-                selected_save[assets][name] += 1
+            asset_name = asset['name']
+            if asset_name in owned_assets:
+                # old_amount = selected_save[assets][name]
+                print(asset_name)
+                print(selected_save)
+                print(type(selected_save))
+                # new_amount = old_amount + 1
+                # selected_save[assets]['name'] = new_amount
+
             else:
                 new_asset = asset.copy()
                 new_asset['quantity'] = 1
-                owned_assets[name] = new_asset
+                owned_assets[asset_name] = new_asset
 
         def sell_asset(asset: dict, counters: dict, owned_assets: dict):
             """
