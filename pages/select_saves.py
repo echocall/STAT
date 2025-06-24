@@ -67,7 +67,7 @@ async def view_saves():
                 else:
                     ui.notify("Error with formatting selected_game name.", position='top', type='warning')
                 
-                str_saves_path = str_games_path + '\\' + game_file_name + '\\' +  saves_path
+                str_saves_path = str_games_path + '\\' + game_file_name +  saves_path
                 existing_saves = {}
                 # getting the existing saves for the loaded game
                 try:

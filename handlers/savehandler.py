@@ -18,6 +18,7 @@ def get_saves(saves_directory_path: str) -> dict:
 
     for save in save_names:
         save_name = save.lower()
+        # We want the saves in their own folders to make sharing them neat.
         full_save_path = Path(saves_directory_path + '\\' + save_name + '\\' + save_name + ".json")
         get_save_result = single_json_getter_fullpath(full_save_path, 'save')
 

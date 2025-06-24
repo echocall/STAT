@@ -1,12 +1,12 @@
 from nicegui import app, binding,  ui
 from elements.message import message
-from handlers.assethandler import *
+from handlers.assethandler import asset_handler, sort_assets_by_category, fetch_owned_assets
 from handlers.gamehandler import *
 from elements.CategoryLabel import CategoryLabel
-from elements.asset_detail_dialog import asset_detail_dialog
 import elements.theme as theme
 from elements.UserConfirm import *
 import traceback
+from helpers.crud import *
 
 # Dashboard for after a game has been selected, and a save has been loaded.
 # Displays the user's information.
@@ -109,12 +109,12 @@ async def dashboard():
             save_formatted = format_str_for_filename_super(save_name)
 
             if not game_formatted['result'] or not save_formatted['result']:
+                ui.notify("Error: Could not format game or save name for filename.", position='top', type='Negative')
                 print("Error: Could not format game or save name for filename.")
                 return
 
             # Construct full save file path
-            full_save_path = f"{root_path}{games_path}\\{game_formatted['string']}{saves_path}\\{save_formatted['string']}.json"
-
+            full_save_path = f"{root_path}{games_path}\\{game_formatted['string']}{saves_path}\\{save_formatted['string']}\\{save_formatted['string']}.json"
             # Save the current selected_save dict to file
             result = overwrite_json_file(selected_save, str_target_file_path=full_save_path, file_name='')
 
