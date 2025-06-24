@@ -267,7 +267,7 @@ async def dashboard():
                                     on_click=lambda: counter_sub(counters, current_counter.text, temp_current_amount, amount_to_change.value), color='orange')
                 btn_sub.props('round dense size=sm')
 
-        # No game or save selected
+        # No game selected
         if not selected_game or 'name' not in selected_game:
             with ui.row():
                 ui.icon('warning').classes('text-3xl text-center')
@@ -277,6 +277,7 @@ async def dashboard():
             ui.label('Then select a save from \'View Saves\'.').classes('text-center')
             with ui.link(target = '/selectgames'):
                 ui.button('Find Game File')
+        # No save selected
         elif not selected_save or 'name' not in selected_save:
             with ui.row():
                 ui.icon('warning').classes('text-3xl text-center')
@@ -353,6 +354,7 @@ async def dashboard():
                 ui.label('')
 
             # ON EVERY TAB
+            # General info bar
             with ui.row().classes('full flex'):
                 with ui.column():
                     ui.label('Save Name: ' + selected_save['name'])
@@ -364,7 +366,19 @@ async def dashboard():
                         current_turn = selected_save['current_turn']
                         ui.label(current_turn)
                 with ui.column():
-                    ui.button(icon='update', on_click=lambda: ui.notify('TODO: implement advancing turns')).props("round")
+                    old_turn = selected_save['current_turn']
+                    turn_type = selected_game['turn_type']
+                    # TODO: advancing turns, up or down as if/else
+                    # if Turn_type = Increase, turn count goes up
+                    # else turn count goes down
+                    # Break this out into a function. 
+                    if turn_type == 'Increasing':
+                        new_turn = old_turn + 1
+                    elif turn_type == 'Decreasing':
+                        new_turn = old_turn - 1
+                    selected_game['current_turn'] = new_turn
+                    ui.button(icon='update', on_click=lambda:  ui.notify('TODO: implement advancing turns')).props("round")
+                    print(selected_save['current_turn'])
                 with ui.column():
                     ui.button(icon='save', on_click=lambda: save_current_session())
                 ui.space()
